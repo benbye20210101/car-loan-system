@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>汽車貸款業務員AI補件系統</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== 頂部標題列 ===== -->
+  <header class="site-header">
+    <h1>汽車貸款業務員AI補件系統</h1>
+    <p class="header-subtitle">Auto Loan AI Supplement System</p>
+  </header>
+
+  <!-- ===== 主要內容 ===== -->
+  <main class="main-wrap">
+
+    <!-- 試算表單卡片 -->
+    <div class="card">
+      <p class="card-title">車貸條件輸入</p>
+
+      <div class="form-grid">
+
+        <!-- A選單框：貸款車輛廠牌 -->
+        <div class="form-group">
+          <label class="form-label" for="select-a">
+            <span class="label-mark"></span>貸款車輛廠牌
+          </label>
+          <div class="select-wrap">
+            <select id="select-a" name="brand">
+              <option value="">─ 請選擇廠牌 ─</option>
+              <option value="PORSCHE">PORSCHE</option>
+              <option value="Benz">Benz</option>
+              <option value="LEXUS">LEXUS</option>
+              <option value="BMW">BMW</option>
+              <option value="INFINITI">INFINITI</option>
+              <option value="AUDI">AUDI</option>
+              <option value="other-import-200up">其他200萬以上進口車</option>
+              <option value="other-import-100-200">其他100～200萬進口車或國產車</option>
+              <option value="other-under-100">其他100萬內進口車或國產車</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- B選單框：車型 -->
+        <div class="form-group">
+          <label class="form-label" for="select-b">
+            <span class="label-mark"></span>車型
+          </label>
+          <div class="select-wrap">
+            <select id="select-b" name="model">
+              <option value="">─ 請選擇車型 ─</option>
+              <option value="grocery">太太買菜車</option>
+              <option value="suv">傳統休旅車</option>
+              <option value="luxury-boss">豪華老闆座車</option>
+              <option value="5door-sedan">5門房車</option>
+              <option value="crossover">跑旅車</option>
+              <option value="supercar">超跑</option>
+              <option value="4door-sedan">傳統4門房車</option>
+              <option value="performance">普通性能車</option>
+              <option value="hatchback">3門/5門入門掀背車</option>
+              <option value="coupe">雙門/敞篷跑車</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- C選單框：車齡 -->
+        <div class="form-group">
+          <label class="form-label" for="select-c">
+            <span class="label-mark"></span>車齡
+          </label>
+          <input
+            type="number"
+            id="select-c"
+            name="car-age"
+            min="0"
+            max="20"
+            step="1"
+            placeholder="請輸入車齡（整數 0 ～ 20 年）"
+          />
+          <span class="error-msg" id="age-error">請輸入 0 到 20 之間的正整數</span>
+        </div>
+
+        <!-- D選單框：貸款類型 -->
+        <div class="form-group">
+          <label class="form-label" for="select-d">
+            <span class="label-mark"></span>貸款類型
+          </label>
+          <div class="select-wrap">
+            <select id="select-d" name="loan-type">
+              <option value="">─ 請選擇貸款類型 ─</option>
+              <option value="new-zero-rate">新車0利率</option>
+              <option value="new-with-rate">新車有利率</option>
+              <option value="factory-new-used">原廠新古車</option>
+              <option value="factory-appraisal">原廠回估中古車</option>
+              <option value="general-used">一般中古車</option>
+              <option value="peer-transfer">同業代償</option>
+              <option value="refinance">原車融資</option>
+            </select>
+          </div>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <!-- 試算按鈕 -->
+      <div class="btn-wrap">
+        <button class="btn-calculate" id="btn-calc" type="button">車　貸　試　算</button>
+      </div>
+
+    </div><!-- /card -->
+
+    <!-- 試算結果卡片（點按鈕後顯示） -->
+    <div class="result-card" id="result-card">
+      <p class="result-title">試算摘要</p>
+      <div class="result-grid" id="result-grid">
+        <!-- 動態填入 -->
+      </div>
+      <p class="result-note" id="result-note">
+        ✦ 以上為本次輸入條件摘要，實際核貸金額與利率視銀行審核結果為準。<br/>
+        如需進一步AI補件建議，請將本頁截圖或資料提供予負責業務人員。
+      </p>
+    </div>
+
+    <footer class="site-footer">
+      &copy; 汽車貸款業務員AI補件系統 ／ 僅供內部業務參考使用
+    </footer>
+
+  </main>
+
+  <!-- ===== JavaScript ===== -->
+  <script>
+    (function () {
+      'use strict';
+
+      var btnCalc   = document.getElementById('btn-calc');
+      var selectA   = document.getElementById('select-a');
+      var selectB   = document.getElementById('select-b');
+      var inputC    = document.getElementById('select-c');
+      var selectD   = document.getElementById('select-d');
+      var ageError  = document.getElementById('age-error');
+      var resultCard= document.getElementById('result-card');
+      var resultGrid= document.getElementById('result-grid');
+
+      /* ── 車齡即時驗證 ── */
+      inputC.addEventListener('input', function () {
+        validateAge(true);
+      });
+
+      function validateAge(showMsg) {
+        var raw = inputC.value.trim();
+        var val = Number(raw);
+        var ok  = raw !== '' && Number.isInteger(val) && val >= 0 && val <= 20;
+
+        if (!ok && raw !== '') {
+          inputC.classList.add('invalid');
+          if (showMsg) ageError.classList.add('show');
+          return false;
+        } else {
+          inputC.classList.remove('invalid');
+          ageError.classList.remove('show');
+          return true;
+        }
+      }
+
+      /* ── 試算按鈕 ── */
+      btnCalc.addEventListener('click', function () {
+        var brand    = selectA.value;
+        var brandTxt = selectA.options[selectA.selectedIndex].text;
+        var model    = selectB.value;
+        var modelTxt = selectB.options[selectB.selectedIndex].text;
+        var ageRaw   = inputC.value.trim();
+        var loanType = selectD.value;
+        var loanTxt  = selectD.options[selectD.selectedIndex].text;
+
+        /* 驗證必填 */
+        var errors = [];
+        if (!brand)    errors.push('請選擇「貸款車輛廠牌」');
+        if (!model)    errors.push('請選擇「車型」');
+        if (ageRaw === '') {
+          errors.push('請輸入「車齡」');
+        } else if (!validateAge(true)) {
+          errors.push('「車齡」必須為 0 到 20 之間的正整數');
+        }
+        if (!loanType) errors.push('請選擇「貸款類型」');
+
+        if (errors.length > 0) {
+          alert('⚠ 請完整填寫以下欄位：\n\n• ' + errors.join('\n• '));
+          return;
+        }
+
+        /* 建立結果摘要 */
+        var items = [
+          { key: '貸款車輛廠牌', val: brandTxt },
+          { key: '車型',         val: modelTxt },
+          { key: '車齡',         val: ageRaw + '　年' },
+          { key: '貸款類型',     val: loanTxt  }
+        ];
+
+        resultGrid.innerHTML = items.map(function (item) {
+          return '<div class="result-item">' +
+                   '<div class="item-key">' + item.key + '</div>' +
+                   '<div class="item-val">' + item.val + '</div>' +
+                 '</div>';
+        }).join('');
+
+        resultCard.classList.add('show');
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
