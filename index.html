@@ -132,6 +132,53 @@
 
   </main>
 
+  <!-- ===== iframe 自動撐高（手機版至少 900px） ===== -->
+  <script>
+    (function () {
+      'use strict';
+
+      var MIN_HEIGHT = 900; /* 手機版最小高度 px */
+
+      /* ── 取得頁面實際高度，並與最小值取最大 ── */
+      function getHeight() {
+        var actual = Math.max(
+          document.body.scrollHeight,
+          document.body.offsetHeight,
+          document.documentElement.scrollHeight,
+          document.documentElement.offsetHeight
+        );
+        return Math.max(actual, MIN_HEIGHT);
+      }
+
+      /* ── 通知 Google Sites 父層調整 iframe 高度 ── */
+      function notifyResize() {
+        var h = getHeight();
+        /* 強制 body 本身也撐到足夠高度，讓 iframe 有內容可量 */
+        document.body.style.minHeight = h + 'px';
+        try {
+          window.parent.postMessage({ type: 'resize', height: h }, '*');
+          window.parent.postMessage(JSON.stringify({ height: h }), '*');
+        } catch (e) { /* 非 iframe 環境忽略 */ }
+      }
+
+      /* ── 頁面載入完成後立即執行 ── */
+      window.addEventListener('load', notifyResize);
+
+      /* ── ResizeObserver：內容高度變化時自動重送（如結果卡片展開） ── */
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(notifyResize).observe(document.body);
+      } else {
+        /* 舊瀏覽器備援：輪詢偵測 */
+        var _lastH = 0;
+        setInterval(function () {
+          var h = getHeight();
+          if (h !== _lastH) { _lastH = h; notifyResize(); }
+        }, 400);
+      }
+
+    })();
+  </script>
+
   <!-- ===== JavaScript ===== -->
   <script>
     (function () {
