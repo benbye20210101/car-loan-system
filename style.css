@@ -1,12 +1,12 @@
 /* ===== 強制全版基礎重設 ===== */
-*, *::before, *::after {
-  box-sizing: border-box;
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 /* ===== 強制全版：html / body ===== */
-html {
+html, body {
   width: 100% !important;
   min-width: 100% !important;
   height: 100% !important;
@@ -15,10 +15,7 @@ html {
 }
 
 body {
-  width: 100% !important;
-  min-width: 100% !important;
   min-height: 100vh !important;
-  overflow-x: hidden !important;
   font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
   background: var(--bg-deep);
   color: var(--text-primary);
