@@ -2,34 +2,12 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <!-- 強制全版 viewport：禁止縮放、鎖死裝置全寬 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>汽車貸款業務員AI補件系統</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <!-- 強制全版內嵌樣式（備援：當 style.css 在 iframe 環境被覆蓋時仍有效） -->
-  <style>
-    html, body {
-      width: 100% !important;
-      min-width: 100% !important;
-      max-width: 100% !important;
-      min-height: 100vh !important;
-      height: auto !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      overflow-x: hidden !important;
-    }
-    .main-wrap {
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-    .card, .result-card, .btn-calculate, select, input[type="number"] {
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-  </style>
 </head>
 <body>
 
@@ -153,51 +131,6 @@
     </footer>
 
   </main>
-
-  <!-- ===== iframe 自動高度：偵測頁面實際高度並通知 Google Sites ===== -->
-  <script>
-    (function () {
-      'use strict';
-
-      /* ── 計算頁面實際高度 ── */
-      function getPageHeight() {
-        return Math.max(
-          document.body.scrollHeight,
-          document.body.offsetHeight,
-          document.documentElement.scrollHeight,
-          document.documentElement.offsetHeight
-        );
-      }
-
-      /* ── 傳送高度給外層 Google Sites iframe ── */
-      function notifyResize() {
-        var h = getPageHeight();
-        try {
-          /* Google Sites 標準格式 */
-          window.parent.postMessage({ type: 'resize', height: h }, '*');
-          /* 備援格式（部分嵌入服務使用） */
-          window.parent.postMessage(JSON.stringify({ height: h }), '*');
-        } catch (e) { /* 非 iframe 環境直接忽略 */ }
-      }
-
-      /* ── 頁面載入完成後立即通知 ── */
-      window.addEventListener('load', notifyResize);
-
-      /* ── 用 ResizeObserver 監聽內容高度變化（結果卡片展開等） ── */
-      if (typeof ResizeObserver !== 'undefined') {
-        var ro = new ResizeObserver(function () { notifyResize(); });
-        ro.observe(document.body);
-      } else {
-        /* 舊瀏覽器備援：每 400ms 輪詢一次 */
-        var lastH = 0;
-        setInterval(function () {
-          var h = getPageHeight();
-          if (h !== lastH) { lastH = h; notifyResize(); }
-        }, 400);
-      }
-
-    })();
-  </script>
 
   <!-- ===== JavaScript ===== -->
   <script>
