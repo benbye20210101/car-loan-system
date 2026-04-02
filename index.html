@@ -534,43 +534,54 @@
         btnLogin.disabled    = true;
         btnLogin.textContent = '驗　證　中';
 
-        fetch(GAS_WEBAPP_URL, {
-          method:   'POST',
-          headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
-          body:     JSON.stringify({ account: account, password: password }),
-          redirect: 'follow'
-        })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          hideLoading();
-          btnLogin.disabled    = false;
-          btnLogin.textContent = '登　入';
+        /*
+         * 雙層 requestAnimationFrame：
+         * 確保瀏覽器至少完成一次畫面渲染（動畫遮罩可見）後，
+         * 再發出 fetch 請求，避免動畫因同步程式碼延遲而無法即刻顯示。
+         */
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
 
-          if (data.success) {
-            closeModal();
-            toastSuccess.classList.add('show');
-            setTimeout(function () {
-              toastSuccess.classList.remove('show');
-              showResults();
-            }, 3000);
-          } else {
-            /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
-            generateCaptcha();
-            resetField(modalCaptcha, 'text');
-            if (data.error === 'account_not_found') {
-              setFieldError(modalAccount, '帳號');
-            } else if (data.error === 'wrong_password') {
-              setFieldError(modalPassword, '密碼');
-            } else {
-              alert('伺服器錯誤，請稍後再試。');
-            }
-          }
-        })
-        .catch(function () {
-          hideLoading();
-          btnLogin.disabled    = false;
-          btnLogin.textContent = '登　入';
-          alert('連線失敗，請確認網路連線或聯絡管理員。');
+            fetch(GAS_WEBAPP_URL, {
+              method:   'POST',
+              headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:     JSON.stringify({ account: account, password: password }),
+              redirect: 'follow'
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              hideLoading();
+              btnLogin.disabled    = false;
+              btnLogin.textContent = '登　入';
+
+              if (data.success) {
+                closeModal();
+                toastSuccess.classList.add('show');
+                setTimeout(function () {
+                  toastSuccess.classList.remove('show');
+                  showResults();
+                }, 3000);
+              } else {
+                /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
+                generateCaptcha();
+                resetField(modalCaptcha, 'text');
+                if (data.error === 'account_not_found') {
+                  setFieldError(modalAccount, '帳號');
+                } else if (data.error === 'wrong_password') {
+                  setFieldError(modalPassword, '密碼');
+                } else {
+                  alert('伺服器錯誤，請稍後再試。');
+                }
+              }
+            })
+            .catch(function () {
+              hideLoading();
+              btnLogin.disabled    = false;
+              btnLogin.textContent = '登　入';
+              alert('連線失敗，請確認網路連線或聯絡管理員。');
+            });
+
+          });
         });
       });
 
