@@ -630,3 +630,86 @@ input.invalid {
     letter-spacing: 0.16em;
   }
 }
+
+/* ===== 等待動畫遮罩 ===== */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(5px);
+  z-index: 400;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-overlay.show { display: flex; }
+
+/* 場景容器 */
+.loading-scene {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 跑道圓圈（虛線） */
+.loading-track-ring {
+  position: absolute;
+  width: 122px;
+  height: 122px;
+  border-radius: 50%;
+  border: 2px dashed rgba(201, 168, 76, 0.2);
+  box-shadow: inset 0 0 20px rgba(201, 168, 76, 0.04);
+}
+
+/* 場景中心點 */
+.loading-scene::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.35);
+}
+
+/* 賽車繞行支點（width/height=0，以 transform 繞中心公轉） */
+.loading-car-pivot {
+  position: absolute;
+  width: 0;
+  height: 0;
+  /*
+    rotate(Θ)         → 支點繞場景中心順時針旋轉
+    translateY(-61px) → 支點偏移到圓軌道上（12點鐘方向）
+    rotate(90deg)     → 賽車自轉90°，使車頭永遠朝向行進切線方向
+  */
+  animation: car-orbit 3s linear infinite;
+}
+
+/* 賽車元素（以支點為錨點置中） */
+.loading-car-el {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 7px rgba(201, 168, 76, 0.55));
+}
+
+/* 文字提示 */
+.loading-label {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  letter-spacing: 0.36em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* 繞圈動畫 */
+@keyframes car-orbit {
+  from { transform: rotate(0deg)   translateY(-61px) rotate(90deg); }
+  to   { transform: rotate(360deg) translateY(-61px) rotate(90deg); }
+}
