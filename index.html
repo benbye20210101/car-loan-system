@@ -212,25 +212,32 @@
       <!-- 賽車繞行支點 -->
       <div class="loading-car-pivot">
         <div class="loading-car-el">
-          <!-- Q版F1賽車（俯視） -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 90" width="54" height="81">
-            <!-- 前翼端板 -->
-            <rect x="3"  y="5"  width="4"  height="10" rx="2" fill="#c9a84c"/>
-            <rect x="53" y="5"  width="4"  height="10" rx="2" fill="#c9a84c"/>
-            <!-- 前翼主翼片 -->
-            <rect x="3"  y="7"  width="54" height="7"  rx="3" fill="#c9a84c"/>
-            <!-- 前翼鼻翼連接 -->
-            <rect x="15" y="7"  width="30" height="11" rx="3" fill="#b8932e"/>
-            <!-- 主車體 -->
+          <!-- Q版F1賽車（俯視）v1.3.1：縮小、新增紅色＋銀灰配色 -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 90" width="44" height="66">
+            <!-- 前翼端板（紅色） -->
+            <rect x="3"  y="5"  width="4"  height="10" rx="2" fill="#cc2233"/>
+            <rect x="53" y="5"  width="4"  height="10" rx="2" fill="#cc2233"/>
+            <!-- 前翼主翼片（紅色） -->
+            <rect x="3"  y="7"  width="54" height="7"  rx="3" fill="#cc2233"/>
+            <!-- 前翼鼻翼連接（深紅） -->
+            <rect x="15" y="7"  width="30" height="11" rx="3" fill="#aa1a28"/>
+            <!-- 主車體（金色） -->
             <ellipse cx="30" cy="48" rx="15" ry="34" fill="#c9a84c"/>
             <!-- 車體高光 -->
             <ellipse cx="30" cy="45" rx="10" ry="28" fill="#e2bb5e" opacity="0.22"/>
-            <!-- 左側廂 -->
+            <!-- 車體中央銀灰條紋 -->
+            <rect x="28" y="20" width="4" height="38" rx="2" fill="#9aa0b8" opacity="0.45"/>
+            <!-- 左側廂（金棕） -->
             <rect x="11" y="38" width="11" height="24" rx="5" fill="#b8932e"/>
+            <!-- 左側廂進氣口 -->
             <rect x="12" y="39" width="9"  height="7"  rx="3" fill="#111318" opacity="0.65"/>
+            <!-- 左側廂紅色裝飾線 -->
+            <rect x="11" y="48" width="11" height="3"  rx="1" fill="#cc2233" opacity="0.85"/>
             <!-- 右側廂 -->
             <rect x="38" y="38" width="11" height="24" rx="5" fill="#b8932e"/>
             <rect x="39" y="39" width="9"  height="7"  rx="3" fill="#111318" opacity="0.65"/>
+            <!-- 右側廂紅色裝飾線 -->
+            <rect x="38" y="48" width="11" height="3"  rx="1" fill="#cc2233" opacity="0.85"/>
             <!-- 駕駛艙 -->
             <ellipse cx="30" cy="41" rx="9" ry="13" fill="#111318"/>
             <!-- 頭盔 -->
@@ -239,25 +246,35 @@
             <ellipse cx="30" cy="36" rx="5" ry="2.5" fill="#4558b8" opacity="0.9"/>
             <!-- 頭盔金色條紋 -->
             <path d="M24 37 Q30 31.5 36 37" stroke="#c9a84c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <!-- 左前輪 -->
-            <rect x="6"    y="17"   width="10" height="16" rx="4" fill="#2a2d3a"/>
-            <rect x="7.5"  y="18.5" width="7"  height="13" rx="3" fill="#1c1f27"/>
+            <!-- 左前輪外框 -->
+            <rect x="6"   y="17"   width="10" height="16" rx="4" fill="#2a2d3a"/>
+            <!-- 左前輪銀灰輪圈 -->
+            <rect x="7.5" y="18.5" width="7"  height="13" rx="3" fill="#7a7f94"/>
+            <!-- 左前輪中心深色 -->
+            <rect x="9"   y="20"   width="4"  height="10" rx="2" fill="#1c1f27"/>
             <!-- 右前輪 -->
-            <rect x="44"   y="17"   width="10" height="16" rx="4" fill="#2a2d3a"/>
-            <rect x="45.5" y="18.5" width="7"  height="13" rx="3" fill="#1c1f27"/>
-            <!-- 左後輪（較寬） -->
-            <rect x="3"    y="56"   width="13" height="20" rx="4" fill="#2a2d3a"/>
-            <rect x="4.5"  y="57.5" width="10" height="17" rx="3" fill="#1c1f27"/>
-            <!-- 右後輪（較寬） -->
-            <rect x="44"   y="56"   width="13" height="20" rx="4" fill="#2a2d3a"/>
-            <rect x="45.5" y="57.5" width="10" height="17" rx="3" fill="#1c1f27"/>
-            <!-- 後翼端板 -->
+            <rect x="44"  y="17"   width="10" height="16" rx="4" fill="#2a2d3a"/>
+            <rect x="45.5" y="18.5" width="7" height="13" rx="3" fill="#7a7f94"/>
+            <rect x="47"  y="20"   width="4"  height="10" rx="2" fill="#1c1f27"/>
+            <!-- 左後輪外框（較寬） -->
+            <rect x="3"   y="56"   width="13" height="20" rx="4" fill="#2a2d3a"/>
+            <!-- 左後輪銀灰輪圈 -->
+            <rect x="4.5" y="57.5" width="10" height="17" rx="3" fill="#7a7f94"/>
+            <!-- 左後輪中心深色 -->
+            <rect x="6.5" y="59.5" width="6"  height="13" rx="2" fill="#1c1f27"/>
+            <!-- 右後輪 -->
+            <rect x="44"  y="56"   width="13" height="20" rx="4" fill="#2a2d3a"/>
+            <rect x="45.5" y="57.5" width="10" height="17" rx="3" fill="#7a7f94"/>
+            <rect x="47.5" y="59.5" width="6"  height="13" rx="2" fill="#1c1f27"/>
+            <!-- 後翼端板（藍紫） -->
             <rect x="2"  y="73" width="5"  height="12" rx="2" fill="#7b8cde"/>
             <rect x="53" y="73" width="5"  height="12" rx="2" fill="#7b8cde"/>
-            <!-- 後翼主翼片 -->
-            <rect x="2" y="76" width="56" height="8" rx="3" fill="#6b7fd4"/>
-            <!-- 後翼 DRS 翼片 -->
-            <rect x="7" y="80" width="46" height="4" rx="2" fill="#5570cc"/>
+            <!-- 後翼主翼片（藍紫） -->
+            <rect x="2"  y="76" width="56" height="8"  rx="3" fill="#6b7fd4"/>
+            <!-- 後翼 DRS 翼片（深藍） -->
+            <rect x="7"  y="80" width="46" height="4"  rx="2" fill="#5570cc"/>
+            <!-- 後翼頂部紅色裝飾條 -->
+            <rect x="7"  y="76" width="46" height="2"  rx="1" fill="#cc2233" opacity="0.75"/>
           </svg>
         </div>
       </div>
