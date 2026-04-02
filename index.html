@@ -105,6 +105,15 @@
           </div>
         </div>
 
+        <!-- E 勾選框：有保證人 -->
+        <div class="form-group checkbox-group">
+          <label class="form-label checkbox-label" for="check-guarantor">
+            <span class="label-mark"></span>有保證人
+            <input type="checkbox" id="check-guarantor" name="guarantor" />
+            <span class="custom-checkbox"></span>
+          </label>
+        </div>
+
       </div><!-- /form-grid -->
 
       <!-- 試算按鈕 -->
@@ -184,14 +193,15 @@
     (function () {
       'use strict';
 
-      var btnCalc   = document.getElementById('btn-calc');
-      var selectA   = document.getElementById('select-a');
-      var selectB   = document.getElementById('select-b');
-      var inputC    = document.getElementById('select-c');
-      var selectD   = document.getElementById('select-d');
-      var ageError  = document.getElementById('age-error');
-      var resultCard= document.getElementById('result-card');
-      var resultGrid= document.getElementById('result-grid');
+      var btnCalc       = document.getElementById('btn-calc');
+      var selectA       = document.getElementById('select-a');
+      var selectB       = document.getElementById('select-b');
+      var inputC        = document.getElementById('select-c');
+      var selectD       = document.getElementById('select-d');
+      var checkGuarantor= document.getElementById('check-guarantor');
+      var ageError      = document.getElementById('age-error');
+      var resultCard    = document.getElementById('result-card');
+      var resultGrid    = document.getElementById('result-grid');
 
       /* ── 車齡即時驗證 ── */
       inputC.addEventListener('input', function () {
@@ -245,7 +255,8 @@
           { key: '貸款車輛廠牌', val: brandTxt },
           { key: '車型',         val: modelTxt },
           { key: '車齡',         val: ageRaw + '　年' },
-          { key: '貸款類型',     val: loanTxt  }
+          { key: '貸款類型',     val: loanTxt  },
+          { key: '有保證人',     val: checkGuarantor.checked ? '是' : '否' }
         ];
 
         resultGrid.innerHTML = items.map(function (item) {

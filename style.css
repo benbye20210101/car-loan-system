@@ -226,6 +226,67 @@ input.invalid {
 
 .error-msg.show { display: block; }
 
+/* ===== 勾選框 ===== */
+.checkbox-group {
+  justify-content: flex-start;
+}
+
+.checkbox-label {
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-label);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+}
+
+.checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.custom-checkbox {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  background: var(--bg-input);
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  position: relative;
+}
+
+.checkbox-label:hover .custom-checkbox {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+
+.checkbox-label input[type="checkbox"]:checked ~ .custom-checkbox {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.2);
+}
+
+.checkbox-label input[type="checkbox"]:checked ~ .custom-checkbox::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border-right: 2px solid #1a1400;
+  border-bottom: 2px solid #1a1400;
+  transform: rotate(45deg);
+}
+
 /* ===== 分隔線 ===== */
 .divider {
   height: 1px;
