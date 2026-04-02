@@ -337,9 +337,12 @@
       'use strict';
 
       /* ══════════════════════════════════════════════════════════════
-         ★ 設定：將下方 YOUR_GAS_WEBAPP_URL 替換為您部署的 GAS 網址
+         ★ 設定：GAS Web App 網址與 API Token
+         GAS_API_TOKEN 必須與 gas-webapp.js 中的 API_TOKEN 完全相同，
+         GAS 後台以此 token 驗證請求是否來自合法網域。
       ══════════════════════════════════════════════════════════════ */
-      var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz0KPaLaZVepJfcaRKJeRgwG018M5ja_CRlHO5ZYI0A4xtHoFnacFxioVvtuuFevEPHBQ/exec';
+      var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzGC1KXJamhCdNhuUUjy1hHT23YUMTzWN5Oq0PeJdKHYtLw7vufgLQmpx4irVqixQ4Gyw/exec';
+      var GAS_API_TOKEN  = 'Bf7Kx9mNpQvL2wEjRtYdCz4oHs1Ua3Xi';
 
       /* ── 主表單元素 ── */
       var btnCalc        = document.getElementById('btn-calc');
@@ -562,7 +565,7 @@
             fetch(GAS_WEBAPP_URL, {
               method:   'POST',
               headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
-              body:     JSON.stringify({ account: account, password: password }),
+              body:     JSON.stringify({ account: account, password: password, token: GAS_API_TOKEN }),
               redirect: 'follow'
             })
             .then(function (res) { return res.json(); })
