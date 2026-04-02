@@ -446,3 +446,187 @@ input.invalid {
 @media (max-width: 360px) {
   .site-header h1 { font-size: 1rem; letter-spacing: 0.06em; }
 }
+
+/* ===== 浮動登入框 ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.7);
+  width: 100%;
+  max-width: 420px;
+  padding: 36px 36px 40px;
+  position: relative;
+  animation: fadeIn 0.28s ease;
+  overflow: hidden;
+}
+
+.modal-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #7b8cde 100%);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  padding: 4px 7px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.modal-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.modal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+/* 驗證碼列：輸入框 + 顯示屏並排 */
+.captcha-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.captcha-row input { flex: 1; }
+
+.captcha-display {
+  min-width: 112px;
+  padding: 12px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--accent);
+  text-align: center;
+  user-select: none;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+}
+
+/* 輸入框錯誤狀態：紅色文字 + 紅色邊框 */
+.input-error-state {
+  border-color: #e05c5c !important;
+  box-shadow: 0 0 0 3px rgba(224, 92, 92, 0.15) !important;
+  color: #e07070 !important;
+}
+
+/* 登入按鈕 */
+.btn-login {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #b8932e 0%, var(--accent) 50%, #d4af50 100%);
+  color: #1a1400;
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-login:hover {
+  background: linear-gradient(135deg, #c9a030 0%, var(--accent-hover) 50%, #e8c55a 100%);
+  box-shadow: 0 6px 28px rgba(201, 168, 76, 0.55);
+  transform: translateY(-1px);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 12px rgba(201, 168, 76, 0.3);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ===== 登入成功提示框 ===== */
+.toast-success {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.88);
+  background: linear-gradient(135deg, #1a2410 0%, #222d14 100%);
+  border: 1px solid rgba(100, 180, 50, 0.4);
+  border-radius: var(--radius);
+  padding: 20px 44px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #8ec840;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(142, 200, 64, 0.15);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-success.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* 手機版 Modal 調整 */
+@media (max-width: 540px) {
+  .modal-box { padding: 28px 20px 32px; }
+  .captcha-display {
+    min-width: 90px;
+    font-size: 0.95rem;
+    letter-spacing: 0.16em;
+  }
+}

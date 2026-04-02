@@ -141,6 +141,67 @@
 
   </main>
 
+  <!-- ===== 身份驗證浮動框 ===== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close" type="button" aria-label="關閉">✕</button>
+      <p class="modal-title">身份驗證</p>
+
+      <!-- A輸入框：帳號 -->
+      <div class="modal-form-group">
+        <label class="form-label" for="modal-account">
+          <span class="label-mark"></span>帳號
+        </label>
+        <input
+          type="text"
+          id="modal-account"
+          placeholder="請輸入帳號（英文或數字）"
+          maxlength="50"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- B輸入框：密碼 -->
+      <div class="modal-form-group">
+        <label class="form-label" for="modal-password">
+          <span class="label-mark"></span>密碼
+        </label>
+        <input
+          type="password"
+          id="modal-password"
+          placeholder="請輸入密碼（英文或數字）"
+          maxlength="50"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- C輸入框：驗證碼 + 顯示屏 -->
+      <div class="modal-form-group">
+        <label class="form-label" for="modal-captcha">
+          <span class="label-mark"></span>驗證碼
+        </label>
+        <div class="captcha-row">
+          <input
+            type="text"
+            id="modal-captcha"
+            placeholder="請輸入右側6位數字"
+            maxlength="6"
+            autocomplete="off"
+          />
+          <div class="captcha-display" id="captcha-display">──────</div>
+        </div>
+      </div>
+
+      <!-- 登入按鈕 -->
+      <div class="btn-wrap" style="margin-top:28px;">
+        <button class="btn-login" id="btn-login" type="button">登　入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 登入成功提示框 ===== -->
+  <div class="toast-success" id="toast-success">登入成功</div>
+
   <!-- ===== iframe 自動撐高（手機版至少 900px） ===== -->
   <script>
     (function () {
@@ -193,38 +254,57 @@
     (function () {
       'use strict';
 
-      var btnCalc       = document.getElementById('btn-calc');
-      var selectA       = document.getElementById('select-a');
-      var selectB       = document.getElementById('select-b');
-      var inputC        = document.getElementById('select-c');
-      var selectD       = document.getElementById('select-d');
-      var checkGuarantor= document.getElementById('check-guarantor');
-      var ageError      = document.getElementById('age-error');
-      var resultCard    = document.getElementById('result-card');
-      var resultGrid    = document.getElementById('result-grid');
+      /* ══════════════════════════════════════════════════════════════
+         ★ 設定：將下方 YOUR_GAS_WEBAPP_URL 替換為您部署的 GAS 網址
+      ══════════════════════════════════════════════════════════════ */
+      var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz0KPaLaZVepJfcaRKJeRgwG018M5ja_CRlHO5ZYI0A4xtHoFnacFxioVvtuuFevEPHBQ/exec';
 
-      /* ── 車齡即時驗證 ── */
-      inputC.addEventListener('input', function () {
-        validateAge(true);
-      });
+      /* ── 主表單元素 ── */
+      var btnCalc        = document.getElementById('btn-calc');
+      var selectA        = document.getElementById('select-a');
+      var selectB        = document.getElementById('select-b');
+      var inputC         = document.getElementById('select-c');
+      var selectD        = document.getElementById('select-d');
+      var checkGuarantor = document.getElementById('check-guarantor');
+      var ageError       = document.getElementById('age-error');
+      var resultCard     = document.getElementById('result-card');
+      var resultGrid     = document.getElementById('result-grid');
+
+      /* ── 浮動登入框元素 ── */
+      var modalOverlay   = document.getElementById('modal-overlay');
+      var modalAccount   = document.getElementById('modal-account');
+      var modalPassword  = document.getElementById('modal-password');
+      var modalCaptcha   = document.getElementById('modal-captcha');
+      var captchaDisplay = document.getElementById('captcha-display');
+      var btnLogin       = document.getElementById('btn-login');
+      var btnModalClose  = document.getElementById('modal-close');
+      var toastSuccess   = document.getElementById('toast-success');
+
+      var currentCaptcha = '';
+      var pendingItems   = null; /* 暫存試算結果，登入成功後顯示 */
+
+      /* ════════════════════════════════════════════════════════════
+         車齡即時驗證
+      ════════════════════════════════════════════════════════════ */
+      inputC.addEventListener('input', function () { validateAge(true); });
 
       function validateAge(showMsg) {
         var raw = inputC.value.trim();
         var val = Number(raw);
         var ok  = raw !== '' && Number.isInteger(val) && val >= 0 && val <= 20;
-
         if (!ok && raw !== '') {
           inputC.classList.add('invalid');
           if (showMsg) ageError.classList.add('show');
           return false;
-        } else {
-          inputC.classList.remove('invalid');
-          ageError.classList.remove('show');
-          return true;
         }
+        inputC.classList.remove('invalid');
+        ageError.classList.remove('show');
+        return true;
       }
 
-      /* ── 試算按鈕 ── */
+      /* ════════════════════════════════════════════════════════════
+         車貸試算按鈕：驗證表單 → 暫存結果 → 開啟登入框
+      ════════════════════════════════════════════════════════════ */
       btnCalc.addEventListener('click', function () {
         var brand    = selectA.value;
         var brandTxt = selectA.options[selectA.selectedIndex].text;
@@ -234,7 +314,6 @@
         var loanType = selectD.value;
         var loanTxt  = selectD.options[selectD.selectedIndex].text;
 
-        /* 驗證必填 */
         var errors = [];
         if (!brand)    errors.push('請選擇「貸款車輛廠牌」');
         if (!model)    errors.push('請選擇「車型」');
@@ -250,8 +329,8 @@
           return;
         }
 
-        /* 建立結果摘要 */
-        var items = [
+        /* 暫存試算資料，登入成功後再顯示 */
+        pendingItems = [
           { key: '貸款車輛廠牌', val: brandTxt },
           { key: '車型',         val: modelTxt },
           { key: '車齡',         val: ageRaw + '　年' },
@@ -259,15 +338,161 @@
           { key: '有保證人',     val: checkGuarantor.checked ? '是' : '否' }
         ];
 
-        resultGrid.innerHTML = items.map(function (item) {
+        openModal();
+      });
+
+      /* ── 登入成功後顯示試算結果 ── */
+      function showResults() {
+        if (!pendingItems) return;
+        resultGrid.innerHTML = pendingItems.map(function (item) {
           return '<div class="result-item">' +
                    '<div class="item-key">' + item.key + '</div>' +
                    '<div class="item-val">' + item.val + '</div>' +
                  '</div>';
         }).join('');
-
         resultCard.classList.add('show');
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        pendingItems = null;
+      }
+
+      /* ════════════════════════════════════════════════════════════
+         浮動登入框：開啟 / 關閉 / 驗證碼產生
+      ════════════════════════════════════════════════════════════ */
+      function generateCaptcha() {
+        var code = '';
+        for (var i = 0; i < 6; i++) code += Math.floor(Math.random() * 10);
+        currentCaptcha = code;
+        captchaDisplay.textContent = code;
+      }
+
+      function openModal() {
+        generateCaptcha();
+        resetField(modalAccount,  'text');
+        resetField(modalPassword, 'password');
+        resetField(modalCaptcha,  'text');
+        modalOverlay.classList.add('show');
+      }
+
+      function closeModal() {
+        modalOverlay.classList.remove('show');
+      }
+
+      btnModalClose.addEventListener('click', closeModal);
+
+      /* ── 輸入框工具函式 ── */
+      function resetField(el, type) {
+        el.type  = type;
+        el.value = '';
+        el.classList.remove('input-error-state');
+      }
+
+      function setFieldError(el, label) {
+        el.type  = 'text'; /* password 欄位也切換為 text 以顯示錯誤訊息 */
+        el.value = label + '錯誤';
+        el.classList.add('input-error-state');
+      }
+
+      /* ── 聚焦時自動清除錯誤狀態 ── */
+      [
+        { el: modalAccount,  type: 'text'     },
+        { el: modalPassword, type: 'password' },
+        { el: modalCaptcha,  type: 'text'     }
+      ].forEach(function (item) {
+        item.el.addEventListener('focus', function () {
+          if (item.el.classList.contains('input-error-state')) {
+            resetField(item.el, item.type);
+          }
+        });
+      });
+
+      /* ── 限制輸入：僅英文 + 數字 ── */
+      function filterAlphanumeric(e) {
+        e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+      }
+
+      /* ── 限制輸入：僅數字，最多 6 位 ── */
+      function filterNumeric6(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+      }
+
+      modalAccount.addEventListener('input',  filterAlphanumeric);
+      modalPassword.addEventListener('input', filterAlphanumeric);
+      modalCaptcha.addEventListener('input',  filterNumeric6);
+
+      /* ════════════════════════════════════════════════════════════
+         登入按鈕
+      ════════════════════════════════════════════════════════════ */
+      btnLogin.addEventListener('click', function () {
+
+        /* 讀取有效值（錯誤狀態下欄位存放的是錯誤訊息，視同空值） */
+        var account  = modalAccount.classList.contains('input-error-state')  ? '' : modalAccount.value.trim();
+        var password = modalPassword.classList.contains('input-error-state') ? '' : modalPassword.value.trim();
+        var captcha  = modalCaptcha.classList.contains('input-error-state')  ? '' : modalCaptcha.value.trim();
+
+        /* 清除上一輪的錯誤樣式 */
+        resetField(modalAccount,  'text');
+        resetField(modalPassword, 'password');
+        resetField(modalCaptcha,  'text');
+
+        var hasError = false;
+
+        /* 空值 & 驗證碼比對（可同時標記多個欄位） */
+        if (!account) {
+          setFieldError(modalAccount, '帳號');
+          hasError = true;
+        }
+        if (!password) {
+          setFieldError(modalPassword, '密碼');
+          hasError = true;
+        }
+        if (!captcha || captcha !== currentCaptcha) {
+          setFieldError(modalCaptcha, '驗證碼');
+          generateCaptcha(); /* 驗證碼不符時立即更新顯示屏 */
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        /* ── 呼叫 GAS Web App 驗證帳號密碼 ── */
+        btnLogin.disabled    = true;
+        btnLogin.textContent = '驗　證　中';
+
+        fetch(GAS_WEBAPP_URL, {
+          method:   'POST',
+          headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body:     JSON.stringify({ account: account, password: password }),
+          redirect: 'follow'
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          btnLogin.disabled    = false;
+          btnLogin.textContent = '登　入';
+
+          if (data.success) {
+            closeModal();
+            toastSuccess.classList.add('show');
+            setTimeout(function () {
+              toastSuccess.classList.remove('show');
+              showResults();
+            }, 3000);
+          } else {
+            /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
+            generateCaptcha();
+            resetField(modalCaptcha, 'text');
+            if (data.error === 'account_not_found') {
+              setFieldError(modalAccount, '帳號');
+            } else if (data.error === 'wrong_password') {
+              setFieldError(modalPassword, '密碼');
+            } else {
+              alert('伺服器錯誤，請稍後再試。');
+            }
+          }
+        })
+        .catch(function () {
+          btnLogin.disabled    = false;
+          btnLogin.textContent = '登　入';
+          alert('連線失敗，請確認網路連線或聯絡管理員。');
+        });
       });
 
     })();
