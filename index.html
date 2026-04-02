@@ -344,7 +344,7 @@
          GAS_API_TOKEN 必須與 gas-webapp.js 中的 API_TOKEN 完全相同，
          GAS 後台以此 token 驗證請求是否來自合法網域。
       ══════════════════════════════════════════════════════════════ */
-      var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzGC1KXJamhCdNhuUUjy1hHT23YUMTzWN5Oq0PeJdKHYtLw7vufgLQmpx4irVqixQ4Gyw/exec';
+      var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyMNfV0Pp8TdVZeQeoLMJM8Qrf1aVM8Bv1RuvVXK4CKcmL1KjWTWAn9di2cbcT3LxL_/exec';
       var GAS_API_TOKEN  = 'Bf7Kx9mNpQvL2wEjRtYdCz4oHs1Ua3Xi';
 
       /* ── 主表單元素 ── */
@@ -372,8 +372,9 @@
       /* ── 等待動畫 ── */
       var loadingOverlay = document.getElementById('loading-overlay');
 
-      var currentCaptcha = '';
-      var pendingItems   = null; /* 暫存試算結果，登入成功後顯示 */
+      var currentCaptcha  = '';
+      var pendingItems    = null; /* 暫存試算結果，登入成功後顯示 */
+      var pendingFormData = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
 
       /* ════════════════════════════════════════════════════════════
          等待動畫控制
@@ -517,23 +518,42 @@
           { key: '有保證人',     val: checkGuarantor.checked ? '是' : '否' }
         ];
 
+        /* 暫存表單原始值，登入成功後一併送至 GAS 寫入 SC 試算表 */
+        pendingFormData = {
+          brand:     brandTxt,
+          model:     modelTxt,
+          age:       ageRaw,
+          loanType:  loanTxt,
+          guarantor: checkGuarantor.checked ? '是' : '否'
+        };
+
         /* 顯示等待動畫 700ms 後開啟登入框 */
         showLoading();
         setTimeout(function () { hideLoading(); openModal(); }, 700);
       });
 
-      /* ── 登入成功後顯示試算結果 ── */
-      function showResults() {
+      /* ── 登入成功後顯示試算結果（含 AI 建議） ── */
+      function showResults(aiSuggestion) {
         if (!pendingItems) return;
-        resultGrid.innerHTML = pendingItems.map(function (item) {
+
+        /* AI 建議列排在最上方 */
+        var aiRow = '<div class="result-item result-item-ai">' +
+                      '<div class="item-key">AI建議</div>' +
+                      '<div class="item-val item-val-ai">' + (aiSuggestion || '（無建議）') + '</div>' +
+                    '</div>';
+
+        var rows = pendingItems.map(function (item) {
           return '<div class="result-item">' +
                    '<div class="item-key">' + item.key + '</div>' +
                    '<div class="item-val">' + item.val + '</div>' +
                  '</div>';
         }).join('');
+
+        resultGrid.innerHTML = aiRow + rows;
         resultCard.classList.add('show');
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        pendingItems = null;
+        pendingItems    = null;
+        pendingFormData = null;
       }
 
       /* ════════════════════════════════════════════════════════════
@@ -657,7 +677,16 @@
             fetch(GAS_WEBAPP_URL, {
               method:   'POST',
               headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
-              body:     JSON.stringify({ account: account, password: password, token: GAS_API_TOKEN }),
+              body:     JSON.stringify({
+                account:   account,
+                password:  password,
+                token:     GAS_API_TOKEN,
+                brand:     pendingFormData ? pendingFormData.brand    : '',
+                model:     pendingFormData ? pendingFormData.model    : '',
+                age:       pendingFormData ? pendingFormData.age      : '0',
+                loanType:  pendingFormData ? pendingFormData.loanType : '',
+                guarantor: pendingFormData ? pendingFormData.guarantor: '否'
+              }),
               redirect: 'follow'
             })
             .then(function (res) { return res.json(); })
@@ -667,11 +696,12 @@
               btnLogin.textContent = '登　入';
 
               if (data.success) {
+                var aiSuggestion = data.aiSuggestion || '';
                 closeModal();
                 toastSuccess.classList.add('show');
                 setTimeout(function () {
                   toastSuccess.classList.remove('show');
-                  showResults();
+                  showResults(aiSuggestion);
                 }, 3000);
               } else {
                 /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
