@@ -621,6 +621,34 @@ input.invalid {
   transform: translate(-50%, -50%) scale(1);
 }
 
+/* ===== 頻率限制警示框 ===== */
+.toast-ratelimit {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.88);
+  background: linear-gradient(135deg, #1f0d0e 0%, #2c1214 100%);
+  border: 1px solid rgba(204, 34, 51, 0.45);
+  border-radius: var(--radius);
+  padding: 20px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #e07070;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(204, 34, 51, 0.12);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+}
+
+.toast-ratelimit.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
 /* 手機版 Modal 調整 */
 @media (max-width: 540px) {
   .modal-box { padding: 28px 20px 32px; }

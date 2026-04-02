@@ -202,6 +202,9 @@
   <!-- ===== 登入成功提示框 ===== -->
   <div class="toast-success" id="toast-success">登入成功</div>
 
+  <!-- ===== 頻率限制警示框 ===== -->
+  <div class="toast-ratelimit" id="toast-ratelimit">請求過於頻繁，請稍後再試</div>
+
   <!-- ===== 等待動畫遮罩 ===== -->
   <div class="loading-overlay" id="loading-overlay">
     <div class="loading-scene">
@@ -363,7 +366,8 @@
       var captchaDisplay = document.getElementById('captcha-display');
       var btnLogin       = document.getElementById('btn-login');
       var btnModalClose  = document.getElementById('modal-close');
-      var toastSuccess   = document.getElementById('toast-success');
+      var toastSuccess    = document.getElementById('toast-success');
+      var toastRateLimit  = document.getElementById('toast-ratelimit');
 
       /* ── 等待動畫 ── */
       var loadingOverlay = document.getElementById('loading-overlay');
@@ -376,6 +380,87 @@
       ════════════════════════════════════════════════════════════ */
       function showLoading() { loadingOverlay.classList.add('show'); }
       function hideLoading()  { loadingOverlay.classList.remove('show'); }
+
+      /* ════════════════════════════════════════════════════════════
+         頻率限制（Rate Limiting）
+         ‧ 以 localStorage 記錄同裝置同瀏覽器的請求次數（模擬 IP 行為）
+         ‧ 每小時最多 5 次 GAS 請求
+         ‧ 超過後顯示警示框 5 秒；警示消失後起算 60 分鐘冷卻期
+      ════════════════════════════════════════════════════════════ */
+      var RL_KEY         = 'car_loan_rl';
+      var RL_MAX         = 5;
+      var RL_WINDOW_MS   = 60 * 60 * 1000;  /* 1 小時計數窗口        */
+      var RL_TOAST_MS    = 5 * 1000;         /* 警示框顯示 5 秒       */
+      var RL_COOLDOWN_MS = 60 * 60 * 1000;  /* 警示消失後 60 分鐘冷卻 */
+
+      var rlToastTimer = null;
+
+      function getRLData() {
+        try {
+          var raw = localStorage.getItem(RL_KEY);
+          return raw ? JSON.parse(raw)
+                     : { count: 0, windowStart: 0, blocked: false, blockedAt: null };
+        } catch (e) {
+          return { count: 0, windowStart: 0, blocked: false, blockedAt: null };
+        }
+      }
+
+      function setRLData(d) {
+        try { localStorage.setItem(RL_KEY, JSON.stringify(d)); } catch (e) {}
+      }
+
+      /**
+       * 檢查並記錄本次請求
+       * 回傳：'allowed' | 'rate_limited' | 'blocked'
+       *   'allowed'      → 允許，已累計次數
+       *   'rate_limited' → 剛達上限，觸發封鎖（需顯示警示框）
+       *   'blocked'      → 冷卻期尚未結束（可再次顯示警示框）
+       */
+      function checkRateLimit() {
+        var now  = Date.now();
+        var data = getRLData();
+
+        /* 若目前處於封鎖狀態，檢查冷卻是否結束 */
+        if (data.blocked && data.blockedAt) {
+          var cooldownEnd = data.blockedAt + RL_TOAST_MS + RL_COOLDOWN_MS;
+          if (now < cooldownEnd) {
+            return 'blocked';        /* 冷卻期尚未結束 */
+          }
+          /* 冷卻結束，重置所有計數 */
+          data = { count: 0, windowStart: now, blocked: false, blockedAt: null };
+          setRLData(data);
+        }
+
+        /* 計數窗口已過期（超過 1 小時），重置計數 */
+        if (now - data.windowStart >= RL_WINDOW_MS) {
+          data.count       = 0;
+          data.windowStart = now;
+          data.blocked     = false;
+          data.blockedAt   = null;
+        }
+
+        /* 已達上限，觸發封鎖 */
+        if (data.count >= RL_MAX) {
+          data.blocked   = true;
+          data.blockedAt = now;
+          setRLData(data);
+          return 'rate_limited';
+        }
+
+        /* 允許本次請求，累計次數 */
+        data.count++;
+        setRLData(data);
+        return 'allowed';
+      }
+
+      function showRateLimitToast() {
+        if (rlToastTimer) { clearTimeout(rlToastTimer); }
+        toastRateLimit.classList.add('show');
+        rlToastTimer = setTimeout(function () {
+          toastRateLimit.classList.remove('show');
+          rlToastTimer = null;
+        }, RL_TOAST_MS);
+      }
 
       /* ════════════════════════════════════════════════════════════
          車齡即時驗證
@@ -549,6 +634,13 @@
 
         if (hasError) return;
 
+        /* ── 頻率限制檢查（每小時最多 5 次）── */
+        var rlResult = checkRateLimit();
+        if (rlResult !== 'allowed') {
+          showRateLimitToast();
+          return;
+        }
+
         /* ── 呼叫 GAS Web App 驗證帳號密碼 ── */
         showLoading();
         btnLogin.disabled    = true;
@@ -585,7 +677,10 @@
                 /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
                 generateCaptcha();
                 resetField(modalCaptcha, 'text');
-                if (data.error === 'account_not_found') {
+                if (data.error === 'rate_limited') {
+                  /* 後端也觸發頻率限制時，同步顯示警示框 */
+                  showRateLimitToast();
+                } else if (data.error === 'account_not_found') {
                   setFieldError(modalAccount, '帳號');
                 } else if (data.error === 'wrong_password') {
                   setFieldError(modalPassword, '密碼');
