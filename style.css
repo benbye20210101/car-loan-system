@@ -212,7 +212,7 @@ input[type="number"] { -moz-appearance: textfield; }
 input::placeholder { color: #4e5468; }
 
 /* 輸入驗證樣式 */
-input.invalid {
+input.invalid, select.invalid {
   border-color: #e05c5c;
   box-shadow: 0 0 0 3px rgba(224,92,92,0.15);
 }
