@@ -760,3 +760,25 @@ input.invalid {
   from { transform: rotate(0deg)   translateY(-61px) rotate(90deg); }
   to   { transform: rotate(360deg) translateY(-61px) rotate(90deg); }
 }
+
+/* ===== 數字輸入框單位後綴（年） ===== */
+.input-unit-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-unit-wrap input[type="number"] {
+  padding-right: 44px;
+}
+
+.input-unit {
+  position: absolute;
+  right: 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.04em;
+}
