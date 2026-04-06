@@ -768,11 +768,13 @@
 
         if (hasError) return;
 
-        /* ── 頻率限制檢查（每小時最多 5 次）── */
-        var rlResult = checkRateLimit();
-        if (rlResult !== 'allowed') {
-          showRateLimitToast();
-          return;
+        /* ── 頻率限制檢查（ADMIN 帳號豁免，其餘每小時最多 5 次）── */
+        if (account !== 'ADMIN') {
+          var rlResult = checkRateLimit();
+          if (rlResult !== 'allowed') {
+            showRateLimitToast();
+            return;
+          }
         }
 
         /* ── 呼叫 GAS Web App 驗證帳號密碼 ── */
