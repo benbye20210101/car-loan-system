@@ -87,6 +87,7 @@
             <span class="input-unit">年</span>
           </div>
           <span class="error-msg" id="age-error">請輸入 0 到 20 之間的正數（最多小數點第一位）</span>
+          <span class="error-msg" id="age-newcar-error">選擇新車貸款類型時，車齡必須為 0</span>
         </div>
 
         <!-- D選單框：貸款類型 -->
@@ -359,6 +360,7 @@
       var selectD        = document.getElementById('select-d');
       var checkGuarantor = document.getElementById('check-guarantor');
       var ageError         = document.getElementById('age-error');
+      var ageNewCarError   = document.getElementById('age-newcar-error');
       var loanTypeAgeError = document.getElementById('loan-type-age-error');
       var resultCard     = document.getElementById('result-card');
       var resultGrid     = document.getElementById('result-grid');
@@ -482,8 +484,13 @@
           inputC.value = val.toFixed(1);
           inputC.classList.remove('invalid');
           ageError.classList.remove('show');
-          if (val === 0) { checkAgeZeroLoanType(true); }
-          else           { clearLoanTypeAgeError(); }
+          if (val === 0) {
+            clearAgeNewCarError();
+            checkAgeZeroLoanType(true);
+          } else {
+            clearLoanTypeAgeError();
+            checkNewCarAgeConstraint(true);
+          }
         } else {
           validateAge(true);
         }
@@ -494,16 +501,26 @@
 
       selectD.addEventListener('change', function () {
         var isNewCar   = NEW_CAR_TYPES.indexOf(selectD.value) !== -1;
-        var currentAge = parseFloat(inputC.value);
+        var raw        = inputC.value.trim();
+        var currentAge = parseFloat(raw);
         if (isNewCar) {
-          inputC.value = '0.0';
-          inputC.classList.remove('invalid');
-          ageError.classList.remove('show');
           clearLoanTypeAgeError();
+          if (raw === '' || currentAge === 0) {
+            /* 車齡空白或已是 0：自動帶入 0.0 */
+            inputC.value = '0.0';
+            inputC.classList.remove('invalid');
+            ageError.classList.remove('show');
+            clearAgeNewCarError();
+          } else {
+            /* 車齡已填且 > 0：顯示錯誤，提示車齡需為 0 */
+            checkNewCarAgeConstraint(true);
+          }
         } else if (!isNaN(currentAge) && currentAge === 0) {
+          clearAgeNewCarError();
           checkAgeZeroLoanType(true);
         } else {
           clearLoanTypeAgeError();
+          clearAgeNewCarError();
         }
       });
 
@@ -523,6 +540,29 @@
       function clearLoanTypeAgeError() {
         selectD.classList.remove('invalid');
         loanTypeAgeError.classList.remove('show');
+      }
+
+      /* 新車貸款類型且車齡 > 0 的驗證 */
+      function checkNewCarAgeConstraint(showMsg) {
+        var raw    = inputC.value.trim();
+        var ageVal = parseFloat(raw);
+        if (NEW_CAR_TYPES.indexOf(selectD.value) !== -1 && raw !== '' && !isNaN(ageVal) && ageVal > 0) {
+          if (showMsg) {
+            inputC.classList.add('invalid');
+            ageNewCarError.classList.add('show');
+          }
+          return false;
+        }
+        clearAgeNewCarError();
+        return true;
+      }
+
+      function clearAgeNewCarError() {
+        ageNewCarError.classList.remove('show');
+        /* 只在一般驗證錯誤也未顯示時，才移除紅框 */
+        if (!ageError.classList.contains('show')) {
+          inputC.classList.remove('invalid');
+        }
       }
 
       function validateAge(showMsg) {
@@ -567,6 +607,14 @@
           if (NEW_CAR_TYPES.indexOf(loanType) === -1) {
             checkAgeZeroLoanType(true);
             errors.push('車齡為 0 時，貸款類型僅可選擇「新車0利率」或「新車有利率」');
+          }
+        }
+
+        /* 新車貸款類型時，車齡必須為 0 */
+        if (ageRaw !== '' && parseFloat(ageRaw) > 0 && loanType) {
+          if (NEW_CAR_TYPES.indexOf(loanType) !== -1) {
+            checkNewCarAgeConstraint(true);
+            errors.push('選擇新車貸款類型時，車齡必須為 0');
           }
         }
 
