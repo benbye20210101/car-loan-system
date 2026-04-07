@@ -449,12 +449,15 @@
       var ACTIVITY_EVENTS = ['mousemove', 'click', 'keydown', 'touchstart', 'scroll'];
 
       function resetInactivityTimer() {
-        if (!getSession()) return;
+        var s = getSession();
+        if (!s) return;
+        if (s.account === 'ADMIN') return; /* ADMIN 帳號不受閒置限制 */
         if (inactivityTimer) clearTimeout(inactivityTimer);
         inactivityTimer = setTimeout(autoLogout, INACTIVITY_MS);
       }
 
-      function startInactivityTimer() {
+      function startInactivityTimer(account) {
+        if (account === 'ADMIN') return; /* ADMIN 帳號豁免閒置自動登出 */
         ACTIVITY_EVENTS.forEach(function (evt) {
           document.addEventListener(evt, resetInactivityTimer, true);
         });
@@ -487,7 +490,7 @@
       /* ── 頁面載入時：若 session 仍存在，恢復登入狀態並啟動計時器 ── */
       (function () {
         var s = getSession();
-        if (s) { showLoginStatus(s.account); startInactivityTimer(); }
+        if (s) { showLoginStatus(s.account); startInactivityTimer(s.account); }
       })();
 
       /* ════════════════════════════════════════════════════════════
@@ -995,7 +998,7 @@
                 /* 儲存登入狀態，顯示帳號，啟動閒置計時器 */
                 setSession(account);
                 showLoginStatus(account);
-                startInactivityTimer();
+                startInactivityTimer(account);
                 toastSuccess.classList.add('show');
                 setTimeout(function () {
                   toastSuccess.classList.remove('show');
