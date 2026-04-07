@@ -128,9 +128,16 @@
 
     </div><!-- /card -->
 
-    <!-- 試算結果卡片（點按鈕後顯示） -->
-    <div class="result-card" id="result-card">
-      <p class="result-title">試算摘要</p>
+    <footer class="site-footer">
+      &copy; 汽車貸款業務員AI補件系統 ／ 僅供內部業務參考使用
+    </footer>
+
+  </main>
+
+  <!-- ===== 試算摘要浮動框 ===== -->
+  <div class="modal-overlay" id="result-overlay">
+    <div class="modal-box result-modal-box">
+      <p class="modal-title">試算摘要</p>
       <div class="result-grid" id="result-grid">
         <!-- 動態填入 -->
       </div>
@@ -138,13 +145,11 @@
         ✦ 以上為本次輸入條件摘要，實際核貸金額與利率視銀行審核結果為準。<br/>
         如需進一步AI補件建議，請將本頁截圖或資料提供予負責業務人員。
       </p>
+      <div class="btn-wrap" style="margin-top:28px;">
+        <button class="btn-reset" id="btn-reset" type="button">重　新　試　算</button>
+      </div>
     </div>
-
-    <footer class="site-footer">
-      &copy; 汽車貸款業務員AI補件系統 ／ 僅供內部業務參考使用
-    </footer>
-
-  </main>
+  </div>
 
   <!-- ===== 身份驗證浮動框 ===== -->
   <div class="modal-overlay" id="modal-overlay">
@@ -362,8 +367,9 @@
       var ageError         = document.getElementById('age-error');
       var ageNewCarError   = document.getElementById('age-newcar-error');
       var loanTypeAgeError = document.getElementById('loan-type-age-error');
-      var resultCard     = document.getElementById('result-card');
+      var resultOverlay  = document.getElementById('result-overlay');
       var resultGrid     = document.getElementById('result-grid');
+      var btnReset       = document.getElementById('btn-reset');
 
       /* ── 浮動登入框元素 ── */
       var modalOverlay   = document.getElementById('modal-overlay');
@@ -664,11 +670,36 @@
         }).join('');
 
         resultGrid.innerHTML = aiRow + rows;
-        resultCard.classList.add('show');
-        resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        resultOverlay.classList.add('show');
         pendingItems    = null;
         pendingFormData = null;
       }
+
+      /* ════════════════════════════════════════════════════════════
+         重新試算：清除所有輸入，關閉試算摘要浮動框
+      ════════════════════════════════════════════════════════════ */
+      btnReset.addEventListener('click', function () {
+        /* 關閉浮動框 */
+        resultOverlay.classList.remove('show');
+
+        /* 清除所有表單欄位 */
+        selectA.value          = '';
+        selectB.value          = '';
+        inputC.value           = '';
+        selectD.value          = '';
+        checkGuarantor.checked = false;
+
+        /* 清除所有錯誤狀態 */
+        inputC.classList.remove('invalid');
+        selectD.classList.remove('invalid');
+        ageError.classList.remove('show');
+        ageNewCarError.classList.remove('show');
+        loanTypeAgeError.classList.remove('show');
+
+        /* 清除暫存資料 */
+        pendingItems    = null;
+        pendingFormData = null;
+      });
 
       /* ════════════════════════════════════════════════════════════
          浮動登入框：開啟 / 關閉 / 驗證碼產生

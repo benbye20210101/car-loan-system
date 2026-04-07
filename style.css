@@ -338,47 +338,30 @@ input.invalid, select.invalid {
   box-shadow: 0 2px 12px rgba(201,168,76,0.3);
 }
 
-/* ===== 結果區塊 ===== */
-.result-card {
-  margin-top: 24px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px 36px 32px;
-  box-shadow: var(--shadow-card);
-  display: none;
-  animation: fadeIn 0.35s ease;
-  position: relative;
-  overflow: hidden;
+/* ===== 試算摘要浮動框 ===== */
+.result-modal-box {
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
-.result-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #7b8cde 0%, var(--accent) 100%);
+.result-modal-box::-webkit-scrollbar {
+  width: 5px;
 }
 
-.result-card.show { display: block; }
-
-.result-title {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.result-modal-box::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.result-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
+.result-modal-box::-webkit-scrollbar-thumb {
   background: var(--border);
+  border-radius: 3px;
+}
+
+.result-modal-box::before {
+  background: linear-gradient(90deg, #7b8cde 0%, var(--accent) 100%);
 }
 
 .result-grid {
@@ -578,6 +561,33 @@ input.invalid, select.invalid {
   border-color: #e05c5c !important;
   box-shadow: 0 0 0 3px rgba(224, 92, 92, 0.15) !important;
   color: #e07070 !important;
+}
+
+/* 重新試算按鈕 */
+.btn-reset {
+  width: 100%;
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-reset:hover {
+  background: rgba(201, 168, 76, 0.1);
+  box-shadow: 0 4px 18px rgba(201, 168, 76, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-reset:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* 登入按鈕 */
