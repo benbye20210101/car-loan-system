@@ -418,8 +418,8 @@ input.invalid, select.invalid {
 
 .result-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px 14px;
 }
 
 .result-item {
@@ -493,7 +493,6 @@ input.invalid, select.invalid {
   .site-header { padding: 18px 16px; }
   .card { padding: 24px 18px 28px; }
   .result-card { padding: 22px 18px 26px; }
-  .result-grid { grid-template-columns: 1fr; }
   .btn-calculate { font-size: 0.95rem; padding: 14px 20px; }
 }
 
