@@ -570,6 +570,49 @@ input.invalid, select.invalid {
   margin-bottom: 18px;
 }
 
+/* ── 登入框內文字加大加粗 ── */
+.modal-box .form-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.modal-box input[type="text"],
+.modal-box input[type="password"] {
+  font-size: 0.97rem;
+}
+
+.modal-title {
+  font-size: 0.92rem !important;
+}
+
+/* ── 密碼顯示切換 ── */
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 44px !important;
+}
+
+.btn-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition);
+  line-height: 1;
+}
+
+.btn-eye:hover { color: var(--accent); }
+
 /* 驗證碼列：輸入框 + 顯示屏並排 */
 .captcha-row {
   display: flex;
@@ -593,6 +636,26 @@ input.invalid, select.invalid {
   user-select: none;
   font-family: 'Courier New', monospace;
   flex-shrink: 0;
+}
+
+/* ── 驗證碼重新產生按鈕 ── */
+.btn-captcha-refresh {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 10px;
+  flex-shrink: 0;
+  transition: all var(--transition);
+  line-height: 1;
+}
+
+.btn-captcha-refresh:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(201, 168, 76, 0.08);
 }
 
 /* 輸入框錯誤狀態：紅色文字 + 紅色邊框 */

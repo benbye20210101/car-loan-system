@@ -178,13 +178,18 @@
         <label class="form-label" for="modal-password">
           <span class="label-mark"></span>密碼
         </label>
-        <input
-          type="password"
-          id="modal-password"
-          placeholder="請輸入密碼（英文或數字）"
-          maxlength="50"
-          autocomplete="off"
-        />
+        <div class="password-wrap">
+          <input
+            type="password"
+            id="modal-password"
+            placeholder="請輸入密碼（英文或數字）"
+            maxlength="50"
+            autocomplete="off"
+          />
+          <button class="btn-eye" id="btn-eye" type="button" aria-label="切換密碼顯示">
+            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
 
       <!-- C輸入框：驗證碼 + 顯示屏 -->
@@ -201,6 +206,7 @@
             autocomplete="off"
           />
           <div class="captcha-display" id="captcha-display">──────</div>
+          <button class="btn-captcha-refresh" id="btn-captcha-refresh" type="button" aria-label="重新產生驗證碼" title="重新產生驗證碼">↻</button>
         </div>
       </div>
 
@@ -395,6 +401,14 @@
       var loginStatusText = document.getElementById('login-status-text');
       var btnLogout       = document.getElementById('btn-logout');
       var toastAutoLogout = document.getElementById('toast-autologout');
+
+      /* ── 密碼眼睛切換 ── */
+      var btnEye          = document.getElementById('btn-eye');
+      var eyeIcon         = document.getElementById('eye-icon');
+      var passwordVisible = false;
+
+      /* ── 驗證碼重新產生 ── */
+      var btnCaptchaRefresh = document.getElementById('btn-captcha-refresh');
 
       var currentCaptcha  = '';
       var pendingItems    = null; /* 暫存試算結果，登入成功後顯示 */
@@ -880,6 +894,11 @@
         el.type  = type;
         el.value = '';
         el.classList.remove('input-error-state');
+        /* 密碼框：重置眼睛狀態 */
+        if (el === modalPassword) {
+          passwordVisible = false;
+          updateEyeIcon();
+        }
       }
 
       function setFieldError(el, label) {
@@ -887,6 +906,35 @@
         el.value = label + '錯誤';
         el.classList.add('input-error-state');
       }
+
+      /* ── 眼睛圖示切換 ── */
+      var SVG_EYE_OPEN  = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+      var SVG_EYE_SLASH = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+      function updateEyeIcon() {
+        btnEye.innerHTML = passwordVisible ? SVG_EYE_SLASH : SVG_EYE_OPEN;
+      }
+
+      btnEye.addEventListener('click', function () {
+        /* 錯誤狀態下不切換（此時欄位顯示錯誤訊息文字） */
+        if (modalPassword.classList.contains('input-error-state')) return;
+        passwordVisible = !passwordVisible;
+        modalPassword.type = passwordVisible ? 'text' : 'password';
+        updateEyeIcon();
+        modalPassword.focus();
+      });
+
+      /* ── 驗證碼重新產生 ── */
+      btnCaptchaRefresh.addEventListener('click', function () {
+        generateCaptcha();
+        /* 清空輸入框並移除錯誤狀態 */
+        if (modalCaptcha.classList.contains('input-error-state')) {
+          resetField(modalCaptcha, 'text');
+        } else {
+          modalCaptcha.value = '';
+        }
+        modalCaptcha.focus();
+      });
 
       /* ── 聚焦時自動清除錯誤狀態 ── */
       [
