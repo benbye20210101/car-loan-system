@@ -53,6 +53,45 @@ body {
   backdrop-filter: blur(8px);
 }
 
+/* ===== 登入狀態列（右上角） ===== */
+.login-status {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  align-items: center;
+  gap: 8px;
+}
+
+.login-status.show { display: flex; }
+
+.login-status-text {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(224, 92, 92, 0.45);
+  color: #e07070;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  line-height: 1.4;
+}
+
+.btn-logout:hover {
+  background: rgba(224, 92, 92, 0.1);
+  border-color: #e07070;
+}
+
 .site-header h1 {
   font-size: clamp(1.1rem, 3.5vw, 1.55rem);
   font-weight: 700;
@@ -648,6 +687,34 @@ input.invalid, select.invalid {
 }
 
 .toast-success.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ===== 自動登出提示框 ===== */
+.toast-autologout {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.88);
+  background: linear-gradient(135deg, #1a1710 0%, #22200e 100%);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  border-radius: var(--radius);
+  padding: 20px 40px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+}
+
+.toast-autologout.show {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }

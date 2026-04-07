@@ -15,6 +15,10 @@
   <header class="site-header">
     <h1>汽車貸款業務員AI補件系統</h1>
     <p class="header-subtitle">Auto Loan AI Supplement System</p>
+    <div class="login-status" id="login-status">
+      <span class="login-status-text" id="login-status-text"></span>
+      <button class="btn-logout" id="btn-logout" type="button">登出</button>
+    </div>
   </header>
 
   <!-- ===== 主要內容 ===== -->
@@ -210,6 +214,9 @@
   <!-- ===== 登入成功提示框 ===== -->
   <div class="toast-success" id="toast-success">登入成功</div>
 
+  <!-- ===== 自動登出提示框 ===== -->
+  <div class="toast-autologout" id="toast-autologout">閒置逾 3 分鐘，已自動登出</div>
+
   <!-- ===== 頻率限制警示框 ===== -->
   <div class="toast-ratelimit" id="toast-ratelimit">請求過於頻繁，請稍後再試</div>
 
@@ -383,6 +390,12 @@
       /* ── 等待動畫 ── */
       var loadingOverlay = document.getElementById('loading-overlay');
 
+      /* ── 登入狀態 ── */
+      var loginStatus     = document.getElementById('login-status');
+      var loginStatusText = document.getElementById('login-status-text');
+      var btnLogout       = document.getElementById('btn-logout');
+      var toastAutoLogout = document.getElementById('toast-autologout');
+
       var currentCaptcha  = '';
       var pendingItems    = null; /* 暫存試算結果，登入成功後顯示 */
       var pendingFormData = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
@@ -392,6 +405,90 @@
       ════════════════════════════════════════════════════════════ */
       function showLoading() { loadingOverlay.classList.add('show'); }
       function hideLoading()  { loadingOverlay.classList.remove('show'); }
+
+      /* ════════════════════════════════════════════════════════════
+         Session 管理（登入狀態記憶）
+         ‧ 使用 sessionStorage：同分頁內持續有效，關閉分頁即清除
+         ‧ 儲存：帳號
+      ════════════════════════════════════════════════════════════ */
+      var SESSION_KEY = 'car_loan_session';
+
+      function getSession() {
+        try {
+          var raw = sessionStorage.getItem(SESSION_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+      }
+
+      function setSession(account) {
+        try {
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify({ account: account }));
+        } catch (e) {}
+      }
+
+      function clearSession() {
+        try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+      }
+
+      /* ── 登入狀態 UI ── */
+      function showLoginStatus(account) {
+        loginStatusText.textContent = account + '　已登入';
+        loginStatus.classList.add('show');
+      }
+
+      function hideLoginStatus() {
+        loginStatus.classList.remove('show');
+        loginStatusText.textContent = '';
+      }
+
+      /* ════════════════════════════════════════════════════════════
+         閒置自動登出（3 分鐘無操作）
+      ════════════════════════════════════════════════════════════ */
+      var INACTIVITY_MS   = 3 * 60 * 1000;  /* 3 分鐘 */
+      var inactivityTimer = null;
+      var ACTIVITY_EVENTS = ['mousemove', 'click', 'keydown', 'touchstart', 'scroll'];
+
+      function resetInactivityTimer() {
+        if (!getSession()) return;
+        if (inactivityTimer) clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(autoLogout, INACTIVITY_MS);
+      }
+
+      function startInactivityTimer() {
+        ACTIVITY_EVENTS.forEach(function (evt) {
+          document.addEventListener(evt, resetInactivityTimer, true);
+        });
+        resetInactivityTimer();
+      }
+
+      function stopInactivityTimer() {
+        if (inactivityTimer) { clearTimeout(inactivityTimer); inactivityTimer = null; }
+        ACTIVITY_EVENTS.forEach(function (evt) {
+          document.removeEventListener(evt, resetInactivityTimer, true);
+        });
+      }
+
+      function autoLogout() {
+        clearSession();
+        stopInactivityTimer();
+        hideLoginStatus();
+        /* 顯示自動登出提示 3 秒 */
+        toastAutoLogout.classList.add('show');
+        setTimeout(function () { toastAutoLogout.classList.remove('show'); }, 3000);
+      }
+
+      /* ── 手動登出 ── */
+      btnLogout.addEventListener('click', function () {
+        clearSession();
+        stopInactivityTimer();
+        hideLoginStatus();
+      });
+
+      /* ── 頁面載入時：若 session 仍存在，恢復登入狀態並啟動計時器 ── */
+      (function () {
+        var s = getSession();
+        if (s) { showLoginStatus(s.account); startInactivityTimer(); }
+      })();
 
       /* ════════════════════════════════════════════════════════════
          頻率限制（Rate Limiting）
@@ -645,9 +742,61 @@
           guarantor: checkGuarantor.checked ? '是' : '否'
         };
 
-        /* 顯示等待動畫 700ms 後開啟登入框 */
-        showLoading();
-        setTimeout(function () { hideLoading(); openModal(); }, 700);
+        /* 已登入：跳過登入框，直接呼叫 GAS */
+        var session = getSession();
+        if (session) {
+          var cachedAccount = session.account;
+
+          /* 前端頻率限制（ADMIN 豁免） */
+          if (cachedAccount !== 'ADMIN') {
+            var rlCheck = checkRateLimit();
+            if (rlCheck !== 'allowed') { showRateLimitToast(); return; }
+          }
+
+          resetInactivityTimer();
+          showLoading();
+          requestAnimationFrame(function () { requestAnimationFrame(function () {
+            fetch(GAS_WEBAPP_URL, {
+              method:   'POST',
+              headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:     JSON.stringify({
+                action:    'sc_query',
+                token:     GAS_API_TOKEN,
+                account:   cachedAccount,
+                brand:     pendingFormData.brand,
+                model:     pendingFormData.model,
+                age:       pendingFormData.age,
+                loanType:  pendingFormData.loanType,
+                guarantor: pendingFormData.guarantor
+              }),
+              redirect: 'follow'
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              hideLoading();
+              if (data.success) {
+                resetInactivityTimer();
+                showResults(data.aiSuggestion || '');
+              } else if (data.error === 'rate_limited') {
+                showRateLimitToast();
+                pendingItems = null; pendingFormData = null;
+              } else {
+                alert('伺服器錯誤，請稍後再試。');
+                pendingItems = null; pendingFormData = null;
+              }
+            })
+            .catch(function () {
+              hideLoading();
+              alert('連線失敗，請確認網路連線或聯絡管理員。');
+              pendingItems = null; pendingFormData = null;
+            });
+          }); });
+
+        } else {
+          /* 未登入：顯示等待動畫 700ms 後開啟登入框 */
+          showLoading();
+          setTimeout(function () { hideLoading(); openModal(); }, 700);
+        }
       });
 
       /* ── 登入成功後顯示試算結果（含 AI 建議） ── */
@@ -843,6 +992,10 @@
               if (data.success) {
                 var aiSuggestion = data.aiSuggestion || '';
                 closeModal();
+                /* 儲存登入狀態，顯示帳號，啟動閒置計時器 */
+                setSession(account);
+                showLoginStatus(account);
+                startInactivityTimer();
                 toastSuccess.classList.add('show');
                 setTimeout(function () {
                   toastSuccess.classList.remove('show');
