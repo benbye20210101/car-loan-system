@@ -378,40 +378,38 @@ input.invalid, select.invalid {
 }
 
 /* ===== 第二步驟輸入浮動框 ===== */
+/* step2 overlay 同樣讓 overlay 自身捲動 */
+#step2-overlay.show {
+  align-items: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .step2-modal-box {
   max-width: 660px;
   width: calc(100% - 32px);
-  max-height: 90vh;
+  max-height: none;
   padding: 44px 48px 52px;
-  overflow-y: auto !important;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  overflow: visible;
+  margin: 20px auto;
+  flex-shrink: 0;
 }
-
-.step2-modal-box::-webkit-scrollbar { width: 5px; }
-.step2-modal-box::-webkit-scrollbar-track { background: transparent; }
-.step2-modal-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 /* ===== 試算摘要浮動框 ===== */
+
+/* overlay 本身可捲動，解決 iOS 固定定位內部無法滑動的問題 */
+#result-overlay.show {
+  align-items: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .result-modal-box {
   max-width: 560px;
-  max-height: 90vh;
-  overflow-y: auto !important;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-
-.result-modal-box::-webkit-scrollbar {
-  width: 5px;
-}
-
-.result-modal-box::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.result-modal-box::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  max-height: none;          /* 移除高度上限，讓內容完整展開 */
+  overflow: visible;
+  margin: 20px auto;         /* 與頂部保留空間，水平置中 */
+  flex-shrink: 0;
 }
 
 .result-modal-box::before {
