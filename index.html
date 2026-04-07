@@ -153,6 +153,78 @@
     </div>
   </div>
 
+  <!-- ===== 第二步驟輸入浮動框 ===== -->
+  <div class="modal-overlay" id="step2-overlay">
+    <div class="modal-box step2-modal-box">
+      <button class="modal-close" id="step2-close" type="button" aria-label="關閉">✕</button>
+      <p class="modal-title">補充貸款資訊</p>
+
+      <div class="form-grid">
+
+        <!-- A：貸款期數 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-period">
+            <span class="label-mark"></span>貸款期數
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-period" min="12" max="120" step="1"
+                   placeholder="請輸入期數（12 ～ 120）" />
+            <span class="input-unit">期</span>
+          </div>
+          <span class="error-msg" id="s2-period-error">請輸入 12 到 120 之間的正整數</span>
+        </div>
+
+        <!-- B：權威車價 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-price">
+            <span class="label-mark"></span>權威車價
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-price" min="21" step="1"
+                   placeholder="請輸入大於 20 的正整數" />
+            <span class="input-unit">萬</span>
+          </div>
+          <span class="error-msg" id="s2-price-error">請輸入大於 20 的正整數</span>
+        </div>
+
+        <!-- C：貸款金額 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-amount">
+            <span class="label-mark"></span>貸款金額
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-amount" min="21" step="1"
+                   placeholder="請輸入大於 20 的正整數" />
+            <span class="input-unit">萬</span>
+          </div>
+          <span class="error-msg" id="s2-amount-error">請輸入大於 20 的正整數</span>
+        </div>
+
+        <!-- D：還款方式 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-payment">
+            <span class="label-mark"></span>還款方式
+          </label>
+          <div class="select-wrap">
+            <select id="s2-payment">
+              <option value="">─ 請選擇還款方式 ─</option>
+              <option value="票信正常的支票付款">票信正常的支票付款</option>
+              <option value="自動扣款">自動扣款</option>
+              <option value="繳款單付款">繳款單付款</option>
+              <option value="客戶自行匯款">客戶自行匯款</option>
+            </select>
+          </div>
+          <span class="error-msg" id="s2-payment-error">請選擇還款方式</span>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <div class="btn-wrap" style="margin-top:32px;">
+        <button class="btn-calculate" id="s2-btn-calc" type="button">車　貸　試　算</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== 身份驗證浮動框 ===== -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal-box">
@@ -410,9 +482,23 @@
       /* ── 驗證碼重新產生 ── */
       var btnCaptchaRefresh = document.getElementById('btn-captcha-refresh');
 
-      var currentCaptcha  = '';
-      var pendingItems    = null; /* 暫存試算結果，登入成功後顯示 */
-      var pendingFormData = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
+      /* ── 第二步驟輸入框 ── */
+      var step2Overlay    = document.getElementById('step2-overlay');
+      var step2BtnClose   = document.getElementById('step2-close');
+      var step2BtnCalc    = document.getElementById('s2-btn-calc');
+      var s2Period        = document.getElementById('s2-period');
+      var s2Price         = document.getElementById('s2-price');
+      var s2Amount        = document.getElementById('s2-amount');
+      var s2Payment       = document.getElementById('s2-payment');
+      var s2PeriodErr     = document.getElementById('s2-period-error');
+      var s2PriceErr      = document.getElementById('s2-price-error');
+      var s2AmountErr     = document.getElementById('s2-amount-error');
+      var s2PaymentErr    = document.getElementById('s2-payment-error');
+
+      var currentCaptcha   = '';
+      var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
+      var pendingFormData  = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
+      var pendingStep1Items = null; /* 暫存第一步驟摘要，第二步驟提交後合併顯示 */
 
       /* ════════════════════════════════════════════════════════════
          等待動畫控制
@@ -793,7 +879,11 @@
               hideLoading();
               if (data.success) {
                 resetInactivityTimer();
-                showResults(data.aiSuggestion || '');
+                /* 暫存第一步驟摘要，開啟第二步驟輸入 */
+                pendingStep1Items = pendingItems ? pendingItems.slice() : [];
+                pendingItems    = null;
+                pendingFormData = null;
+                openStep2();
               } else if (data.error === 'rate_limited') {
                 showRateLimitToast();
                 pendingItems = null; pendingFormData = null;
@@ -816,17 +906,19 @@
         }
       });
 
-      /* ── 登入成功後顯示試算結果（含 AI 建議） ── */
-      function showResults(aiSuggestion) {
-        if (!pendingItems) return;
+      /* ── 顯示試算摘要浮動框 ──
+         allItems：可直接傳入完整陣列；不傳則使用 pendingItems
+      ── */
+      function showResults(aiSuggestion, allItems) {
+        var items = allItems || pendingItems;
+        if (!items) return;
 
-        /* AI 建議列排在最上方 */
         var aiRow = '<div class="result-item result-item-ai">' +
                       '<div class="item-key">AI建議</div>' +
                       '<div class="item-val item-val-ai">' + (aiSuggestion || '（無建議）') + '</div>' +
                     '</div>';
 
-        var rows = pendingItems.map(function (item) {
+        var rows = items.map(function (item) {
           return '<div class="result-item">' +
                    '<div class="item-key">' + item.key + '</div>' +
                    '<div class="item-val">' + item.val + '</div>' +
@@ -835,9 +927,35 @@
 
         resultGrid.innerHTML = aiRow + rows;
         resultOverlay.classList.add('show');
-        pendingItems    = null;
-        pendingFormData = null;
+        pendingItems      = null;
+        pendingFormData   = null;
+        pendingStep1Items = null;
       }
+
+      /* ════════════════════════════════════════════════════════════
+         第二步驟浮動框：開啟 / 關閉
+      ════════════════════════════════════════════════════════════ */
+      function openStep2() {
+        s2Period.value  = '';  s2Price.value  = '';
+        s2Amount.value  = '';  s2Payment.value = '';
+        [s2Period, s2Price, s2Amount, s2Payment].forEach(function (el) {
+          el.classList.remove('invalid');
+        });
+        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr].forEach(function (el) {
+          el.classList.remove('show');
+        });
+        step2Overlay.classList.add('show');
+      }
+
+      function closeStep2() {
+        step2Overlay.classList.remove('show');
+      }
+
+      /* ✕ 關閉第二步驟（放棄本次流程） */
+      step2BtnClose.addEventListener('click', function () {
+        closeStep2();
+        pendingStep1Items = null;
+      });
 
       /* ════════════════════════════════════════════════════════════
          重新試算：清除所有輸入，關閉試算摘要浮動框
@@ -860,9 +978,21 @@
         ageNewCarError.classList.remove('show');
         loanTypeAgeError.classList.remove('show');
 
+        /* 清除第二步驟欄位與錯誤狀態 */
+        closeStep2();
+        s2Period.value  = '';  s2Price.value   = '';
+        s2Amount.value  = '';  s2Payment.value  = '';
+        [s2Period, s2Price, s2Amount, s2Payment].forEach(function (el) {
+          el.classList.remove('invalid');
+        });
+        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr].forEach(function (el) {
+          el.classList.remove('show');
+        });
+
         /* 清除暫存資料 */
-        pendingItems    = null;
-        pendingFormData = null;
+        pendingItems      = null;
+        pendingFormData   = null;
+        pendingStep1Items = null;
       });
 
       /* ════════════════════════════════════════════════════════════
@@ -922,6 +1052,101 @@
         modalPassword.type = passwordVisible ? 'text' : 'password';
         updateEyeIcon();
         modalPassword.focus();
+      });
+
+      /* ════════════════════════════════════════════════════════════
+         第二步驟「車貸試算」：驗證 → 呼叫 GAS sc_extra → 顯示摘要
+      ════════════════════════════════════════════════════════════ */
+      step2BtnCalc.addEventListener('click', function () {
+
+        var periodVal  = s2Period.value.trim();
+        var priceVal   = s2Price.value.trim();
+        var amountVal  = s2Amount.value.trim();
+        var paymentVal = s2Payment.value;
+
+        var period  = parseFloat(periodVal);
+        var price   = parseFloat(priceVal);
+        var amount  = parseFloat(amountVal);
+
+        var hasErr = false;
+
+        /* A 貸款期數：12~120 正整數 */
+        var periodOk = periodVal !== '' && !isNaN(period) &&
+                       period === Math.floor(period) && period >= 12 && period <= 120;
+        s2Period.classList.toggle('invalid', !periodOk);
+        s2PeriodErr.classList.toggle('show', !periodOk);
+        if (!periodOk) hasErr = true;
+
+        /* B 權威車價：大於 20 的正整數 */
+        var priceOk = priceVal !== '' && !isNaN(price) &&
+                      price === Math.floor(price) && price > 20;
+        s2Price.classList.toggle('invalid', !priceOk);
+        s2PriceErr.classList.toggle('show', !priceOk);
+        if (!priceOk) hasErr = true;
+
+        /* C 貸款金額：大於 20 的正整數 */
+        var amountOk = amountVal !== '' && !isNaN(amount) &&
+                       amount === Math.floor(amount) && amount > 20;
+        s2Amount.classList.toggle('invalid', !amountOk);
+        s2AmountErr.classList.toggle('show', !amountOk);
+        if (!amountOk) hasErr = true;
+
+        /* D 還款方式：必選 */
+        var paymentOk = paymentVal !== '';
+        s2Payment.classList.toggle('invalid', !paymentOk);
+        s2PaymentErr.classList.toggle('show', !paymentOk);
+        if (!paymentOk) hasErr = true;
+
+        if (hasErr) return;
+
+        /* 計算貸款成數：C ÷ B，四捨五入至小數第一位 */
+        var loanRatio = Math.round((amount / price) * 10) / 10;
+
+        /* 第二步驟摘要項目 */
+        var step2Items = [
+          { key: '貸款期數', val: period  + '　期' },
+          { key: '權威車價', val: price   + '　萬' },
+          { key: '貸款金額', val: amount  + '　萬' },
+          { key: '還款方式', val: paymentVal }
+        ];
+
+        var s2Session = getSession();
+        var s2Account = s2Session ? s2Session.account : '';
+
+        showLoading();
+        requestAnimationFrame(function () { requestAnimationFrame(function () {
+          fetch(GAS_WEBAPP_URL, {
+            method:   'POST',
+            headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
+            body:     JSON.stringify({
+              action:      'sc_extra',
+              token:       GAS_API_TOKEN,
+              account:     s2Account,
+              loanPeriod:  String(period),
+              loanRatio:   String(loanRatio),
+              paymentType: paymentVal
+            }),
+            redirect: 'follow'
+          })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            hideLoading();
+            if (data.success) {
+              resetInactivityTimer();
+              closeStep2();
+              var allItems = (pendingStep1Items || []).concat(step2Items);
+              showResults(data.aiSuggestion || '', allItems);
+            } else if (data.error === 'rate_limited') {
+              showRateLimitToast();
+            } else {
+              alert('伺服器錯誤，請稍後再試。');
+            }
+          })
+          .catch(function () {
+            hideLoading();
+            alert('連線失敗，請確認網路連線或聯絡管理員。');
+          });
+        }); });
       });
 
       /* ── 驗證碼重新產生 ── */
@@ -1041,16 +1266,19 @@
               btnLogin.textContent = '登　入';
 
               if (data.success) {
-                var aiSuggestion = data.aiSuggestion || '';
                 closeModal();
                 /* 儲存登入狀態，顯示帳號，啟動閒置計時器 */
                 setSession(account);
                 showLoginStatus(account);
                 startInactivityTimer(account);
+                /* 暫存第一步驟摘要，待第二步驟提交後合併顯示 */
+                pendingStep1Items = pendingItems ? pendingItems.slice() : [];
+                pendingItems    = null;
+                pendingFormData = null;
                 toastSuccess.classList.add('show');
                 setTimeout(function () {
                   toastSuccess.classList.remove('show');
-                  showResults(aiSuggestion);
+                  openStep2();
                 }, 3000);
               } else {
                 /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */

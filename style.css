@@ -377,6 +377,19 @@ input.invalid, select.invalid {
   box-shadow: 0 2px 12px rgba(201,168,76,0.3);
 }
 
+/* ===== 第二步驟輸入浮動框 ===== */
+.step2-modal-box {
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.step2-modal-box::-webkit-scrollbar { width: 5px; }
+.step2-modal-box::-webkit-scrollbar-track { background: transparent; }
+.step2-modal-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
 /* ===== 試算摘要浮動框 ===== */
 .result-modal-box {
   max-width: 560px;
