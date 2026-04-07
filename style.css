@@ -563,31 +563,33 @@ input.invalid, select.invalid {
   color: #e07070 !important;
 }
 
-/* 重新試算按鈕 */
+/* 重新試算按鈕（浮動框右上角） */
 .btn-reset {
-  width: 100%;
-  padding: 14px 24px;
-  background: transparent;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(201, 168, 76, 0.1);
   color: var(--accent);
   font-family: inherit;
-  font-size: 0.98rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
-  border: 1.5px solid var(--accent);
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(201, 168, 76, 0.4);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  padding: 6px 12px;
   transition: all var(--transition);
+  line-height: 1;
 }
 
 .btn-reset:hover {
-  background: rgba(201, 168, 76, 0.1);
-  box-shadow: 0 4px 18px rgba(201, 168, 76, 0.2);
-  transform: translateY(-1px);
+  background: rgba(201, 168, 76, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px rgba(201, 168, 76, 0.2);
 }
 
 .btn-reset:active {
-  transform: translateY(0);
-  box-shadow: none;
+  background: rgba(201, 168, 76, 0.3);
 }
 
 /* 登入按鈕 */
