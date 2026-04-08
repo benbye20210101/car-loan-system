@@ -217,6 +217,91 @@
           <span class="error-msg" id="s2-payment-error">請選擇還款方式</span>
         </div>
 
+        <!-- A（新）：車主年齡 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-owner-age">
+            <span class="label-mark"></span>車主年齡
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-owner-age" min="20" max="70" step="1"
+                   placeholder="請輸入 20 到 70 的正整數" />
+            <span class="input-unit">歲</span>
+          </div>
+          <span class="error-msg" id="s2-owner-age-error">請輸入 20 到 70 之間的正整數</span>
+        </div>
+
+        <!-- B（新）：車主職業 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-owner-job">
+            <span class="label-mark"></span>車主職業
+          </label>
+          <div class="select-wrap">
+            <select id="s2-owner-job">
+              <option value="">─ 請選擇職業（選填）─</option>
+              <option value="專業技術人員">專業技術人員</option>
+              <option value="上市櫃公司職員">上市櫃公司職員</option>
+              <option value="公教人員">公教人員</option>
+              <option value="國軍軍官">國軍軍官</option>
+              <option value="國軍兵員">國軍兵員</option>
+              <option value="銀行職員">銀行職員</option>
+              <option value="國營事業職員">國營事業職員</option>
+              <option value="有登記公司老闆">有登記公司老闆</option>
+              <option value="有登記公司董監事">有登記公司董監事</option>
+              <option value="保險業務人員">保險業務人員</option>
+              <option value="保險業務主管">保險業務主管</option>
+              <option value="業務人員或業務主管">業務人員或業務主管</option>
+              <option value="非老闆但任職於家族企業職員">非老闆但任職於家族企業職員</option>
+              <option value="一般正職上班族">一般正職上班族</option>
+              <option value="其他正職工作">其他正職工作</option>
+              <option value="無登記但自營生意老闆等">無登記但自營生意老闆等</option>
+              <option value="無業或家管人員">無業或家管人員</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- C（新）：車主工作年資 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-owner-seniority">
+            <span class="label-mark"></span>車主工作年資
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-owner-seniority" min="0.1" max="30" step="0.1"
+                   placeholder="請輸入 0.1 ～ 30.0（選填）" />
+            <span class="input-unit">年</span>
+          </div>
+          <span class="error-msg" id="s2-owner-seniority-error">請輸入 0.1 到 30.0 之間的正數（最多小數點第一位）</span>
+        </div>
+
+        <!-- D（新）：車主年收入 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-owner-income">
+            <span class="label-mark"></span>車主年收入
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-owner-income" min="1" max="500" step="1"
+                   placeholder="請輸入 1 到 500 的正整數（選填）" />
+            <span class="input-unit">萬</span>
+          </div>
+          <span class="error-msg" id="s2-owner-income-error">請輸入 1 到 500 之間的正整數</span>
+        </div>
+
+        <!-- E（新）：車主婚姻狀態 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-owner-marital">
+            <span class="label-mark"></span>車主婚姻狀態
+          </label>
+          <div class="select-wrap">
+            <select id="s2-owner-marital">
+              <option value="">─ 請選擇婚姻狀態（選填）─</option>
+              <option value="已婚/配偶本國人">已婚／配偶本國人</option>
+              <option value="配偶已歿">配偶已歿</option>
+              <option value="已婚/配偶外國人">已婚／配偶外國人</option>
+              <option value="未婚">未婚</option>
+              <option value="離婚">離婚</option>
+            </select>
+          </div>
+        </div>
+
       </div><!-- /form-grid -->
 
       <div class="btn-wrap" style="margin-top:32px;">
@@ -494,6 +579,14 @@
       var s2PriceErr      = document.getElementById('s2-price-error');
       var s2AmountErr     = document.getElementById('s2-amount-error');
       var s2PaymentErr    = document.getElementById('s2-payment-error');
+      var s2OwnerAge      = document.getElementById('s2-owner-age');
+      var s2OwnerJob      = document.getElementById('s2-owner-job');
+      var s2OwnerSeniority= document.getElementById('s2-owner-seniority');
+      var s2OwnerIncome   = document.getElementById('s2-owner-income');
+      var s2OwnerMarital  = document.getElementById('s2-owner-marital');
+      var s2OwnerAgeErr   = document.getElementById('s2-owner-age-error');
+      var s2OwnerSeniorityErr = document.getElementById('s2-owner-seniority-error');
+      var s2OwnerIncomeErr    = document.getElementById('s2-owner-income-error');
 
       var currentCaptcha   = '';
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
@@ -938,10 +1031,13 @@
       function openStep2() {
         s2Period.value  = '';  s2Price.value  = '';
         s2Amount.value  = '';  s2Payment.value = '';
-        [s2Period, s2Price, s2Amount, s2Payment].forEach(function (el) {
+        s2OwnerAge.value = '';  s2OwnerJob.value = '';
+        s2OwnerSeniority.value = '';  s2OwnerIncome.value = '';
+        s2OwnerMarital.value = '';
+        [s2Period, s2Price, s2Amount, s2Payment, s2OwnerAge, s2OwnerSeniority, s2OwnerIncome].forEach(function (el) {
           el.classList.remove('invalid');
         });
-        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr].forEach(function (el) {
+        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr].forEach(function (el) {
           el.classList.remove('show');
         });
         step2Overlay.classList.add('show');
@@ -982,10 +1078,13 @@
         closeStep2();
         s2Period.value  = '';  s2Price.value   = '';
         s2Amount.value  = '';  s2Payment.value  = '';
-        [s2Period, s2Price, s2Amount, s2Payment].forEach(function (el) {
+        s2OwnerAge.value = '';  s2OwnerJob.value = '';
+        s2OwnerSeniority.value = '';  s2OwnerIncome.value = '';
+        s2OwnerMarital.value = '';
+        [s2Period, s2Price, s2Amount, s2Payment, s2OwnerAge, s2OwnerSeniority, s2OwnerIncome].forEach(function (el) {
           el.classList.remove('invalid');
         });
-        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr].forEach(function (el) {
+        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr].forEach(function (el) {
           el.classList.remove('show');
         });
 
@@ -1097,6 +1196,54 @@
         s2PaymentErr.classList.toggle('show', !paymentOk);
         if (!paymentOk) hasErr = true;
 
+        /* A（新）車主年齡：必填，20~70 正整數 */
+        var ownerAgeVal = s2OwnerAge.value.trim();
+        var ownerAgeNum = parseFloat(ownerAgeVal);
+        var ownerAgeOk  = ownerAgeVal !== '' && !isNaN(ownerAgeNum) &&
+                          ownerAgeNum === Math.floor(ownerAgeNum) &&
+                          ownerAgeNum >= 20 && ownerAgeNum <= 70;
+        s2OwnerAge.classList.toggle('invalid', !ownerAgeOk);
+        s2OwnerAgeErr.classList.toggle('show', !ownerAgeOk);
+        if (!ownerAgeOk) hasErr = true;
+
+        /* B（新）車主職業：選填 */
+        var ownerJobVal = s2OwnerJob.value;
+
+        /* C（新）車主工作年資：選填，若有填則驗證 0.1~30.0 最多一位小數 */
+        var ownerSeniorityVal = s2OwnerSeniority.value.trim();
+        var ownerSeniorityStr = '';
+        if (ownerSeniorityVal !== '') {
+          var ownerSeniorityNum = parseFloat(ownerSeniorityVal);
+          var seniorityOk = !isNaN(ownerSeniorityNum) &&
+                            ownerSeniorityNum >= 0.1 && ownerSeniorityNum <= 30 &&
+                            /^\d+(\.\d)?$/.test(ownerSeniorityVal);
+          s2OwnerSeniority.classList.toggle('invalid', !seniorityOk);
+          s2OwnerSeniorityErr.classList.toggle('show', !seniorityOk);
+          if (!seniorityOk) { hasErr = true; }
+          else { ownerSeniorityStr = ownerSeniorityNum.toFixed(1); }
+        } else {
+          s2OwnerSeniority.classList.remove('invalid');
+          s2OwnerSeniorityErr.classList.remove('show');
+        }
+
+        /* D（新）車主年收入：選填，若有填則驗證 1~500 正整數 */
+        var ownerIncomeVal = s2OwnerIncome.value.trim();
+        if (ownerIncomeVal !== '') {
+          var ownerIncomeNum = parseFloat(ownerIncomeVal);
+          var incomeOk = !isNaN(ownerIncomeNum) &&
+                         ownerIncomeNum === Math.floor(ownerIncomeNum) &&
+                         ownerIncomeNum >= 1 && ownerIncomeNum <= 500;
+          s2OwnerIncome.classList.toggle('invalid', !incomeOk);
+          s2OwnerIncomeErr.classList.toggle('show', !incomeOk);
+          if (!incomeOk) hasErr = true;
+        } else {
+          s2OwnerIncome.classList.remove('invalid');
+          s2OwnerIncomeErr.classList.remove('show');
+        }
+
+        /* E（新）車主婚姻狀態：選填 */
+        var ownerMaritalVal = s2OwnerMarital.value;
+
         if (hasErr) return;
 
         /* 計算貸款成數：C ÷ B，四捨五入至小數第一位 */
@@ -1107,8 +1254,13 @@
           { key: '貸款期數', val: period  + '　期' },
           { key: '權威車價', val: price   + '　萬' },
           { key: '貸款金額', val: amount  + '　萬' },
-          { key: '還款方式', val: paymentVal }
+          { key: '還款方式', val: paymentVal },
+          { key: '車主年齡', val: ownerAgeVal + '　歲' }
         ];
+        if (ownerJobVal)       step2Items.push({ key: '車主職業',     val: ownerJobVal });
+        if (ownerSeniorityStr) step2Items.push({ key: '車主工作年資', val: ownerSeniorityStr + '　年' });
+        if (ownerIncomeVal)    step2Items.push({ key: '車主年收入',   val: ownerIncomeVal + '　萬' });
+        if (ownerMaritalVal)   step2Items.push({ key: '車主婚姻狀態', val: ownerMaritalVal });
 
         var s2Session = getSession();
         var s2Account = s2Session ? s2Session.account : '';
@@ -1119,12 +1271,17 @@
             method:   'POST',
             headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
             body:     JSON.stringify({
-              action:      'sc_extra',
-              token:       GAS_API_TOKEN,
-              account:     s2Account,
-              loanPeriod:  String(period),
-              loanRatio:   String(loanRatio),
-              paymentType: paymentVal
+              action:          'sc_extra',
+              token:           GAS_API_TOKEN,
+              account:         s2Account,
+              loanPeriod:      String(period),
+              loanRatio:       String(loanRatio),
+              paymentType:     paymentVal,
+              ownerAge:        ownerAgeVal,
+              ownerJob:        ownerJobVal,
+              ownerSeniority:  ownerSeniorityStr,
+              ownerIncome:     ownerIncomeVal,
+              ownerMarital:    ownerMaritalVal
             }),
             redirect: 'follow'
           })
@@ -1147,6 +1304,18 @@
             alert('連線失敗，請確認網路連線或聯絡管理員。');
           });
         }); });
+      });
+
+      /* ── 車主工作年資：離開輸入框自動補齊為小數第一位（例如 5 → 5.0） ── */
+      s2OwnerSeniority.addEventListener('blur', function () {
+        var raw = s2OwnerSeniority.value.trim();
+        if (raw === '') return;
+        var val = parseFloat(raw);
+        if (!isNaN(val) && val >= 0.1 && val <= 30 && /^\d+(\.\d?)?$/.test(raw)) {
+          s2OwnerSeniority.value = val.toFixed(1);
+          s2OwnerSeniority.classList.remove('invalid');
+          s2OwnerSeniorityErr.classList.remove('show');
+        }
       });
 
       /* ── 驗證碼重新產生 ── */
