@@ -1579,7 +1579,14 @@
           carLoanVal = s2CarHasLoan.checked ? '有車貸' : (s2CarNoLoan.checked ? '無車貸' : '');
         }
 
-        if (hasErr) return;
+        if (hasErr) {
+          var firstInvalidEl = step2Overlay.querySelector('input.invalid, select.invalid');
+          if (firstInvalidEl) {
+            var targetGroup = firstInvalidEl.closest('.form-group') || firstInvalidEl;
+            targetGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
 
         /* 計算貸款成數：C ÷ B，四捨五入至小數第一位 */
         var loanRatio = Math.round((amount / price) * 10) / 10;
