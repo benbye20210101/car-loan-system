@@ -302,6 +302,136 @@
           </div>
         </div>
 
+        <!-- A（存）：存摺餘額 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-balance">
+            <span class="label-mark"></span>存摺餘額
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-balance" min="0" step="1"
+                   placeholder="請輸入 0 以上的正整數（選填）" />
+            <span class="input-unit">元</span>
+          </div>
+          <span class="error-msg" id="s2-balance-error">請輸入 0 以上的正整數</span>
+        </div>
+
+        <!-- B（存）：半年存摺餘額最低 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-min-balance">
+            <span class="label-mark"></span>半年存摺餘額最低
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-min-balance" min="0" step="1"
+                   placeholder="請輸入 0 以上的正整數（選填）" />
+            <span class="input-unit">元</span>
+          </div>
+          <span class="error-msg" id="s2-min-balance-error">請輸入 0 以上的正整數</span>
+        </div>
+
+        <!-- C（存）：不動產持有時間 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-prop-years">
+            <span class="label-mark"></span>不動產持有時間
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-prop-years" min="0" step="0.1"
+                   placeholder="請輸入 0 以上的正數（選填）" />
+            <span class="input-unit">年</span>
+          </div>
+          <span class="error-msg" id="s2-prop-years-error">請輸入 0 以上的正數（最多小數點第一位）</span>
+        </div>
+
+        <!-- D（存）：不動產貸款狀況 -->
+        <div class="form-group">
+          <span class="form-label" style="display:block;margin-bottom:6px;">
+            <span class="label-mark"></span>不動產貸款狀況
+          </span>
+          <div class="checkbox-pair-row">
+            <label class="checkbox-label" for="s2-prop-no-loan">
+              <input type="checkbox" id="s2-prop-no-loan" />
+              <span class="custom-checkbox"></span>
+              不動產無貸款
+            </label>
+            <label class="checkbox-label" for="s2-prop-has-loan">
+              <input type="checkbox" id="s2-prop-has-loan" />
+              <span class="custom-checkbox"></span>
+              不動產有貸款
+            </label>
+          </div>
+          <div id="s2-prop-loan-paid-wrap" style="display:none;margin-top:10px;">
+            <label class="form-label" for="s2-prop-loan-paid" style="display:block;margin-bottom:4px;">
+              <span class="label-mark"></span>貸款已繳時間
+            </label>
+            <div class="input-unit-wrap">
+              <input type="number" id="s2-prop-loan-paid" min="0" step="0.1"
+                     placeholder="請輸入 0 以上的正數（選填）" />
+              <span class="input-unit">年</span>
+            </div>
+            <span class="error-msg" id="s2-prop-loan-paid-error">請輸入 0 以上的正數（最多小數點第一位）</span>
+          </div>
+        </div>
+
+        <!-- E（存）：現在用車狀況 -->
+        <div class="form-group">
+          <label class="form-label" for="s2-car-status">
+            <span class="label-mark"></span>現在用車狀況
+          </label>
+          <div class="select-wrap">
+            <select id="s2-car-status">
+              <option value="">─ 請選擇用車狀況（選填）─</option>
+              <option value="沒有開車或首購">沒有開車或首購</option>
+              <option value="剛賣車">剛賣車</option>
+              <option value="車主或保人所有">車主或保人所有</option>
+              <option value="其他人所有">其他人所有</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- F（存）：現在用車的原本新車牌價 -->
+        <div class="form-group field-disabled" id="s2-car-price-group">
+          <label class="form-label" for="s2-car-price">
+            <span class="label-mark"></span>現在用車的原本新車牌價
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-car-price" min="1" step="1"
+                   placeholder="請輸入正整數（選填）" disabled />
+            <span class="input-unit">萬</span>
+          </div>
+          <span class="error-msg" id="s2-car-price-error">請輸入正整數</span>
+        </div>
+
+        <!-- G（存）：現在用車車齡 -->
+        <div class="form-group field-disabled" id="s2-car-age-group">
+          <label class="form-label" for="s2-car-age">
+            <span class="label-mark"></span>現在用車車齡
+          </label>
+          <div class="input-unit-wrap">
+            <input type="number" id="s2-car-age" min="1" max="20" step="1"
+                   placeholder="請輸入 1 ～ 20 的正整數（選填）" disabled />
+            <span class="input-unit">年</span>
+          </div>
+          <span class="error-msg" id="s2-car-age-error">請輸入 1 到 20 之間的正整數</span>
+        </div>
+
+        <!-- H（存）：車貸狀況 -->
+        <div class="form-group field-disabled" id="s2-car-loan-group">
+          <span class="form-label" style="display:block;margin-bottom:6px;">
+            <span class="label-mark"></span>車貸狀況
+          </span>
+          <div class="checkbox-pair-row">
+            <label class="checkbox-label" for="s2-car-no-loan">
+              <input type="checkbox" id="s2-car-no-loan" disabled />
+              <span class="custom-checkbox"></span>
+              無車貸
+            </label>
+            <label class="checkbox-label" for="s2-car-has-loan">
+              <input type="checkbox" id="s2-car-has-loan" disabled />
+              <span class="custom-checkbox"></span>
+              有車貸
+            </label>
+          </div>
+        </div>
+
       </div><!-- /form-grid -->
 
       <div class="btn-wrap" style="margin-top:32px;">
@@ -587,6 +717,27 @@
       var s2OwnerAgeErr   = document.getElementById('s2-owner-age-error');
       var s2OwnerSeniorityErr = document.getElementById('s2-owner-seniority-error');
       var s2OwnerIncomeErr    = document.getElementById('s2-owner-income-error');
+      var s2Balance         = document.getElementById('s2-balance');
+      var s2MinBalance      = document.getElementById('s2-min-balance');
+      var s2PropYears       = document.getElementById('s2-prop-years');
+      var s2PropNoLoan      = document.getElementById('s2-prop-no-loan');
+      var s2PropHasLoan     = document.getElementById('s2-prop-has-loan');
+      var s2PropLoanPaidWrap= document.getElementById('s2-prop-loan-paid-wrap');
+      var s2PropLoanPaid    = document.getElementById('s2-prop-loan-paid');
+      var s2CarStatus       = document.getElementById('s2-car-status');
+      var s2CarPrice        = document.getElementById('s2-car-price');
+      var s2CarAge          = document.getElementById('s2-car-age');
+      var s2CarNoLoan       = document.getElementById('s2-car-no-loan');
+      var s2CarHasLoan      = document.getElementById('s2-car-has-loan');
+      var s2CarPriceGroup   = document.getElementById('s2-car-price-group');
+      var s2CarAgeGroup     = document.getElementById('s2-car-age-group');
+      var s2CarLoanGroup    = document.getElementById('s2-car-loan-group');
+      var s2BalanceErr      = document.getElementById('s2-balance-error');
+      var s2MinBalanceErr   = document.getElementById('s2-min-balance-error');
+      var s2PropYearsErr    = document.getElementById('s2-prop-years-error');
+      var s2PropLoanPaidErr = document.getElementById('s2-prop-loan-paid-error');
+      var s2CarPriceErr     = document.getElementById('s2-car-price-error');
+      var s2CarAgeErr       = document.getElementById('s2-car-age-error');
 
       var currentCaptcha   = '';
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
@@ -1028,6 +1179,28 @@
       /* ════════════════════════════════════════════════════════════
          第二步驟浮動框：開啟 / 關閉
       ════════════════════════════════════════════════════════════ */
+      function resetNewFields() {
+        s2Balance.value = '';       s2MinBalance.value = '';
+        s2PropYears.value = '';
+        s2PropNoLoan.checked = false; s2PropHasLoan.checked = false;
+        s2PropLoanPaid.value = '';
+        s2PropLoanPaidWrap.style.display = 'none';
+        s2CarStatus.value = '';
+        s2CarPrice.value = '';      s2CarAge.value = '';
+        s2CarNoLoan.checked = false; s2CarHasLoan.checked = false;
+        [s2CarPriceGroup, s2CarAgeGroup, s2CarLoanGroup].forEach(function (el) {
+          el.classList.add('field-disabled');
+        });
+        s2CarPrice.disabled = true; s2CarAge.disabled = true;
+        s2CarNoLoan.disabled = true; s2CarHasLoan.disabled = true;
+        [s2Balance, s2MinBalance, s2PropYears, s2PropLoanPaid, s2CarPrice, s2CarAge].forEach(function (el) {
+          el.classList.remove('invalid');
+        });
+        [s2BalanceErr, s2MinBalanceErr, s2PropYearsErr, s2PropLoanPaidErr, s2CarPriceErr, s2CarAgeErr].forEach(function (el) {
+          el.classList.remove('show');
+        });
+      }
+
       function openStep2() {
         s2Period.value  = '';  s2Price.value  = '';
         s2Amount.value  = '';  s2Payment.value = '';
@@ -1040,6 +1213,7 @@
         [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr].forEach(function (el) {
           el.classList.remove('show');
         });
+        resetNewFields();
         step2Overlay.classList.add('show');
       }
 
@@ -1087,6 +1261,7 @@
         [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr].forEach(function (el) {
           el.classList.remove('show');
         });
+        resetNewFields();
 
         /* 清除暫存資料 */
         pendingItems      = null;
@@ -1151,6 +1326,68 @@
         modalPassword.type = passwordVisible ? 'text' : 'password';
         updateEyeIcon();
         modalPassword.focus();
+      });
+
+      /* ── D 不動產勾選框互斥 + 顯示/隱藏貸款已繳時間 ── */
+      s2PropNoLoan.addEventListener('change', function () {
+        if (this.checked) s2PropHasLoan.checked = false;
+        s2PropLoanPaidWrap.style.display = 'none';
+        s2PropLoanPaid.value = '';
+        s2PropLoanPaid.classList.remove('invalid');
+        s2PropLoanPaidErr.classList.remove('show');
+      });
+      s2PropHasLoan.addEventListener('change', function () {
+        if (this.checked) {
+          s2PropNoLoan.checked = false;
+          s2PropLoanPaidWrap.style.display = 'block';
+        } else {
+          s2PropLoanPaidWrap.style.display = 'none';
+          s2PropLoanPaid.value = '';
+          s2PropLoanPaid.classList.remove('invalid');
+          s2PropLoanPaidErr.classList.remove('show');
+        }
+      });
+
+      /* ── C 不動產持有時間 / 貸款已繳時間：離開框自動補 .0 ── */
+      s2PropYears.addEventListener('blur', function () {
+        var v = this.value.trim();
+        if (v !== '' && !isNaN(parseFloat(v))) {
+          var n = parseFloat(v);
+          if (n === Math.floor(n)) this.value = n.toFixed(1);
+        }
+      });
+      s2PropLoanPaid.addEventListener('blur', function () {
+        var v = this.value.trim();
+        if (v !== '' && !isNaN(parseFloat(v))) {
+          var n = parseFloat(v);
+          if (n === Math.floor(n)) this.value = n.toFixed(1);
+        }
+      });
+
+      /* ── E 現在用車狀況：聯動啟用/停用 F、G、H ── */
+      s2CarStatus.addEventListener('change', function () {
+        var isOwner = this.value === '車主或保人所有';
+        [s2CarPriceGroup, s2CarAgeGroup, s2CarLoanGroup].forEach(function (el) {
+          el.classList.toggle('field-disabled', !isOwner);
+        });
+        s2CarPrice.disabled = !isOwner;
+        s2CarAge.disabled   = !isOwner;
+        s2CarNoLoan.disabled  = !isOwner;
+        s2CarHasLoan.disabled = !isOwner;
+        if (!isOwner) {
+          s2CarPrice.value = '';  s2CarAge.value = '';
+          s2CarNoLoan.checked = false;  s2CarHasLoan.checked = false;
+          s2CarPrice.classList.remove('invalid');  s2CarPriceErr.classList.remove('show');
+          s2CarAge.classList.remove('invalid');    s2CarAgeErr.classList.remove('show');
+        }
+      });
+
+      /* ── H 車貸勾選框互斥 ── */
+      s2CarNoLoan.addEventListener('change', function () {
+        if (this.checked) s2CarHasLoan.checked = false;
+      });
+      s2CarHasLoan.addEventListener('change', function () {
+        if (this.checked) s2CarNoLoan.checked = false;
       });
 
       /* ════════════════════════════════════════════════════════════
@@ -1244,6 +1481,104 @@
         /* E（新）車主婚姻狀態：選填 */
         var ownerMaritalVal = s2OwnerMarital.value;
 
+        /* A（存）存摺餘額：選填，0 以上正整數 */
+        var balanceVal = s2Balance.value.trim();
+        if (balanceVal !== '') {
+          var balanceNum = parseFloat(balanceVal);
+          var balanceOk  = !isNaN(balanceNum) && balanceNum >= 0 && balanceNum === Math.floor(balanceNum);
+          s2Balance.classList.toggle('invalid', !balanceOk);
+          s2BalanceErr.classList.toggle('show', !balanceOk);
+          if (!balanceOk) hasErr = true;
+        } else {
+          s2Balance.classList.remove('invalid');
+          s2BalanceErr.classList.remove('show');
+        }
+
+        /* B（存）半年存摺餘額最低：選填，0 以上正整數 */
+        var minBalanceVal = s2MinBalance.value.trim();
+        if (minBalanceVal !== '') {
+          var minBalanceNum = parseFloat(minBalanceVal);
+          var minBalanceOk  = !isNaN(minBalanceNum) && minBalanceNum >= 0 && minBalanceNum === Math.floor(minBalanceNum);
+          s2MinBalance.classList.toggle('invalid', !minBalanceOk);
+          s2MinBalanceErr.classList.toggle('show', !minBalanceOk);
+          if (!minBalanceOk) hasErr = true;
+        } else {
+          s2MinBalance.classList.remove('invalid');
+          s2MinBalanceErr.classList.remove('show');
+        }
+
+        /* C（存）不動產持有時間：選填，0 以上最多一位小數 */
+        var propYearsVal = s2PropYears.value.trim();
+        var propYearsStr = '';
+        if (propYearsVal !== '') {
+          var propYearsNum = parseFloat(propYearsVal);
+          var propYearsOk  = !isNaN(propYearsNum) && propYearsNum >= 0 && /^\d+(\.\d)?$/.test(propYearsVal);
+          s2PropYears.classList.toggle('invalid', !propYearsOk);
+          s2PropYearsErr.classList.toggle('show', !propYearsOk);
+          if (!propYearsOk) hasErr = true;
+          else propYearsStr = propYearsNum.toFixed(1);
+        } else {
+          s2PropYears.classList.remove('invalid');
+          s2PropYearsErr.classList.remove('show');
+        }
+
+        /* D（存）不動產貸款狀況：選填 */
+        var propLoanVal = s2PropHasLoan.checked ? '不動產有貸款' :
+                          (s2PropNoLoan.checked  ? '不動產無貸款' : '');
+
+        /* 貸款已繳時間：D = 有貸款時選填 */
+        var propLoanPaidStr = '';
+        if (s2PropHasLoan.checked) {
+          var propLoanPaidVal = s2PropLoanPaid.value.trim();
+          if (propLoanPaidVal !== '') {
+            var propLoanPaidNum = parseFloat(propLoanPaidVal);
+            var propLoanPaidOk  = !isNaN(propLoanPaidNum) && propLoanPaidNum >= 0 && /^\d+(\.\d)?$/.test(propLoanPaidVal);
+            s2PropLoanPaid.classList.toggle('invalid', !propLoanPaidOk);
+            s2PropLoanPaidErr.classList.toggle('show', !propLoanPaidOk);
+            if (!propLoanPaidOk) hasErr = true;
+            else propLoanPaidStr = propLoanPaidNum.toFixed(1);
+          } else {
+            s2PropLoanPaid.classList.remove('invalid');
+            s2PropLoanPaidErr.classList.remove('show');
+          }
+        }
+
+        /* E（存）現在用車狀況：選填 */
+        var carStatusVal = s2CarStatus.value;
+
+        /* F、G、H：僅在 E = 車主或保人所有 時有效 */
+        var carPriceVal = '', carAgeVal = '', carLoanVal = '';
+        if (carStatusVal === '車主或保人所有') {
+          /* F 現在用車的原本新車牌價：選填，正整數 */
+          var carPriceRaw = s2CarPrice.value.trim();
+          if (carPriceRaw !== '') {
+            var carPriceNum = parseFloat(carPriceRaw);
+            var carPriceOk  = !isNaN(carPriceNum) && carPriceNum === Math.floor(carPriceNum) && carPriceNum >= 1;
+            s2CarPrice.classList.toggle('invalid', !carPriceOk);
+            s2CarPriceErr.classList.toggle('show', !carPriceOk);
+            if (!carPriceOk) hasErr = true;
+            else carPriceVal = String(carPriceNum);
+          } else {
+            s2CarPrice.classList.remove('invalid');
+            s2CarPriceErr.classList.remove('show');
+          }
+          /* G 現在用車車齡：選填，1~20 正整數 */
+          var carAgeRaw = s2CarAge.value.trim();
+          if (carAgeRaw !== '') {
+            var carAgeNum = parseFloat(carAgeRaw);
+            var carAgeOk  = !isNaN(carAgeNum) && carAgeNum === Math.floor(carAgeNum) && carAgeNum >= 1 && carAgeNum <= 20;
+            s2CarAge.classList.toggle('invalid', !carAgeOk);
+            s2CarAgeErr.classList.toggle('show', !carAgeOk);
+            if (!carAgeOk) hasErr = true;
+            else carAgeVal = String(carAgeNum);
+          } else {
+            s2CarAge.classList.remove('invalid');
+            s2CarAgeErr.classList.remove('show');
+          }
+          /* H 車貸狀況：選填 */
+          carLoanVal = s2CarHasLoan.checked ? '有車貸' : (s2CarNoLoan.checked ? '無車貸' : '');
+        }
+
         if (hasErr) return;
 
         /* 計算貸款成數：C ÷ B，四捨五入至小數第一位 */
@@ -1257,10 +1592,20 @@
           { key: '還款方式', val: paymentVal },
           { key: '車主年齡', val: ownerAgeVal + '　歲' }
         ];
-        if (ownerJobVal)       step2Items.push({ key: '車主職業',     val: ownerJobVal });
-        if (ownerSeniorityStr) step2Items.push({ key: '車主工作年資', val: ownerSeniorityStr + '　年' });
-        if (ownerIncomeVal)    step2Items.push({ key: '車主年收入',   val: ownerIncomeVal + '　萬' });
-        if (ownerMaritalVal)   step2Items.push({ key: '車主婚姻狀態', val: ownerMaritalVal });
+        if (ownerJobVal)       step2Items.push({ key: '車主職業',         val: ownerJobVal });
+        if (ownerSeniorityStr) step2Items.push({ key: '車主工作年資',     val: ownerSeniorityStr + '　年' });
+        if (ownerIncomeVal)    step2Items.push({ key: '車主年收入',       val: ownerIncomeVal + '　萬' });
+        if (ownerMaritalVal)   step2Items.push({ key: '車主婚姻狀態',     val: ownerMaritalVal });
+        if (balanceVal)        step2Items.push({ key: '存摺餘額',         val: balanceVal + '　元' });
+        if (minBalanceVal)     step2Items.push({ key: '半年存摺餘額最低', val: minBalanceVal + '　元' });
+        if (propYearsStr)      step2Items.push({ key: '不動產持有時間',   val: propYearsStr + '　年' });
+        if (propLoanVal)       step2Items.push({ key: '不動產貸款狀況',   val: propLoanVal });
+        if (propLoanVal === '不動產有貸款' && propLoanPaidStr)
+                               step2Items.push({ key: '貸款已繳時間',     val: propLoanPaidStr + '　年' });
+        if (carStatusVal)      step2Items.push({ key: '現在用車狀況',     val: carStatusVal });
+        if (carPriceVal)       step2Items.push({ key: '現在用車牌價',     val: carPriceVal + '　萬' });
+        if (carAgeVal)         step2Items.push({ key: '現在用車車齡',     val: carAgeVal + '　年' });
+        if (carLoanVal)        step2Items.push({ key: '車貸狀況',         val: carLoanVal });
 
         var s2Session = getSession();
         var s2Account = s2Session ? s2Session.account : '';
@@ -1282,7 +1627,16 @@
               ownerJob:        ownerJobVal,
               ownerSeniority:  ownerSeniorityStr,
               ownerIncome:     ownerIncomeVal,
-              ownerMarital:    ownerMaritalVal
+              ownerMarital:    ownerMaritalVal,
+              balance:         balanceVal,
+              minBalance:      minBalanceVal,
+              propYears:       propYearsStr,
+              propLoan:        propLoanVal,
+              propLoanPaid:    propLoanPaidStr,
+              carStatus:       carStatusVal,
+              carPrice:        carPriceVal,
+              carAge:          carAgeVal,
+              carLoan:         carLoanVal
             }),
             redirect: 'follow'
           })

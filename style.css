@@ -326,6 +326,21 @@ input.invalid, select.invalid {
   transform: rotate(45deg);
 }
 
+/* ===== 勾選框配對列 ===== */
+.checkbox-pair-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* ===== 停用欄位樣式 ===== */
+.form-group.field-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 /* ===== 分隔線 ===== */
 .divider {
   height: 1px;
