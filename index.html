@@ -432,6 +432,119 @@
           </div>
         </div>
 
+        <!-- ── 保證人資料區塊（僅在「有保證人」勾選時顯示）── -->
+        <div id="s2-guar-section" style="display:none;grid-column:1/-1;">
+          <div style="border-top:1px solid var(--border);margin:8px 0 22px;position:relative;text-align:center;">
+            <span style="position:relative;top:-0.75em;background:var(--bg-card);padding:0 14px;color:var(--accent);font-weight:700;font-size:0.92rem;letter-spacing:0.12em;">保　證　人　資　料</span>
+          </div>
+          <div class="form-grid">
+
+            <!-- A：車保關係（必填） -->
+            <div class="form-group">
+              <label class="form-label" for="s2-guar-rel">
+                <span class="label-mark"></span>車保關係
+              </label>
+              <div class="select-wrap">
+                <select id="s2-guar-rel">
+                  <option value="">─ 請選擇車保關係 ─</option>
+                  <option value="父母子女配偶">父母子女配偶</option>
+                  <option value="同父母之兄弟姊妹">同父母之兄弟姊妹</option>
+                  <option value="男女朋友">男女朋友</option>
+                  <option value="其他親戚">其他親戚</option>
+                  <option value="朋友同事">朋友同事</option>
+                </select>
+              </div>
+              <span class="error-msg" id="s2-guar-rel-error">請選擇車保關係</span>
+            </div>
+
+            <!-- B：保證人年齡（必填） -->
+            <div class="form-group">
+              <label class="form-label" for="s2-guar-age">
+                <span class="label-mark"></span>保證人年齡
+              </label>
+              <div class="input-unit-wrap">
+                <input type="number" id="s2-guar-age" min="20" max="70" step="1"
+                       placeholder="請輸入 20 到 70 的正整數" />
+                <span class="input-unit">歲</span>
+              </div>
+              <span class="error-msg" id="s2-guar-age-error">請輸入 20 到 70 之間的正整數</span>
+            </div>
+
+            <!-- C：保證人職業（選填） -->
+            <div class="form-group">
+              <label class="form-label" for="s2-guar-job">
+                <span class="label-mark"></span>保證人職業
+              </label>
+              <div class="select-wrap">
+                <select id="s2-guar-job">
+                  <option value="">─ 請選擇職業（選填）─</option>
+                  <option value="專業技術人員">專業技術人員</option>
+                  <option value="上市櫃公司職員">上市櫃公司職員</option>
+                  <option value="公教人員">公教人員</option>
+                  <option value="國軍軍官">國軍軍官</option>
+                  <option value="國軍兵員">國軍兵員</option>
+                  <option value="銀行職員">銀行職員</option>
+                  <option value="國營事業職員">國營事業職員</option>
+                  <option value="有登記公司老闆">有登記公司老闆</option>
+                  <option value="有登記公司董監事">有登記公司董監事</option>
+                  <option value="保險業務人員">保險業務人員</option>
+                  <option value="保險業務主管">保險業務主管</option>
+                  <option value="業務人員或業務主管">業務人員或業務主管</option>
+                  <option value="非老闆但任職於家族企業職員">非老闆但任職於家族企業職員</option>
+                  <option value="一般正職上班族">一般正職上班族</option>
+                  <option value="其他正職工作">其他正職工作</option>
+                  <option value="無登記但自營生意老闆等">無登記但自營生意老闆等</option>
+                  <option value="無業或家管人員">無業或家管人員</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- D：保證人工作年資（選填，1~30 正整數） -->
+            <div class="form-group">
+              <label class="form-label" for="s2-guar-seniority">
+                <span class="label-mark"></span>保證人工作年資
+              </label>
+              <div class="input-unit-wrap">
+                <input type="number" id="s2-guar-seniority" min="1" max="30" step="1"
+                       placeholder="請輸入 1 ～ 30 的正整數（選填）" />
+                <span class="input-unit">年</span>
+              </div>
+              <span class="error-msg" id="s2-guar-seniority-error">請輸入 1 到 30 之間的正整數</span>
+            </div>
+
+            <!-- E：保證人年收入（選填） -->
+            <div class="form-group">
+              <label class="form-label" for="s2-guar-income">
+                <span class="label-mark"></span>保證人年收入
+              </label>
+              <div class="input-unit-wrap">
+                <input type="number" id="s2-guar-income" min="1" max="500" step="1"
+                       placeholder="請輸入 1 到 500 的正整數（選填）" />
+                <span class="input-unit">萬</span>
+              </div>
+              <span class="error-msg" id="s2-guar-income-error">請輸入 1 到 500 之間的正整數</span>
+            </div>
+
+            <!-- F：保證人婚姻狀態（選填） -->
+            <div class="form-group">
+              <label class="form-label" for="s2-guar-marital">
+                <span class="label-mark"></span>保證人婚姻狀態
+              </label>
+              <div class="select-wrap">
+                <select id="s2-guar-marital">
+                  <option value="">─ 請選擇婚姻狀態（選填）─</option>
+                  <option value="已婚/配偶本國人">已婚／配偶本國人</option>
+                  <option value="配偶已歿">配偶已歿</option>
+                  <option value="已婚/配偶外國人">已婚／配偶外國人</option>
+                  <option value="未婚">未婚</option>
+                  <option value="離婚">離婚</option>
+                </select>
+              </div>
+            </div>
+
+          </div><!-- /guar form-grid -->
+        </div><!-- /s2-guar-section -->
+
       </div><!-- /form-grid -->
 
       <div class="btn-wrap" style="margin-top:32px;">
@@ -738,6 +851,19 @@
       var s2PropLoanPaidErr = document.getElementById('s2-prop-loan-paid-error');
       var s2CarPriceErr     = document.getElementById('s2-car-price-error');
       var s2CarAgeErr       = document.getElementById('s2-car-age-error');
+
+      /* ── 保證人資料區塊 ── */
+      var s2GuarSection    = document.getElementById('s2-guar-section');
+      var s2GuarRel        = document.getElementById('s2-guar-rel');
+      var s2GuarAge        = document.getElementById('s2-guar-age');
+      var s2GuarJob        = document.getElementById('s2-guar-job');
+      var s2GuarSeniority  = document.getElementById('s2-guar-seniority');
+      var s2GuarIncome     = document.getElementById('s2-guar-income');
+      var s2GuarMarital    = document.getElementById('s2-guar-marital');
+      var s2GuarRelErr     = document.getElementById('s2-guar-rel-error');
+      var s2GuarAgeErr     = document.getElementById('s2-guar-age-error');
+      var s2GuarSeniorityErr = document.getElementById('s2-guar-seniority-error');
+      var s2GuarIncomeErr  = document.getElementById('s2-guar-income-error');
 
       var currentCaptcha   = '';
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
@@ -1199,6 +1325,14 @@
         [s2BalanceErr, s2MinBalanceErr, s2PropYearsErr, s2PropLoanPaidErr, s2CarPriceErr, s2CarAgeErr].forEach(function (el) {
           el.classList.remove('show');
         });
+        /* 保證人欄位重置 */
+        s2GuarRel.value = '';      s2GuarAge.value = '';
+        s2GuarJob.value = '';      s2GuarSeniority.value = '';
+        s2GuarIncome.value = '';   s2GuarMarital.value = '';
+        [s2GuarRel, s2GuarAge].forEach(function (el) { el.classList.remove('invalid'); });
+        [s2GuarRelErr, s2GuarAgeErr, s2GuarSeniorityErr, s2GuarIncomeErr].forEach(function (el) {
+          el.classList.remove('show');
+        });
       }
 
       function openStep2() {
@@ -1214,6 +1348,8 @@
           el.classList.remove('show');
         });
         resetNewFields();
+        /* 有勾選「有保證人」才顯示保證人資料區塊 */
+        s2GuarSection.style.display = checkGuarantor.checked ? '' : 'none';
         step2Overlay.classList.add('show');
       }
 
@@ -1579,6 +1715,67 @@
           carLoanVal = s2CarHasLoan.checked ? '有車貸' : (s2CarNoLoan.checked ? '無車貸' : '');
         }
 
+        /* 保證人欄位（僅在有保證人區塊顯示時驗證）*/
+        var guarRelVal = '', guarAgeVal = '', guarJobVal = '';
+        var guarSeniorityVal = '', guarIncomeVal = '', guarMaritalVal = '';
+        if (checkGuarantor.checked) {
+          /* A 車保關係：必填 */
+          guarRelVal = s2GuarRel.value;
+          var guarRelOk = guarRelVal !== '';
+          s2GuarRel.classList.toggle('invalid', !guarRelOk);
+          s2GuarRelErr.classList.toggle('show', !guarRelOk);
+          if (!guarRelOk) hasErr = true;
+
+          /* B 保證人年齡：必填，20~70 正整數 */
+          var guarAgeRaw = s2GuarAge.value.trim();
+          var guarAgeNum = parseFloat(guarAgeRaw);
+          var guarAgeOk  = guarAgeRaw !== '' && !isNaN(guarAgeNum) &&
+                           guarAgeNum === Math.floor(guarAgeNum) &&
+                           guarAgeNum >= 20 && guarAgeNum <= 70;
+          s2GuarAge.classList.toggle('invalid', !guarAgeOk);
+          s2GuarAgeErr.classList.toggle('show', !guarAgeOk);
+          if (!guarAgeOk) hasErr = true;
+          else guarAgeVal = guarAgeRaw;
+
+          /* C 保證人職業：選填 */
+          guarJobVal = s2GuarJob.value;
+
+          /* D 保證人工作年資：選填，1~30 正整數 */
+          var guarSeniorityRaw = s2GuarSeniority.value.trim();
+          if (guarSeniorityRaw !== '') {
+            var guarSeniorityNum = parseFloat(guarSeniorityRaw);
+            var guarSeniorityOk  = !isNaN(guarSeniorityNum) &&
+                                   guarSeniorityNum === Math.floor(guarSeniorityNum) &&
+                                   guarSeniorityNum >= 1 && guarSeniorityNum <= 30;
+            s2GuarSeniority.classList.toggle('invalid', !guarSeniorityOk);
+            s2GuarSeniorityErr.classList.toggle('show', !guarSeniorityOk);
+            if (!guarSeniorityOk) hasErr = true;
+            else guarSeniorityVal = guarSeniorityRaw;
+          } else {
+            s2GuarSeniority.classList.remove('invalid');
+            s2GuarSeniorityErr.classList.remove('show');
+          }
+
+          /* E 保證人年收入：選填，1~500 正整數 */
+          var guarIncomeRaw = s2GuarIncome.value.trim();
+          if (guarIncomeRaw !== '') {
+            var guarIncomeNum = parseFloat(guarIncomeRaw);
+            var guarIncomeOk  = !isNaN(guarIncomeNum) &&
+                                guarIncomeNum === Math.floor(guarIncomeNum) &&
+                                guarIncomeNum >= 1 && guarIncomeNum <= 500;
+            s2GuarIncome.classList.toggle('invalid', !guarIncomeOk);
+            s2GuarIncomeErr.classList.toggle('show', !guarIncomeOk);
+            if (!guarIncomeOk) hasErr = true;
+            else guarIncomeVal = guarIncomeRaw;
+          } else {
+            s2GuarIncome.classList.remove('invalid');
+            s2GuarIncomeErr.classList.remove('show');
+          }
+
+          /* F 保證人婚姻狀態：選填 */
+          guarMaritalVal = s2GuarMarital.value;
+        }
+
         if (hasErr) {
           var firstInvalidEl = step2Overlay.querySelector('input.invalid, select.invalid');
           if (firstInvalidEl) {
@@ -1613,6 +1810,12 @@
         if (carPriceVal)       step2Items.push({ key: '現在用車牌價',     val: carPriceVal + '　萬' });
         if (carAgeVal)         step2Items.push({ key: '現在用車車齡',     val: carAgeVal + '　年' });
         if (carLoanVal)        step2Items.push({ key: '車貸狀況',         val: carLoanVal });
+        if (guarRelVal)        step2Items.push({ key: '車保關係',         val: guarRelVal });
+        if (guarAgeVal)        step2Items.push({ key: '保證人年齡',       val: guarAgeVal + '　歲' });
+        if (guarJobVal)        step2Items.push({ key: '保證人職業',       val: guarJobVal });
+        if (guarSeniorityVal)  step2Items.push({ key: '保證人工作年資',   val: guarSeniorityVal + '　年' });
+        if (guarIncomeVal)     step2Items.push({ key: '保證人年收入',     val: guarIncomeVal + '　萬' });
+        if (guarMaritalVal)    step2Items.push({ key: '保證人婚姻狀態',   val: guarMaritalVal });
 
         var s2Session = getSession();
         var s2Account = s2Session ? s2Session.account : '';
@@ -1643,7 +1846,13 @@
               carStatus:       carStatusVal,
               carPrice:        carPriceVal,
               carAge:          carAgeVal,
-              carLoan:         carLoanVal
+              carLoan:         carLoanVal,
+              guarRel:         guarRelVal,
+              guarAge:         guarAgeVal,
+              guarJob:         guarJobVal,
+              guarSeniority:   guarSeniorityVal,
+              guarIncome:      guarIncomeVal,
+              guarMarital:     guarMaritalVal
             }),
             redirect: 'follow'
           })
