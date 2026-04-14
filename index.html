@@ -434,55 +434,62 @@
 
         <!-- ── 信用與送件資訊區塊 ── -->
         <div style="grid-column:1/-1;">
-          <div style="border-top:1px solid var(--border);margin:8px 0 22px;position:relative;text-align:center;">
+          <div style="border-top:1px solid var(--border);margin:8px 0 18px;position:relative;text-align:center;">
             <span style="position:relative;top:-0.75em;background:var(--bg-card);padding:0 14px;color:var(--accent);font-weight:700;font-size:0.92rem;letter-spacing:0.12em;">信　用　與　送　件　資　訊</span>
           </div>
-          <div class="form-grid">
 
-            <!-- A：信用現況異常 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-credit-abnormal">
-                <span class="label-mark"></span>信用現況異常
+          <!-- 警示標記列：A B C D E -->
+          <div class="form-group" style="margin-bottom:14px;">
+            <span class="credit-flag-subtitle">警示標記（有狀況者請勾選）</span>
+            <div class="credit-flag-row">
+              <label class="checkbox-label" for="s2-credit-abnormal">
                 <input type="checkbox" id="s2-credit-abnormal" />
-                <span class="custom-checkbox"></span>
+                <span class="custom-checkbox"></span>信用現況異常
               </label>
-            </div>
-
-            <!-- B：法院疑有強制執行 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-court-enforce">
-                <span class="label-mark"></span>法院疑有強制執行
+              <label class="checkbox-label" for="s2-court-enforce">
                 <input type="checkbox" id="s2-court-enforce" />
-                <span class="custom-checkbox"></span>
+                <span class="custom-checkbox"></span>法院疑有強制執行
               </label>
-            </div>
-
-            <!-- C：法院疑有犯罪紀錄 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-court-crime">
-                <span class="label-mark"></span>法院疑有犯罪紀錄
+              <label class="checkbox-label" for="s2-court-crime">
                 <input type="checkbox" id="s2-court-crime" />
-                <span class="custom-checkbox"></span>
+                <span class="custom-checkbox"></span>法院疑有犯罪紀錄
               </label>
-            </div>
-
-            <!-- D：近期有借貸公司婉拒紀錄 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-rejected">
-                <span class="label-mark"></span>近期有借貸公司婉拒紀錄
+              <label class="checkbox-label" for="s2-rejected">
                 <input type="checkbox" id="s2-rejected" />
-                <span class="custom-checkbox"></span>
+                <span class="custom-checkbox"></span>近期有借貸公司婉拒紀錄
               </label>
-            </div>
-
-            <!-- E：1年內有借貸公司法催紀錄 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-legal-notice">
-                <span class="label-mark"></span>1年內有借貸公司法催紀錄
+              <label class="checkbox-label" for="s2-legal-notice">
                 <input type="checkbox" id="s2-legal-notice" />
-                <span class="custom-checkbox"></span>
+                <span class="custom-checkbox"></span>1年內有借貸公司法催紀錄
               </label>
             </div>
+          </div>
+
+          <!-- 有利標記列：G H I J -->
+          <div class="form-group" style="margin-bottom:18px;">
+            <span class="credit-flag-subtitle">有利標記（有狀況者請勾選）</span>
+            <div class="credit-flag-row">
+              <label class="checkbox-label" for="s2-ccis-none">
+                <input type="checkbox" id="s2-ccis-none" />
+                <span class="custom-checkbox"></span>CCIS從無借貸公司查詢
+              </label>
+              <label class="checkbox-label" for="s2-product-loan">
+                <input type="checkbox" id="s2-product-loan" />
+                <span class="custom-checkbox"></span>1年內有商品/機車貸
+              </label>
+              <label class="checkbox-label" for="s2-same-company-good">
+                <input type="checkbox" id="s2-same-company-good" />
+                <span class="custom-checkbox"></span>同一借貸公司正常往來還款
+              </label>
+              <label class="checkbox-label" for="s2-recent-good">
+                <input type="checkbox" id="s2-recent-good" />
+                <span class="custom-checkbox"></span>近3年有與借貸公司正常往來還款
+              </label>
+            </div>
+          </div>
+
+          <!-- 貸款利率（F）＋ 送件借貸公司（K）同一行 -->
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:22px;align-items:start;">
 
             <!-- F：貸款利率 -->
             <div class="form-group">
@@ -491,50 +498,14 @@
               </label>
               <div class="input-unit-wrap">
                 <input type="number" id="s2-loan-rate" min="0" max="16" step="0.1"
-                       placeholder="請輸入 0 或 1 ～ 16（選填）" />
+                       placeholder="0 或 1 ～ 16（選填）" />
                 <span class="input-unit">%</span>
               </div>
               <span class="error-msg" id="s2-loan-rate-error">請輸入 0 或 1 ～ 16 之間的正數（最多小數點第一位）</span>
             </div>
 
-            <!-- G：CCIS從無借貸公司查詢 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-ccis-none">
-                <span class="label-mark"></span>CCIS從無借貸公司查詢
-                <input type="checkbox" id="s2-ccis-none" />
-                <span class="custom-checkbox"></span>
-              </label>
-            </div>
-
-            <!-- H：1年內有商品/機車貸 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-product-loan">
-                <span class="label-mark"></span>1年內有商品/機車貸
-                <input type="checkbox" id="s2-product-loan" />
-                <span class="custom-checkbox"></span>
-              </label>
-            </div>
-
-            <!-- I：同一借貸公司正常往來還款 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-same-company-good">
-                <span class="label-mark"></span>同一借貸公司正常往來還款
-                <input type="checkbox" id="s2-same-company-good" />
-                <span class="custom-checkbox"></span>
-              </label>
-            </div>
-
-            <!-- J：近3年有與借貸公司正常往來還款 -->
-            <div class="form-group checkbox-group">
-              <label class="form-label checkbox-label" for="s2-recent-good">
-                <span class="label-mark"></span>近3年有與借貸公司正常往來還款
-                <input type="checkbox" id="s2-recent-good" />
-                <span class="custom-checkbox"></span>
-              </label>
-            </div>
-
             <!-- K：送件借貸公司（必填，選項依SC類別動態更新） -->
-            <div class="form-group" style="grid-column:1/-1;">
+            <div class="form-group">
               <label class="form-label" for="s2-submit-company">
                 <span class="label-mark"></span>送件借貸公司
               </label>
@@ -546,7 +517,7 @@
               <span class="error-msg" id="s2-submit-company-error">請選擇送件借貸公司</span>
             </div>
 
-          </div><!-- /credit form-grid -->
+          </div><!-- /F+K row -->
         </div><!-- /credit section -->
 
         <!-- ── 保證人資料區塊（僅在「有保證人」勾選時顯示）── -->

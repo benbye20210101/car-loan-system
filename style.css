@@ -335,6 +335,39 @@ input.invalid, select.invalid {
   margin-top: 4px;
 }
 
+/* ===== 信用與送件資訊：勾選框橫排列 ===== */
+.credit-flag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(201,168,76,0.04);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: var(--radius-sm);
+}
+
+.credit-flag-subtitle {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-label);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.credit-flag-subtitle::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 11px;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 /* ===== 停用欄位樣式 ===== */
 .form-group.field-disabled {
   opacity: 0.4;
