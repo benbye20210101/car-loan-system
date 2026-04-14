@@ -498,10 +498,11 @@
               </label>
               <div class="input-unit-wrap">
                 <input type="number" id="s2-loan-rate" min="0" max="16" step="0.1"
-                       placeholder="0 或 1 ～ 16（選填）" />
+                       placeholder="0 ～ 16（選填）" />
                 <span class="input-unit">%</span>
               </div>
-              <span class="error-msg" id="s2-loan-rate-error">請輸入 0 或 1 ～ 16 之間的正數（最多小數點第一位）</span>
+              <span class="error-msg" id="s2-loan-rate-error">請輸入 0 ～ 16 之間的正數（最多小數點第一位）</span>
+              <span class="error-msg" id="s2-loan-rate-zero-error">貸款類型為「新車0利率」時，貸款利率必須填 0</span>
             </div>
 
             <!-- K：送件借貸公司（必填，選項依SC類別動態更新） -->
@@ -961,6 +962,7 @@
       var s2LegalNotice      = document.getElementById('s2-legal-notice');
       var s2LoanRate         = document.getElementById('s2-loan-rate');
       var s2LoanRateErr      = document.getElementById('s2-loan-rate-error');
+      var s2LoanRateZeroErr  = document.getElementById('s2-loan-rate-zero-error');
       var s2CcisNone         = document.getElementById('s2-ccis-none');
       var s2ProductLoan      = document.getElementById('s2-product-loan');
       var s2SameCompanyGood  = document.getElementById('s2-same-company-good');
@@ -970,6 +972,7 @@
 
       var currentCaptcha     = '';
       var currentScCategory  = '低SC'; /* 第一步驟完成後由 computeScCategory() 設定 */
+      var currentLoanType    = '';     /* 第一步驟貸款類型文字，供第二步驟零利率驗證使用 */
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
       var pendingFormData  = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
       var pendingStep1Items = null; /* 暫存第一步驟摘要，第二步驟提交後合併顯示 */
@@ -1320,6 +1323,8 @@
         };
         /* SC 類別在第一步驟確定，供第二步驟「送件借貸公司」下拉動態篩選 */
         currentScCategory = computeScCategory(brandTxt, loanTxt);
+        /* 貸款類型在第一步驟確定，供第二步驟「貸款利率」零利率驗證使用 */
+        currentLoanType   = loanTxt;
 
         /* 已登入：跳過登入框，直接呼叫 GAS */
         var session = getSession();
@@ -1453,6 +1458,7 @@
         s2SubmitCompany.value     = '';
         s2LoanRate.classList.remove('invalid');
         s2LoanRateErr.classList.remove('show');
+        s2LoanRateZeroErr.classList.remove('show');
         s2SubmitCompany.classList.remove('invalid');
         s2SubmitCompanyErr.classList.remove('show');
       }
@@ -1944,21 +1950,26 @@
         var rejectedVal        = s2Rejected.checked        ? '是' : '';
         /* E 1年內有借貸公司法催紀錄：選填 */
         var legalNoticeVal     = s2LegalNotice.checked     ? '是' : '';
-        /* F 貸款利率：選填，0 或 1~16，最多小數點第一位 */
+        /* F 貸款利率：選填，0~16，最多小數點第一位；新車0利率時只能填 0 */
         var loanRateVal = '';
         var loanRateRaw = s2LoanRate.value.trim();
         if (loanRateRaw !== '') {
-          var loanRateNum = parseFloat(loanRateRaw);
-          var loanRateOk  = !isNaN(loanRateNum) &&
-                            (loanRateNum === 0 || (loanRateNum >= 1 && loanRateNum <= 16)) &&
-                            /^\d+(\.\d?)?$/.test(loanRateRaw);
+          var loanRateNum     = parseFloat(loanRateRaw);
+          var loanRateInRange = !isNaN(loanRateNum) &&
+                                loanRateNum >= 0 && loanRateNum <= 16 &&
+                                /^\d+(\.\d?)?$/.test(loanRateRaw);
+          var loanRateZeroErr = loanRateInRange &&
+                                currentLoanType === '新車0利率' && loanRateNum !== 0;
+          var loanRateOk      = loanRateInRange && !loanRateZeroErr;
           s2LoanRate.classList.toggle('invalid', !loanRateOk);
-          s2LoanRateErr.classList.toggle('show', !loanRateOk);
+          s2LoanRateErr.classList.toggle('show',     !loanRateInRange);
+          s2LoanRateZeroErr.classList.toggle('show', loanRateZeroErr);
           if (!loanRateOk) hasErr = true;
           else loanRateVal = loanRateNum.toFixed(1);
         } else {
           s2LoanRate.classList.remove('invalid');
           s2LoanRateErr.classList.remove('show');
+          s2LoanRateZeroErr.classList.remove('show');
         }
         /* G CCIS從無借貸公司查詢：選填 */
         var ccisNoneVal        = s2CcisNone.checked        ? '是' : '';
@@ -2098,16 +2109,22 @@
         }); });
       });
 
-      /* ── 貸款利率：離開輸入框自動補齊為小數第一位（例如 5 → 5.0） ── */
+      /* ── 貸款利率：離開輸入框自動補齊為小數第一位，並即時驗證零利率限制 ── */
       s2LoanRate.addEventListener('blur', function () {
         var raw = s2LoanRate.value.trim();
-        if (raw === '') return;
-        var val = parseFloat(raw);
-        if (!isNaN(val) && (val === 0 || (val >= 1 && val <= 16)) && /^\d+(\.\d?)?$/.test(raw)) {
-          s2LoanRate.value = val.toFixed(1);
+        if (raw === '') {
           s2LoanRate.classList.remove('invalid');
           s2LoanRateErr.classList.remove('show');
+          s2LoanRateZeroErr.classList.remove('show');
+          return;
         }
+        var val         = parseFloat(raw);
+        var inRange     = !isNaN(val) && val >= 0 && val <= 16 && /^\d+(\.\d?)?$/.test(raw);
+        var zeroViolate = inRange && currentLoanType === '新車0利率' && val !== 0;
+        if (inRange) s2LoanRate.value = val.toFixed(1);
+        s2LoanRate.classList.toggle('invalid', !inRange || zeroViolate);
+        s2LoanRateErr.classList.toggle('show',      !inRange);
+        s2LoanRateZeroErr.classList.toggle('show',  zeroViolate);
       });
 
       /* ── 車主工作年資：離開輸入框自動補齊為小數第一位（例如 5 → 5.0） ── */
