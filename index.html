@@ -432,6 +432,123 @@
           </div>
         </div>
 
+        <!-- ── 信用與送件資訊區塊 ── -->
+        <div style="grid-column:1/-1;">
+          <div style="border-top:1px solid var(--border);margin:8px 0 22px;position:relative;text-align:center;">
+            <span style="position:relative;top:-0.75em;background:var(--bg-card);padding:0 14px;color:var(--accent);font-weight:700;font-size:0.92rem;letter-spacing:0.12em;">信　用　與　送　件　資　訊</span>
+          </div>
+          <div class="form-grid">
+
+            <!-- A：信用現況異常 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-credit-abnormal">
+                <span class="label-mark"></span>信用現況異常
+                <input type="checkbox" id="s2-credit-abnormal" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- B：法院疑有強制執行 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-court-enforce">
+                <span class="label-mark"></span>法院疑有強制執行
+                <input type="checkbox" id="s2-court-enforce" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- C：法院疑有犯罪紀錄 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-court-crime">
+                <span class="label-mark"></span>法院疑有犯罪紀錄
+                <input type="checkbox" id="s2-court-crime" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- D：近期有借貸公司婉拒紀錄 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-rejected">
+                <span class="label-mark"></span>近期有借貸公司婉拒紀錄
+                <input type="checkbox" id="s2-rejected" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- E：1年內有借貸公司法催紀錄 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-legal-notice">
+                <span class="label-mark"></span>1年內有借貸公司法催紀錄
+                <input type="checkbox" id="s2-legal-notice" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- F：貸款利率 -->
+            <div class="form-group">
+              <label class="form-label" for="s2-loan-rate">
+                <span class="label-mark"></span>貸款利率
+              </label>
+              <div class="input-unit-wrap">
+                <input type="number" id="s2-loan-rate" min="0" max="16" step="0.1"
+                       placeholder="請輸入 0 或 1 ～ 16（選填）" />
+                <span class="input-unit">%</span>
+              </div>
+              <span class="error-msg" id="s2-loan-rate-error">請輸入 0 或 1 ～ 16 之間的正數（最多小數點第一位）</span>
+            </div>
+
+            <!-- G：CCIS從無借貸公司查詢 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-ccis-none">
+                <span class="label-mark"></span>CCIS從無借貸公司查詢
+                <input type="checkbox" id="s2-ccis-none" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- H：1年內有商品/機車貸 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-product-loan">
+                <span class="label-mark"></span>1年內有商品/機車貸
+                <input type="checkbox" id="s2-product-loan" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- I：同一借貸公司正常往來還款 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-same-company-good">
+                <span class="label-mark"></span>同一借貸公司正常往來還款
+                <input type="checkbox" id="s2-same-company-good" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- J：近3年有與借貸公司正常往來還款 -->
+            <div class="form-group checkbox-group">
+              <label class="form-label checkbox-label" for="s2-recent-good">
+                <span class="label-mark"></span>近3年有與借貸公司正常往來還款
+                <input type="checkbox" id="s2-recent-good" />
+                <span class="custom-checkbox"></span>
+              </label>
+            </div>
+
+            <!-- K：送件借貸公司（必填，選項依SC類別動態更新） -->
+            <div class="form-group" style="grid-column:1/-1;">
+              <label class="form-label" for="s2-submit-company">
+                <span class="label-mark"></span>送件借貸公司
+              </label>
+              <div class="select-wrap">
+                <select id="s2-submit-company">
+                  <option value="">─ 請選擇送件公司 ─</option>
+                </select>
+              </div>
+              <span class="error-msg" id="s2-submit-company-error">請選擇送件借貸公司</span>
+            </div>
+
+          </div><!-- /credit form-grid -->
+        </div><!-- /credit section -->
+
         <!-- ── 保證人資料區塊（僅在「有保證人」勾選時顯示）── -->
         <div id="s2-guar-section" style="display:none;grid-column:1/-1;">
           <div style="border-top:1px solid var(--border);margin:8px 0 22px;position:relative;text-align:center;">
@@ -865,7 +982,23 @@
       var s2GuarSeniorityErr = document.getElementById('s2-guar-seniority-error');
       var s2GuarIncomeErr  = document.getElementById('s2-guar-income-error');
 
-      var currentCaptcha   = '';
+      /* ── 信用與送件資訊欄位 ── */
+      var s2CreditAbnormal   = document.getElementById('s2-credit-abnormal');
+      var s2CourtEnforce     = document.getElementById('s2-court-enforce');
+      var s2CourtCrime       = document.getElementById('s2-court-crime');
+      var s2Rejected         = document.getElementById('s2-rejected');
+      var s2LegalNotice      = document.getElementById('s2-legal-notice');
+      var s2LoanRate         = document.getElementById('s2-loan-rate');
+      var s2LoanRateErr      = document.getElementById('s2-loan-rate-error');
+      var s2CcisNone         = document.getElementById('s2-ccis-none');
+      var s2ProductLoan      = document.getElementById('s2-product-loan');
+      var s2SameCompanyGood  = document.getElementById('s2-same-company-good');
+      var s2RecentGood       = document.getElementById('s2-recent-good');
+      var s2SubmitCompany    = document.getElementById('s2-submit-company');
+      var s2SubmitCompanyErr = document.getElementById('s2-submit-company-error');
+
+      var currentCaptcha     = '';
+      var currentScCategory  = '低SC'; /* 第一步驟完成後由 computeScCategory() 設定 */
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
       var pendingFormData  = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
       var pendingStep1Items = null; /* 暫存第一步驟摘要，第二步驟提交後合併顯示 */
@@ -1214,6 +1347,8 @@
           loanType:  loanTxt,
           guarantor: checkGuarantor.checked ? '是' : '否'
         };
+        /* SC 類別在第一步驟確定，供第二步驟「送件借貸公司」下拉動態篩選 */
+        currentScCategory = computeScCategory(brandTxt, loanTxt);
 
         /* 已登入：跳過登入框，直接呼叫 GAS */
         var session = getSession();
@@ -1333,6 +1468,56 @@
         [s2GuarRelErr, s2GuarAgeErr, s2GuarSeniorityErr, s2GuarIncomeErr].forEach(function (el) {
           el.classList.remove('show');
         });
+        /* 信用與送件資訊欄位重置 */
+        s2CreditAbnormal.checked  = false;
+        s2CourtEnforce.checked    = false;
+        s2CourtCrime.checked      = false;
+        s2Rejected.checked        = false;
+        s2LegalNotice.checked     = false;
+        s2LoanRate.value          = '';
+        s2CcisNone.checked        = false;
+        s2ProductLoan.checked     = false;
+        s2SameCompanyGood.checked = false;
+        s2RecentGood.checked      = false;
+        s2SubmitCompany.value     = '';
+        s2LoanRate.classList.remove('invalid');
+        s2LoanRateErr.classList.remove('show');
+        s2SubmitCompany.classList.remove('invalid');
+        s2SubmitCompanyErr.classList.remove('show');
+      }
+
+      /* ── SC 類別判斷（與 GAS getScCategory 邏輯相同）── */
+      function computeScCategory(brand, loanType) {
+        var highBrands  = ['PORSCHE', 'Benz', 'LEXUS', 'BMW', 'INFINITI', 'AUDI', '其他200萬以上進口車'];
+        var newCarTypes = ['新車0利率', '新車有利率'];
+        return (highBrands.indexOf(brand) !== -1 && newCarTypes.indexOf(loanType) !== -1) ? '高SC' : '低SC';
+      }
+
+      /* ── 依 SC 類別動態更新「送件借貸公司」下拉選項 ── */
+      function updateSubmitCompanyOptions(scCategory) {
+        var options = [
+          { val: '台灣賓士',    highOnly: true  },
+          { val: '福斯財務',    highOnly: false },
+          { val: '財盟',        highOnly: false },
+          { val: '合迪',        highOnly: false },
+          { val: '和潤',        highOnly: false },
+          { val: '日盛',        highOnly: false },
+          { val: '台新大安租',  highOnly: false },
+          { val: '中信資融',    highOnly: false },
+          { val: '裕融',        highOnly: false },
+          { val: '遠信資融',    highOnly: false },
+          { val: '其他租賃公司',highOnly: false },
+          { val: '銀行',        highOnly: true  }
+        ];
+        s2SubmitCompany.innerHTML = '<option value="">─ 請選擇送件公司 ─</option>';
+        options.forEach(function (opt) {
+          if (!opt.highOnly || scCategory === '高SC') {
+            var o = document.createElement('option');
+            o.value       = opt.val;
+            o.textContent = opt.val;
+            s2SubmitCompany.appendChild(o);
+          }
+        });
       }
 
       function openStep2() {
@@ -1348,6 +1533,7 @@
           el.classList.remove('show');
         });
         resetNewFields();
+        updateSubmitCompanyOptions(currentScCategory);
         /* 有勾選「有保證人」才顯示保證人資料區塊 */
         s2GuarSection.style.display = checkGuarantor.checked ? '' : 'none';
         step2Overlay.classList.add('show');
@@ -1776,6 +1962,48 @@
           guarMaritalVal = s2GuarMarital.value;
         }
 
+        /* ── 信用與送件資訊欄位 ── */
+        /* A 信用現況異常：選填 */
+        var creditAbnormalVal  = s2CreditAbnormal.checked  ? '是' : '';
+        /* B 法院疑有強制執行：選填 */
+        var courtEnforceVal    = s2CourtEnforce.checked    ? '是' : '';
+        /* C 法院疑有犯罪紀錄：選填 */
+        var courtCrimeVal      = s2CourtCrime.checked      ? '是' : '';
+        /* D 近期有借貸公司婉拒紀錄：選填 */
+        var rejectedVal        = s2Rejected.checked        ? '是' : '';
+        /* E 1年內有借貸公司法催紀錄：選填 */
+        var legalNoticeVal     = s2LegalNotice.checked     ? '是' : '';
+        /* F 貸款利率：選填，0 或 1~16，最多小數點第一位 */
+        var loanRateVal = '';
+        var loanRateRaw = s2LoanRate.value.trim();
+        if (loanRateRaw !== '') {
+          var loanRateNum = parseFloat(loanRateRaw);
+          var loanRateOk  = !isNaN(loanRateNum) &&
+                            (loanRateNum === 0 || (loanRateNum >= 1 && loanRateNum <= 16)) &&
+                            /^\d+(\.\d?)?$/.test(loanRateRaw);
+          s2LoanRate.classList.toggle('invalid', !loanRateOk);
+          s2LoanRateErr.classList.toggle('show', !loanRateOk);
+          if (!loanRateOk) hasErr = true;
+          else loanRateVal = loanRateNum.toFixed(1);
+        } else {
+          s2LoanRate.classList.remove('invalid');
+          s2LoanRateErr.classList.remove('show');
+        }
+        /* G CCIS從無借貸公司查詢：選填 */
+        var ccisNoneVal        = s2CcisNone.checked        ? '是' : '';
+        /* H 1年內有商品/機車貸：選填 */
+        var productLoanVal     = s2ProductLoan.checked     ? '是' : '';
+        /* I 同一借貸公司正常往來還款：選填 */
+        var sameCompanyGoodVal = s2SameCompanyGood.checked ? '是' : '';
+        /* J 近3年有與借貸公司正常往來還款：選填 */
+        var recentGoodVal      = s2RecentGood.checked      ? '是' : '';
+        /* K 送件借貸公司：必填 */
+        var submitCompanyVal   = s2SubmitCompany.value;
+        var submitCompanyOk    = submitCompanyVal !== '';
+        s2SubmitCompany.classList.toggle('invalid', !submitCompanyOk);
+        s2SubmitCompanyErr.classList.toggle('show', !submitCompanyOk);
+        if (!submitCompanyOk) hasErr = true;
+
         if (hasErr) {
           var firstInvalidEl = step2Overlay.querySelector('input.invalid, select.invalid');
           if (firstInvalidEl) {
@@ -1816,6 +2044,17 @@
         if (guarSeniorityVal)  step2Items.push({ key: '保證人工作年資',   val: guarSeniorityVal + '　年' });
         if (guarIncomeVal)     step2Items.push({ key: '保證人年收入',     val: guarIncomeVal + '　萬' });
         if (guarMaritalVal)    step2Items.push({ key: '保證人婚姻狀態',   val: guarMaritalVal });
+        if (creditAbnormalVal)  step2Items.push({ key: '信用現況異常',               val: '是' });
+        if (courtEnforceVal)    step2Items.push({ key: '法院疑有強制執行',           val: '是' });
+        if (courtCrimeVal)      step2Items.push({ key: '法院疑有犯罪紀錄',           val: '是' });
+        if (rejectedVal)        step2Items.push({ key: '近期有借貸公司婉拒紀錄',     val: '是' });
+        if (legalNoticeVal)     step2Items.push({ key: '1年內有借貸公司法催紀錄',    val: '是' });
+        if (loanRateVal)        step2Items.push({ key: '貸款利率',                   val: loanRateVal + '　%' });
+        if (ccisNoneVal)        step2Items.push({ key: 'CCIS從無借貸公司查詢',       val: '是' });
+        if (productLoanVal)     step2Items.push({ key: '1年內有商品/機車貸',         val: '是' });
+        if (sameCompanyGoodVal) step2Items.push({ key: '同一借貸公司正常往來還款',   val: '是' });
+        if (recentGoodVal)      step2Items.push({ key: '近3年有與借貸公司正常往來還款', val: '是' });
+                                step2Items.push({ key: '送件借貸公司',               val: submitCompanyVal });
 
         var s2Session = getSession();
         var s2Account = s2Session ? s2Session.account : '';
@@ -1847,12 +2086,23 @@
               carPrice:        carPriceVal,
               carAge:          carAgeVal,
               carLoan:         carLoanVal,
-              guarRel:         guarRelVal,
-              guarAge:         guarAgeVal,
-              guarJob:         guarJobVal,
-              guarSeniority:   guarSeniorityVal,
-              guarIncome:      guarIncomeVal,
-              guarMarital:     guarMaritalVal
+              guarRel:          guarRelVal,
+              guarAge:          guarAgeVal,
+              guarJob:          guarJobVal,
+              guarSeniority:    guarSeniorityVal,
+              guarIncome:       guarIncomeVal,
+              guarMarital:      guarMaritalVal,
+              creditAbnormal:   creditAbnormalVal,
+              courtEnforce:     courtEnforceVal,
+              courtCrime:       courtCrimeVal,
+              rejected:         rejectedVal,
+              legalNotice:      legalNoticeVal,
+              loanRate:         loanRateVal,
+              ccisNone:         ccisNoneVal,
+              productLoan:      productLoanVal,
+              sameCompanyGood:  sameCompanyGoodVal,
+              recentGood:       recentGoodVal,
+              submitCompany:    submitCompanyVal
             }),
             redirect: 'follow'
           })
@@ -1875,6 +2125,18 @@
             alert('連線失敗，請確認網路連線或聯絡管理員。');
           });
         }); });
+      });
+
+      /* ── 貸款利率：離開輸入框自動補齊為小數第一位（例如 5 → 5.0） ── */
+      s2LoanRate.addEventListener('blur', function () {
+        var raw = s2LoanRate.value.trim();
+        if (raw === '') return;
+        var val = parseFloat(raw);
+        if (!isNaN(val) && (val === 0 || (val >= 1 && val <= 16)) && /^\d+(\.\d?)?$/.test(raw)) {
+          s2LoanRate.value = val.toFixed(1);
+          s2LoanRate.classList.remove('invalid');
+          s2LoanRateErr.classList.remove('show');
+        }
       });
 
       /* ── 車主工作年資：離開輸入框自動補齊為小數第一位（例如 5 → 5.0） ── */
