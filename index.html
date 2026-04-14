@@ -1513,6 +1513,8 @@
         updateSubmitCompanyOptions(currentScCategory);
         /* 有勾選「有保證人」才顯示保證人資料區塊 */
         s2GuarSection.style.display = checkGuarantor.checked ? '' : 'none';
+        /* 每次開啟前先重設捲動位置，確保從頂端開始 */
+        step2Overlay.scrollTop = 0;
         step2Overlay.classList.add('show');
       }
 
