@@ -509,6 +509,41 @@ input.invalid, select.invalid {
   line-height: 1.7;
 }
 
+/* ── 建議增補條件區塊 ── */
+.supp-section-header {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #7bb8de;
+  border-left: 3px solid #7bb8de;
+  background: rgba(123,184,222,0.06);
+  border-radius: 2px;
+}
+
+.result-item-supp {
+  grid-column: 1 / -1;
+  border-color: rgba(123,184,222,0.45);
+  border-width: 1.5px;
+  background: rgba(123,184,222,0.05);
+}
+
+.result-item-supp .item-key {
+  font-size: 0.72rem;
+  color: #7bb8de;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.item-val-supp {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 0.88rem;
+}
+
 .result-note {
   margin-top: 18px;
   padding: 12px 14px;

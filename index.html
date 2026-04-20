@@ -1390,7 +1390,7 @@
       /* ── 顯示試算摘要浮動框 ──
          allItems：可直接傳入完整陣列；不傳則使用 pendingItems
       ── */
-      function showResults(aiSuggestion, allItems) {
+      function showResults(aiSuggestion, allItems, supplementConditions) {
         var items = allItems || pendingItems;
         if (!items) return;
 
@@ -1399,6 +1399,18 @@
                       '<div class="item-val item-val-ai">' + (aiSuggestion || '（無建議）') + '</div>' +
                     '</div>';
 
+        var suppHtml = '';
+        var suppArr  = supplementConditions || [];
+        if (suppArr.length > 0) {
+          var suppItems = suppArr.map(function (cond, idx) {
+            return '<div class="result-item result-item-supp">' +
+                     '<div class="item-key">建議' + (idx + 1) + '</div>' +
+                     '<div class="item-val item-val-supp">' + cond + '</div>' +
+                   '</div>';
+          }).join('');
+          suppHtml = '<div class="supp-section-header">建議增補條件</div>' + suppItems;
+        }
+
         var rows = items.map(function (item) {
           return '<div class="result-item">' +
                    '<div class="item-key">' + item.key + '</div>' +
@@ -1406,7 +1418,7 @@
                  '</div>';
         }).join('');
 
-        resultGrid.innerHTML = aiRow + rows;
+        resultGrid.innerHTML = aiRow + suppHtml + rows;
         resultOverlay.classList.add('show');
         pendingItems      = null;
         pendingFormData   = null;
@@ -2097,7 +2109,7 @@
               resetInactivityTimer();
               closeStep2();
               var allItems = (pendingStep1Items || []).concat(step2Items);
-              showResults(data.aiSuggestion || '', allItems);
+              showResults(data.aiSuggestion || '', allItems, data.supplementConditions || []);
             } else if (data.error === 'rate_limited') {
               showRateLimitToast();
             } else {
