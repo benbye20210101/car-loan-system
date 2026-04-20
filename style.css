@@ -544,19 +544,6 @@ input.invalid, select.invalid {
   font-size: 0.88rem;
 }
 
-/* ── 合併模式：step1/step2 分隔標題 ── */
-.s2-section-divider {
-  grid-column: 1 / -1;
-  margin: 10px 0 14px;
-  padding: 8px 14px;
-  background: rgba(123, 184, 222, 0.08);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  color: var(--accent);
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
 
 .result-note {
   margin-top: 18px;
