@@ -159,6 +159,90 @@
       <button class="modal-close" id="step2-close" type="button" aria-label="關閉">✕</button>
       <p class="modal-title">補充貸款資訊</p>
 
+      <!-- ── 合併模式：重新試算時顯示第一步驟欄位 ── -->
+      <div id="s2-step1-section" style="display:none;">
+        <div class="s2-section-divider">貸款基本資料（重新輸入）</div>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label class="form-label" for="c1-brand"><span class="label-mark"></span>貸款車輛廠牌</label>
+            <div class="select-wrap">
+              <select id="c1-brand">
+                <option value="">─ 請選擇廠牌 ─</option>
+                <option value="PORSCHE">PORSCHE</option>
+                <option value="Benz">Benz</option>
+                <option value="LEXUS">LEXUS</option>
+                <option value="BMW">BMW</option>
+                <option value="INFINITI">INFINITI</option>
+                <option value="AUDI">AUDI</option>
+                <option value="其他200萬以上進口車">其他200萬以上進口車</option>
+                <option value="其他100～200萬進口車或國產車">其他100～200萬進口車或國產車</option>
+                <option value="其他100萬內進口車或國產車">其他100萬內進口車或國產車</option>
+              </select>
+            </div>
+            <span class="error-msg" id="c1-brand-error">請選擇貸款車輛廠牌</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="c1-model"><span class="label-mark"></span>車型</label>
+            <div class="select-wrap">
+              <select id="c1-model">
+                <option value="">─ 請選擇車型 ─</option>
+                <option value="太太買菜車">太太買菜車</option>
+                <option value="傳統休旅車">傳統休旅車</option>
+                <option value="豪華老闆座車">豪華老闆座車</option>
+                <option value="5門房車">5門房車</option>
+                <option value="跑旅車">跑旅車</option>
+                <option value="超跑">超跑</option>
+                <option value="傳統4門房車">傳統4門房車</option>
+                <option value="普通性能車">普通性能車</option>
+                <option value="3門/5門入門掀背車">3門/5門入門掀背車</option>
+                <option value="雙門/敞篷跑車">雙門/敞篷跑車</option>
+              </select>
+            </div>
+            <span class="error-msg" id="c1-model-error">請選擇車型</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="c1-age"><span class="label-mark"></span>車齡</label>
+            <div class="input-unit-wrap">
+              <input type="number" id="c1-age" min="0" max="20" step="0.1" placeholder="請輸入車齡（0 ～ 20）" />
+              <span class="input-unit">年</span>
+            </div>
+            <span class="error-msg" id="c1-age-error">請輸入 0 到 20 之間的正數（最多小數點第一位）</span>
+            <span class="error-msg" id="c1-age-newcar-error">選擇新車貸款類型時，車齡必須為 0</span>
+            <span class="error-msg" id="c1-loantype-age-error">車齡為 0 時，貸款類型僅可選擇「新車0利率」或「新車有利率」</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="c1-loantype"><span class="label-mark"></span>貸款類型</label>
+            <div class="select-wrap">
+              <select id="c1-loantype">
+                <option value="">─ 請選擇貸款類型 ─</option>
+                <option value="新車0利率">新車0利率</option>
+                <option value="新車有利率">新車有利率</option>
+                <option value="原廠新古車">原廠新古車</option>
+                <option value="原廠回估中古車">原廠回估中古車</option>
+                <option value="一般中古車">一般中古車</option>
+                <option value="同業代償">同業代償</option>
+                <option value="原車融資">原車融資</option>
+              </select>
+            </div>
+            <span class="error-msg" id="c1-loantype-error">請選擇貸款類型</span>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="form-label checkbox-label" for="c1-guarantor">
+              <span class="label-mark"></span>有保證人
+              <input type="checkbox" id="c1-guarantor" />
+              <span class="custom-checkbox"></span>
+            </label>
+          </div>
+
+        </div><!-- /form-grid step1 -->
+        <div class="s2-section-divider">補充貸款資訊</div>
+      </div><!-- /#s2-step1-section -->
+
       <div class="form-grid">
 
         <!-- A：貸款期數 -->
@@ -174,10 +258,10 @@
           <span class="error-msg" id="s2-period-error">請輸入 12 到 120 之間的正整數</span>
         </div>
 
-        <!-- B：權威車價 -->
+        <!-- B：權威車價/新車價 -->
         <div class="form-group">
           <label class="form-label" for="s2-price">
-            <span class="label-mark"></span>權威車價
+            <span class="label-mark"></span>權威車價/新車價(不含非原廠配備價錢)
           </label>
           <div class="input-unit-wrap">
             <input type="number" id="s2-price" min="21" step="1"
@@ -185,6 +269,7 @@
             <span class="input-unit">萬</span>
           </div>
           <span class="error-msg" id="s2-price-error">請輸入大於 20 的正整數</span>
+          <span class="error-msg" id="s2-price-gteamount-error">高SC時，權威車價/新車價須大於或等於貸款金額</span>
         </div>
 
         <!-- C：貸款金額 -->
@@ -908,7 +993,8 @@
       var s2Amount        = document.getElementById('s2-amount');
       var s2Payment       = document.getElementById('s2-payment');
       var s2PeriodErr     = document.getElementById('s2-period-error');
-      var s2PriceErr      = document.getElementById('s2-price-error');
+      var s2PriceErr          = document.getElementById('s2-price-error');
+      var s2PriceGteAmountErr = document.getElementById('s2-price-gteamount-error');
       var s2AmountErr     = document.getElementById('s2-amount-error');
       var s2PaymentErr    = document.getElementById('s2-payment-error');
       var s2OwnerAge      = document.getElementById('s2-owner-age');
@@ -976,6 +1062,21 @@
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
       var pendingFormData  = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
       var pendingStep1Items = null; /* 暫存第一步驟摘要，第二步驟提交後合併顯示 */
+      var combinedMode     = false; /* 已登入重新試算時啟用，step2 overlay 同時顯示 step1 欄位 */
+
+      /* ── 合併模式：第一步驟欄位元素 ── */
+      var s2Step1Section  = document.getElementById('s2-step1-section');
+      var c1Brand         = document.getElementById('c1-brand');
+      var c1Model         = document.getElementById('c1-model');
+      var c1Age           = document.getElementById('c1-age');
+      var c1Loantype      = document.getElementById('c1-loantype');
+      var c1Guarantor     = document.getElementById('c1-guarantor');
+      var c1BrandErr      = document.getElementById('c1-brand-error');
+      var c1ModelErr      = document.getElementById('c1-model-error');
+      var c1AgeErr        = document.getElementById('c1-age-error');
+      var c1AgeNewcarErr  = document.getElementById('c1-age-newcar-error');
+      var c1LoantypeAgeErr= document.getElementById('c1-loantype-age-error');
+      var c1LoantypeErr   = document.getElementById('c1-loantype-error');
 
       /* ════════════════════════════════════════════════════════════
          等待動畫控制
@@ -1536,6 +1637,10 @@
 
       /* ✕ 關閉第二步驟（放棄本次流程） */
       step2BtnClose.addEventListener('click', function () {
+        if (combinedMode) {
+          combinedMode = false;
+          s2Step1Section.style.display = 'none';
+        }
         closeStep2();
         pendingStep1Items = null;
       });
@@ -1544,42 +1649,51 @@
          重新試算：清除所有輸入，關閉試算摘要浮動框
       ════════════════════════════════════════════════════════════ */
       btnReset.addEventListener('click', function () {
-        /* 關閉浮動框 */
         resultOverlay.classList.remove('show');
 
-        /* 清除所有表單欄位 */
-        selectA.value          = '';
-        selectB.value          = '';
-        inputC.value           = '';
-        selectD.value          = '';
-        checkGuarantor.checked = false;
-
-        /* 清除所有錯誤狀態 */
-        inputC.classList.remove('invalid');
-        selectD.classList.remove('invalid');
-        ageError.classList.remove('show');
-        ageNewCarError.classList.remove('show');
-        loanTypeAgeError.classList.remove('show');
-
-        /* 清除第二步驟欄位與錯誤狀態 */
-        closeStep2();
-        s2Period.value  = '';  s2Price.value   = '';
-        s2Amount.value  = '';  s2Payment.value  = '';
-        s2OwnerAge.value = '';  s2OwnerJob.value = '';
-        s2OwnerSeniority.value = '';  s2OwnerIncome.value = '';
-        s2OwnerMarital.value = '';
-        [s2Period, s2Price, s2Amount, s2Payment, s2OwnerAge, s2OwnerSeniority, s2OwnerIncome].forEach(function (el) {
-          el.classList.remove('invalid');
-        });
-        [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr].forEach(function (el) {
-          el.classList.remove('show');
-        });
-        resetNewFields();
-
-        /* 清除暫存資料 */
-        pendingItems      = null;
-        pendingFormData   = null;
-        pendingStep1Items = null;
+        var session = getSession();
+        if (session) {
+          /* 已登入：進入合併模式，直接開啟 step2 overlay 並顯示 step1 欄位區塊 */
+          combinedMode = true;
+          /* 清空合併模式 step1 欄位 */
+          c1Brand.value = '';  c1Model.value = '';
+          c1Age.value   = '';  c1Loantype.value = '';
+          c1Guarantor.checked = false;
+          [c1Brand, c1Model, c1Age, c1Loantype].forEach(function (el) { el.classList.remove('invalid'); });
+          [c1BrandErr, c1ModelErr, c1AgeErr, c1AgeNewcarErr, c1LoantypeAgeErr, c1LoantypeErr].forEach(function (el) { el.classList.remove('show'); });
+          /* 隱藏保證人區塊（等使用者勾選再顯示） */
+          s2GuarSection.style.display = 'none';
+          /* 清除 step2 各欄位的驗證錯誤（保留輸入值讓使用者可修改） */
+          [s2Period, s2Price, s2Amount, s2Payment, s2OwnerAge, s2OwnerSeniority, s2OwnerIncome].forEach(function (el) { el.classList.remove('invalid'); });
+          [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr, s2PriceGteAmountErr].forEach(function (el) { el.classList.remove('show'); });
+          s2Step1Section.style.display = '';
+          step2Overlay.scrollTop = 0;
+          step2Overlay.classList.add('show');
+        } else {
+          /* 未登入：清除所有欄位，回到主表單 */
+          selectA.value          = '';
+          selectB.value          = '';
+          inputC.value           = '';
+          selectD.value          = '';
+          checkGuarantor.checked = false;
+          inputC.classList.remove('invalid');
+          selectD.classList.remove('invalid');
+          ageError.classList.remove('show');
+          ageNewCarError.classList.remove('show');
+          loanTypeAgeError.classList.remove('show');
+          closeStep2();
+          s2Period.value  = '';  s2Price.value   = '';
+          s2Amount.value  = '';  s2Payment.value  = '';
+          s2OwnerAge.value = '';  s2OwnerJob.value = '';
+          s2OwnerSeniority.value = '';  s2OwnerIncome.value = '';
+          s2OwnerMarital.value = '';
+          [s2Period, s2Price, s2Amount, s2Payment, s2OwnerAge, s2OwnerSeniority, s2OwnerIncome].forEach(function (el) { el.classList.remove('invalid'); });
+          [s2PeriodErr, s2PriceErr, s2AmountErr, s2PaymentErr, s2OwnerAgeErr, s2OwnerSeniorityErr, s2OwnerIncomeErr].forEach(function (el) { el.classList.remove('show'); });
+          resetNewFields();
+          pendingItems      = null;
+          pendingFormData   = null;
+          pendingStep1Items = null;
+        }
       });
 
       /* ════════════════════════════════════════════════════════════
@@ -1708,6 +1822,65 @@
       ════════════════════════════════════════════════════════════ */
       step2BtnCalc.addEventListener('click', function () {
 
+        /* ── 合併模式：先驗證第一步驟欄位 ── */
+        var c1BrandVal = '', c1ModelVal = '', c1AgeVal = '', c1LoantypeVal = '';
+        var c1HasErr   = false;
+        if (combinedMode) {
+          c1BrandVal    = c1Brand.value;
+          c1ModelVal    = c1Model.value;
+          c1AgeVal      = c1Age.value.trim();
+          c1LoantypeVal = c1Loantype.value;
+
+          var c1BrandOk = c1BrandVal !== '';
+          c1Brand.classList.toggle('invalid', !c1BrandOk);
+          c1BrandErr.classList.toggle('show', !c1BrandOk);
+          if (!c1BrandOk) c1HasErr = true;
+
+          var c1ModelOk = c1ModelVal !== '';
+          c1Model.classList.toggle('invalid', !c1ModelOk);
+          c1ModelErr.classList.toggle('show', !c1ModelOk);
+          if (!c1ModelOk) c1HasErr = true;
+
+          var c1AgeNum = parseFloat(c1AgeVal);
+          var c1AgeOk  = c1AgeVal !== '' && !isNaN(c1AgeNum) && c1AgeNum >= 0 && c1AgeNum <= 20 && /^\d+(\.\d)?$/.test(c1AgeVal);
+          c1Age.classList.toggle('invalid', !c1AgeOk);
+          c1AgeErr.classList.toggle('show', !c1AgeOk);
+          if (!c1AgeOk) c1HasErr = true;
+
+          var c1LoantypeOk = c1LoantypeVal !== '';
+          c1Loantype.classList.toggle('invalid', !c1LoantypeOk);
+          c1LoantypeErr.classList.toggle('show', !c1LoantypeOk);
+          if (!c1LoantypeOk) c1HasErr = true;
+
+          var C1_NEW_CAR_TYPES = ['新車0利率', '新車有利率'];
+          if (c1AgeOk && c1LoantypeOk) {
+            if (c1AgeNum === 0 && C1_NEW_CAR_TYPES.indexOf(c1LoantypeVal) === -1) {
+              c1LoantypeAgeErr.classList.add('show'); c1HasErr = true;
+            } else {
+              c1LoantypeAgeErr.classList.remove('show');
+            }
+            if (c1AgeNum > 0 && C1_NEW_CAR_TYPES.indexOf(c1LoantypeVal) !== -1) {
+              c1AgeNewcarErr.classList.add('show'); c1HasErr = true;
+            } else {
+              c1AgeNewcarErr.classList.remove('show');
+            }
+          }
+
+          if (c1HasErr) {
+            var firstC1Invalid = s2Step1Section.querySelector('input.invalid, select.invalid');
+            if (firstC1Invalid) {
+              var c1Group = firstC1Invalid.closest('.form-group') || firstC1Invalid;
+              c1Group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+          }
+
+          /* 更新 SC 類別與貸款類型（供本次試算驗證使用） */
+          currentScCategory = computeScCategory(c1BrandVal, c1LoantypeVal);
+          currentLoanType   = c1LoantypeVal;
+          updateSubmitCompanyOptions(currentScCategory);
+        }
+
         var periodVal  = s2Period.value.trim();
         var priceVal   = s2Price.value.trim();
         var amountVal  = s2Amount.value.trim();
@@ -1726,7 +1899,7 @@
         s2PeriodErr.classList.toggle('show', !periodOk);
         if (!periodOk) hasErr = true;
 
-        /* B 權威車價：大於 20 的正整數 */
+        /* B 權威車價/新車價：大於 20 的正整數 */
         var priceOk = priceVal !== '' && !isNaN(price) &&
                       price === Math.floor(price) && price > 20;
         s2Price.classList.toggle('invalid', !priceOk);
@@ -1739,6 +1912,18 @@
         s2Amount.classList.toggle('invalid', !amountOk);
         s2AmountErr.classList.toggle('show', !amountOk);
         if (!amountOk) hasErr = true;
+
+        /* 高SC 額外驗證：權威車價/新車價 >= 貸款金額 */
+        var priceGteAmountOk = true;
+        if (currentScCategory === '高SC' && priceOk && amountOk && price < amount) {
+          priceGteAmountOk = false;
+          s2Price.classList.add('invalid');
+          s2Amount.classList.add('invalid');
+          s2PriceGteAmountErr.classList.add('show');
+          hasErr = true;
+        } else {
+          s2PriceGteAmountErr.classList.remove('show');
+        }
 
         /* D 還款方式：必選 */
         var paymentOk = paymentVal !== '';
@@ -2015,7 +2200,7 @@
         /* 第二步驟摘要項目 */
         var step2Items = [
           { key: '貸款期數', val: period  + '　期' },
-          { key: '權威車價', val: price   + '　萬' },
+          { key: '權威車價/新車價', val: price   + '　萬' },
           { key: '貸款金額', val: amount  + '　萬' },
           { key: '還款方式', val: paymentVal },
           { key: '車主年齡', val: ownerAgeVal + '　歲' }
@@ -2055,8 +2240,8 @@
         var s2Session = getSession();
         var s2Account = s2Session ? s2Session.account : '';
 
-        showLoading();
-        requestAnimationFrame(function () { requestAnimationFrame(function () {
+        /* 呼叫 sc_extra（可能在 sc_query 之後呼叫） */
+        function callScExtra(c1Step1Items) {
           fetch(GAS_WEBAPP_URL, {
             method:   'POST',
             headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
@@ -2107,8 +2292,13 @@
             hideLoading();
             if (data.success) {
               resetInactivityTimer();
+              if (combinedMode) {
+                combinedMode = false;
+                s2Step1Section.style.display = 'none';
+              }
               closeStep2();
-              var allItems = (pendingStep1Items || []).concat(step2Items);
+              var baseItems = c1Step1Items || pendingStep1Items || [];
+              var allItems  = baseItems.concat(step2Items);
               showResults(data.aiSuggestion || '', allItems, data.supplementConditions || []);
             } else if (data.error === 'rate_limited') {
               showRateLimitToast();
@@ -2120,6 +2310,58 @@
             hideLoading();
             alert('連線失敗，請確認網路連線或聯絡管理員。');
           });
+        }
+
+        showLoading();
+        requestAnimationFrame(function () { requestAnimationFrame(function () {
+
+          if (combinedMode) {
+            /* 合併模式：先呼叫 sc_query（重寫試算表輸入），再呼叫 sc_extra */
+            var c1GuarantorVal = c1Guarantor.checked ? '是' : '否';
+            var c1Step1Items = [
+              { key: '貸款車輛廠牌', val: c1BrandVal },
+              { key: '車型',         val: c1ModelVal  },
+              { key: '車齡',         val: parseFloat(c1AgeVal).toFixed(1) + '　年' },
+              { key: '貸款類型',     val: c1LoantypeVal },
+              { key: '有保證人',     val: c1GuarantorVal }
+            ];
+            fetch(GAS_WEBAPP_URL, {
+              method:   'POST',
+              headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:     JSON.stringify({
+                action:    'sc_query',
+                token:     GAS_API_TOKEN,
+                account:   s2Account,
+                brand:     c1BrandVal,
+                model:     c1ModelVal,
+                age:       c1AgeVal,
+                loanType:  c1LoantypeVal,
+                guarantor: c1GuarantorVal
+              }),
+              redirect: 'follow'
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              if (data.success) {
+                resetInactivityTimer();
+                callScExtra(c1Step1Items);
+              } else if (data.error === 'rate_limited') {
+                hideLoading();
+                showRateLimitToast();
+              } else {
+                hideLoading();
+                alert('伺服器錯誤，請稍後再試。');
+              }
+            })
+            .catch(function () {
+              hideLoading();
+              alert('連線失敗，請確認網路連線或聯絡管理員。');
+            });
+          } else {
+            /* 一般模式：直接呼叫 sc_extra */
+            callScExtra(null);
+          }
+
         }); });
       });
 
@@ -2139,6 +2381,24 @@
         s2LoanRate.classList.toggle('invalid', !inRange || zeroViolate);
         s2LoanRateErr.classList.toggle('show',      !inRange);
         s2LoanRateZeroErr.classList.toggle('show',  zeroViolate);
+      });
+
+      /* ── 合併模式：廠牌 / 貸款類型變更 → 即時更新 SC 類別和送件公司選項 ── */
+      function updateCombinedScCategory() {
+        var brand = c1Brand.value;
+        var loan  = c1Loantype.value;
+        if (brand && loan) {
+          currentScCategory = computeScCategory(brand, loan);
+          currentLoanType   = loan;
+          updateSubmitCompanyOptions(currentScCategory);
+        }
+      }
+      c1Brand.addEventListener('change', updateCombinedScCategory);
+      c1Loantype.addEventListener('change', updateCombinedScCategory);
+
+      /* ── 合併模式：有保證人 checkbox → 顯示/隱藏保證人區塊 ── */
+      c1Guarantor.addEventListener('change', function () {
+        s2GuarSection.style.display = this.checked ? '' : 'none';
       });
 
       /* ── 車主工作年資：離開輸入框自動補齊為小數第一位（例如 5 → 5.0） ── */
