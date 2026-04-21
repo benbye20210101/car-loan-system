@@ -425,6 +425,83 @@ input.invalid, select.invalid {
   box-shadow: 0 2px 12px rgba(201,168,76,0.3);
 }
 
+/* ── 初始畫面 START 按鈕：Carbon Fiber 底紋 ── */
+#btn-calc {
+  /* Carbon fiber 編織紋（四層漸層模擬斜紋梭織） */
+  background-color: #161718;
+  background-image:
+    linear-gradient(27deg,  #0e0f10 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #0e0f10 5px, transparent 5px) 10px 0,
+    linear-gradient(27deg,  #1c1d20 5px, transparent 5px) 0 10px,
+    linear-gradient(207deg, #1c1d20 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #141516 10px, transparent 10px),
+    linear-gradient(
+      #161718 25%, #121314 25%, #121314 50%,
+      transparent 50%, transparent 75%,
+      #1a1b1e 75%, #1a1b1e
+    );
+  background-size: 20px 20px;
+  /* 金色邊框：呼應銀行專業感 */
+  border: 1px solid rgba(201,168,76,0.5);
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 5px 26px rgba(0,0,0,0.7);
+  /* 金色字 + 光暈，配合 Carbon 底色 */
+  color: #c9a84c;
+  font-size: 1.12rem;
+  font-weight: 900;
+  letter-spacing: 0.52em;
+  text-indent: 0.52em; /* 補齊最後字母右側空白，視覺置中 */
+  text-shadow:
+    0 0 16px rgba(201,168,76,0.5),
+    0 1px 3px rgba(0,0,0,0.9);
+}
+
+#btn-calc::before {
+  background: rgba(201,168,76,0);
+  transition: background var(--transition);
+}
+
+#btn-calc:hover {
+  background-color: #161718;
+  background-image:
+    linear-gradient(27deg,  #0e0f10 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #0e0f10 5px, transparent 5px) 10px 0,
+    linear-gradient(27deg,  #1c1d20 5px, transparent 5px) 0 10px,
+    linear-gradient(207deg, #1c1d20 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #141516 10px, transparent 10px),
+    linear-gradient(
+      #161718 25%, #121314 25%, #121314 50%,
+      transparent 50%, transparent 75%,
+      #1a1b1e 75%, #1a1b1e
+    );
+  background-size: 20px 20px;
+  border-color: rgba(201,168,76,0.85);
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 7px 32px rgba(0,0,0,0.75),
+    0 0 28px rgba(201,168,76,0.18);
+  color: #e2bb5e;
+  text-shadow:
+    0 0 24px rgba(201,168,76,0.75),
+    0 1px 3px rgba(0,0,0,0.9);
+  transform: translateY(-1px);
+}
+
+#btn-calc:hover::before { background: rgba(201,168,76,0.06); }
+
+#btn-calc:active {
+  transform: translateY(0);
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 2px 10px rgba(0,0,0,0.6);
+}
+
 /* ===== 第二步驟輸入浮動框 ===== */
 /* step2 overlay 同樣讓 overlay 自身捲動 */
 #step2-overlay.show {
