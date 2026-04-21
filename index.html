@@ -1405,12 +1405,31 @@
         var suppArr  = supplementConditions || [];
         if (suppArr.length > 0) {
           var suppItems = suppArr.map(function (cond, idx) {
-            return '<div class="result-item result-item-supp">' +
-                     '<div class="item-key">建議' + (idx + 1) + '</div>' +
-                     '<div class="item-val item-val-supp">' + cond + '</div>' +
+            var lines    = cond.split('\n').filter(function (l) { return l.trim() !== ''; });
+            var mainText = lines[0] || '';
+            var subLines = lines.slice(1);
+            var subHtml  = subLines.map(function (line, si) {
+              return '<div class="supp-sub-item supp-sub-c' + (si % 5) + '">' +
+                       '<span class="supp-sub-dot"></span>' +
+                       '<span class="supp-sub-text">' + line + '</span>' +
+                     '</div>';
+            }).join('');
+            return '<div class="supp-card">' +
+                     '<div class="supp-card-num">' + (idx + 1) + '</div>' +
+                     '<div class="supp-card-body">' +
+                       '<div class="supp-main-text">' + mainText + '</div>' +
+                       (subHtml ? '<div class="supp-sub-list">' + subHtml + '</div>' : '') +
+                     '</div>' +
                    '</div>';
           }).join('');
-          suppHtml = '<div class="supp-section-header">建議增補條件</div>' + suppItems;
+          suppHtml = '<div class="supp-section">' +
+                       '<div class="supp-section-header">' +
+                         '<span class="supp-header-icon">◆</span>' +
+                         ' 系統建議增補條件' +
+                         '<span class="supp-header-count">' + suppArr.length + '&thinsp;項</span>' +
+                       '</div>' +
+                       '<div class="supp-list">' + suppItems + '</div>' +
+                     '</div>';
         }
 
         var rows = items.map(function (item) {
