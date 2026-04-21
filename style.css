@@ -425,159 +425,230 @@ input.invalid, select.invalid {
   box-shadow: 0 2px 12px rgba(201,168,76,0.3);
 }
 
-/* ── 初始畫面 START 按鈕：Carbon Fiber × Mercedes-Benz 冷銀質感 ── */
+/* ══════════════════════════════════════════════════════════════
+   初始畫面 START 按鈕
+   造型：汽車引擎啟動圓形按鈕
+   配色：鍍鉻銀外環 × 黑色碳纖維內面 × 黃金 LED 光圈 + 發光字
+   ══════════════════════════════════════════════════════════════ */
 #btn-calc {
-  /* ① 深黑 Carbon 底色 + 更高對比織紋 */
-  background-color: #0b0c0e;
-  background-image:
-    /* 頂部漆面光澤薄層 */
-    linear-gradient(180deg, rgba(255,255,255,0.065) 0%, rgba(255,255,255,0) 48%),
-    /* Carbon 斜紋梭織（4層模擬雙軸編織） */
-    linear-gradient(27deg,  #060708 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #060708 5px, transparent 5px) 10px 0,
-    linear-gradient(27deg,  #171920 5px, transparent 5px) 0 10px,
-    linear-gradient(207deg, #171920 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #0a0b0d 10px, transparent 10px),
-    linear-gradient(
-      #0c0d10 25%, #080a0c 25%, #080a0c 50%,
-      transparent 50%, transparent 75%,
-      #101215 75%, #101215
-    );
-  background-size:
-    100% 100%,
-    20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
-  /* ② 冷銀邊框（三面）+ 底邊一條細金線如簽名 */
-  border-top:    1px solid rgba(215,220,232,0.22);
-  border-left:   1px solid rgba(215,220,232,0.14);
-  border-right:  1px solid rgba(215,220,232,0.14);
-  border-bottom: 1px solid rgba(201,168,76,0.45);
-  border-radius: var(--radius-sm);
+  /* ── 圓形尺寸，覆寫 .btn-calculate 的 width:100% ── */
+  width: 178px;
+  height: 178px;
+  border-radius: 50%;
+  margin: 6px auto 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  overflow: visible; /* 允許 LED 光圈光暈溢出至鍍鉻環 */
+
+  /* ── 鍍鉻銀外環（border）+ 黑色碳纖內面（background） ── */
+  border: 14px solid transparent;
+  background:
+    /* 內面：深黑漸層，中心略亮模擬按鈕曲面反光 */
+    radial-gradient(
+      circle at 42% 36%,
+      #2e3038 0%,
+      #141618 46%,
+      #090b0e 100%
+    ) padding-box,
+    /* 鍍鉻環：conic 旋轉漸層模擬金屬拉絲圓環光影 */
+    conic-gradient(
+      from 105deg at 50% 50%,
+      #555660  0deg,
+      #adb0ba  44deg,
+      #d2d5de  72deg,
+      #eceff7  96deg,
+      #e2e5ed 116deg,
+      #c0c3cc 150deg,
+      #92959f 196deg,
+      #787a84 234deg,
+      #a2a5ae 276deg,
+      #c4c7d0 316deg,
+      #555660 360deg
+    ) border-box;
+
+  /* ── 外緣深色稜線 + 強立體感深度陰影 ── */
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.65),
-    0 8px 34px rgba(0,0,0,0.92);
-  /* ③ 字型：讓 .start-chrome span 承擔配色，此處僅保持排版 */
-  font-size: 1.14rem;
-  font-weight: 900;
-  letter-spacing: 0.58em;
-  text-indent: 0.58em;
-  padding: 16px 24px;
-  color: transparent; /* span 覆蓋，避免繼承色影響 */
-}
+    0 0 0 1.5px #3c3d44,            /* 最外層暗邊 */
+    0 0 0 2.5px #585960,            /* 次外層銀邊 */
+    inset 0 4px 10px rgba(255,255,255,0.09),  /* 頂部內側高光 */
+    inset 0 -5px 12px rgba(0,0,0,0.65),       /* 底部內側陰影 */
+    0 18px 52px rgba(0,0,0,0.97),
+    0 8px 22px rgba(0,0,0,0.92);
 
-/* ④ 銀鉻漸層文字（Mercedes 冷銀色階） */
-.start-chrome {
-  background: linear-gradient(
-    175deg,
-    #dde2ec  0%,
-    #b8bfcf 18%,
-    #f4f6fa 42%,
-    #c8cedd 52%,
-    #8e96aa 70%,
-    #b0b8ca 85%,
-    #d4d9e6 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* 清除 .btn-calculate 的排版設定 */
+  font-size: inherit;
+  letter-spacing: normal;
+  text-indent: 0;
+  text-shadow: none;
   color: transparent;
-  display: inline-block;
-  position: relative;
-  z-index: 1;
-  /* 冷銀深度陰影（投影在 carbon 底紋上的立體感） */
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.95))
-          drop-shadow(0 0 8px rgba(200,210,235,0.18));
+  transition: box-shadow 0.26s ease, transform 0.18s ease, background 0s;
 }
 
-/* ⑤ hover 用 ::before 做冷白覆膜（極淡） */
+/* ── 黃金 LED 光圈（::before） ── */
 #btn-calc::before {
-  background: rgba(255,255,255,0);
-  transition: background var(--transition);
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid rgba(201,168,76,0.90);
+  box-shadow:
+    0 0  6px 2px rgba(201,168,76,0.68),
+    0 0 16px 5px rgba(201,168,76,0.34),
+    0 0 32px 9px rgba(201,168,76,0.13),
+    inset 0 0  8px 2px rgba(201,168,76,0.24),
+    inset 0 0 22px 5px rgba(201,168,76,0.09);
+  pointer-events: none;
+  transition: box-shadow 0.26s ease;
 }
 
-/* ⑥ ::after 做金屬光澤掃過動畫（不 hover 時停在左側外） */
+/* ── 鍍鉻環左上頂部高光（hover 時淡入） ── */
 #btn-calc::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -130%;
-  width: 65%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent               0%,
-    rgba(255,255,255,0.04)   35%,
-    rgba(255,255,255,0.11)   50%,
-    rgba(255,255,255,0.04)   65%,
-    transparent              100%
+  inset: -14px;         /* 覆蓋整圓含鍍鉻環 */
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 36% 26%,
+    rgba(255,255,255,0.22) 0%,
+    rgba(255,255,255,0.06) 35%,
+    rgba(255,255,255,0)    58%
   );
-  transform: skewX(-14deg);
   pointer-events: none;
-  transition: left 0s; /* 不 hover 時瞬間歸位，無殘影 */
+  opacity: 0;
+  transition: opacity 0.26s ease;
 }
 
+/* ── 按鈕內：ENGINE 小標 ── */
+.btn-top-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  color: rgba(201,168,76,0.50);
+  -webkit-text-fill-color: rgba(201,168,76,0.50);
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 7px rgba(201,168,76,0.28);
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  filter: none;
+}
+
+/* ── 按鈕內：START 黃金 LED 發光字 ── */
+.start-chrome {
+  font-size: 1.30rem;
+  font-weight: 900;
+  letter-spacing: 0.30em;
+  text-indent: 0.30em;
+  line-height: 1;
+  display: block;
+  position: relative;
+  z-index: 1;
+  /* 仿儀表板 LED 發光效果：多層暈染 */
+  color: #d4a038;
+  -webkit-text-fill-color: #d4a038;
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  filter: none;
+  text-shadow:
+    0 0  5px rgba(212,160,56,0.98),
+    0 0 12px rgba(204,148,36,0.80),
+    0 0 24px rgba(196,136,24,0.55),
+    0 0 48px rgba(196,136,24,0.24),
+    0 1px 2px rgba(0,0,0,0.98);
+}
+
+/* ════════ hover ════════ */
 #btn-calc:hover {
-  /* Carbon 底紋維持不變，只換邊框與陰影 */
-  background-color: #0b0c0e;
-  background-image:
-    linear-gradient(180deg, rgba(255,255,255,0.065) 0%, rgba(255,255,255,0) 48%),
-    linear-gradient(27deg,  #060708 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #060708 5px, transparent 5px) 10px 0,
-    linear-gradient(27deg,  #171920 5px, transparent 5px) 0 10px,
-    linear-gradient(207deg, #171920 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #0a0b0d 10px, transparent 10px),
-    linear-gradient(
-      #0c0d10 25%, #080a0c 25%, #080a0c 50%,
-      transparent 50%, transparent 75%,
-      #101215 75%, #101215
-    );
-  background-size:
-    100% 100%,
-    20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
-  border-top-color:    rgba(230,234,245,0.42);
-  border-left-color:   rgba(230,234,245,0.26);
-  border-right-color:  rgba(230,234,245,0.26);
-  border-bottom-color: rgba(201,168,76,0.72);
+  background:
+    radial-gradient(
+      circle at 42% 36%,
+      #2e3038 0%,
+      #141618 46%,
+      #090b0e 100%
+    ) padding-box,
+    conic-gradient(
+      from 105deg at 50% 50%,
+      #555660  0deg,
+      #adb0ba  44deg,
+      #d2d5de  72deg,
+      #eceff7  96deg,
+      #e2e5ed 116deg,
+      #c0c3cc 150deg,
+      #92959f 196deg,
+      #787a84 234deg,
+      #a2a5ae 276deg,
+      #c4c7d0 316deg,
+      #555660 360deg
+    ) border-box;
+  border-color: transparent;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.11),
-    inset 0 -1px 0 rgba(0,0,0,0.65),
-    0 10px 38px rgba(0,0,0,0.97),
-    0 0 22px rgba(210,220,240,0.07);
-  transform: translateY(-1px);
+    0 0 0 1.5px #505158,
+    0 0 0 2.5px #6e7078,
+    inset 0 4px 10px rgba(255,255,255,0.12),
+    inset 0 -5px 12px rgba(0,0,0,0.65),
+    0 20px 58px rgba(0,0,0,0.99),
+    0 10px 28px rgba(0,0,0,0.96),
+    0 0  36px rgba(201,168,76,0.11);
+  transform: translateY(-2px);
 }
 
-/* hover 時文字鍍鉻更亮 */
+/* hover：LED 光圈發光增強 */
+#btn-calc:hover::before {
+  box-shadow:
+    0 0  9px 3px rgba(201,168,76,0.88),
+    0 0 22px 7px rgba(201,168,76,0.52),
+    0 0 44px 12px rgba(201,168,76,0.22),
+    inset 0 0 12px 3px rgba(201,168,76,0.34),
+    inset 0 0 32px 7px rgba(201,168,76,0.13);
+}
+
+/* hover：頂部鍍鉻高光出現 */
+#btn-calc:hover::after { opacity: 1; }
+
+/* hover：ENGINE 字亮起 */
+#btn-calc:hover .btn-top-label {
+  color: rgba(228,180,68,0.72);
+  -webkit-text-fill-color: rgba(228,180,68,0.72);
+  text-shadow: 0 0 10px rgba(228,180,68,0.48);
+}
+
+/* hover：START 字發光增強 */
 #btn-calc:hover .start-chrome {
-  background: linear-gradient(
-    175deg,
-    #edf0f8  0%,
-    #ccd3e2 15%,
-    #ffffff  40%,
-    #dde2ef 52%,
-    #a2aabf 68%,
-    #c2c9d8 84%,
-    #e0e4f0 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.95))
-          drop-shadow(0 0 14px rgba(210,220,245,0.28));
+  color: #e8b840;
+  -webkit-text-fill-color: #e8b840;
+  text-shadow:
+    0 0  7px rgba(232,184,64,1.00),
+    0 0 16px rgba(220,168,44,0.90),
+    0 0 32px rgba(210,152,32,0.68),
+    0 0 64px rgba(210,152,32,0.32),
+    0 1px 2px rgba(0,0,0,0.98);
 }
 
-/* hover 時光澤掃過 */
-#btn-calc:hover::after {
-  left: 150%;
-  transition: left 0.58s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-#btn-calc:hover::before { background: rgba(255,255,255,0.025); }
-
+/* ── active 按壓感 ── */
 #btn-calc:active {
-  transform: translateY(0);
+  transform: translateY(2px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    inset 0 -1px 0 rgba(0,0,0,0.65),
-    0 2px 10px rgba(0,0,0,0.85);
+    0 0 0 1.5px #3c3d44,
+    0 0 0 2.5px #585960,
+    inset 0 5px 14px rgba(0,0,0,0.55),
+    inset 0 -2px 6px rgba(255,255,255,0.05),
+    0 4px 16px rgba(0,0,0,0.95);
+}
+
+#btn-calc:active::before {
+  box-shadow:
+    0 0 4px 1px rgba(201,168,76,0.55),
+    0 0 10px 3px rgba(201,168,76,0.26),
+    inset 0 0 6px 1px rgba(201,168,76,0.18);
 }
 
 /* ===== 第二步驟輸入浮動框 ===== */
@@ -836,6 +907,11 @@ input.invalid, select.invalid {
   .card { padding: 24px 18px 28px; }
   .result-card { padding: 22px 18px 26px; }
   .btn-calculate { font-size: 0.95rem; padding: 14px 20px; }
+  /* 圓形 START 按鈕手機縮小 */
+  #btn-calc { width: 155px; height: 155px; border-width: 12px; }
+  #btn-calc::after { inset: -12px; }
+  .start-chrome { font-size: 1.12rem; }
+  .btn-top-label { font-size: 0.53rem; }
 }
 
 @media (max-width: 360px) {
