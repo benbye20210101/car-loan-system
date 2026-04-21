@@ -425,81 +425,159 @@ input.invalid, select.invalid {
   box-shadow: 0 2px 12px rgba(201,168,76,0.3);
 }
 
-/* ── 初始畫面 START 按鈕：Carbon Fiber 底紋 ── */
+/* ── 初始畫面 START 按鈕：Carbon Fiber × Mercedes-Benz 冷銀質感 ── */
 #btn-calc {
-  /* Carbon fiber 編織紋（四層漸層模擬斜紋梭織） */
-  background-color: #161718;
+  /* ① 深黑 Carbon 底色 + 更高對比織紋 */
+  background-color: #0b0c0e;
   background-image:
-    linear-gradient(27deg,  #0e0f10 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #0e0f10 5px, transparent 5px) 10px 0,
-    linear-gradient(27deg,  #1c1d20 5px, transparent 5px) 0 10px,
-    linear-gradient(207deg, #1c1d20 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #141516 10px, transparent 10px),
+    /* 頂部漆面光澤薄層 */
+    linear-gradient(180deg, rgba(255,255,255,0.065) 0%, rgba(255,255,255,0) 48%),
+    /* Carbon 斜紋梭織（4層模擬雙軸編織） */
+    linear-gradient(27deg,  #060708 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #060708 5px, transparent 5px) 10px 0,
+    linear-gradient(27deg,  #171920 5px, transparent 5px) 0 10px,
+    linear-gradient(207deg, #171920 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #0a0b0d 10px, transparent 10px),
     linear-gradient(
-      #161718 25%, #121314 25%, #121314 50%,
+      #0c0d10 25%, #080a0c 25%, #080a0c 50%,
       transparent 50%, transparent 75%,
-      #1a1b1e 75%, #1a1b1e
+      #101215 75%, #101215
     );
-  background-size: 20px 20px;
-  /* 金色邊框：呼應銀行專業感 */
-  border: 1px solid rgba(201,168,76,0.5);
+  background-size:
+    100% 100%,
+    20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
+  /* ② 冷銀邊框（三面）+ 底邊一條細金線如簽名 */
+  border-top:    1px solid rgba(215,220,232,0.22);
+  border-left:   1px solid rgba(215,220,232,0.14);
+  border-right:  1px solid rgba(215,220,232,0.14);
+  border-bottom: 1px solid rgba(201,168,76,0.45);
+  border-radius: var(--radius-sm);
   box-shadow:
-    0 0 0 1px rgba(201,168,76,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.4),
-    0 5px 26px rgba(0,0,0,0.7);
-  /* 金色字 + 光暈，配合 Carbon 底色 */
-  color: #c9a84c;
-  font-size: 1.12rem;
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.65),
+    0 8px 34px rgba(0,0,0,0.92);
+  /* ③ 字型：讓 .start-chrome span 承擔配色，此處僅保持排版 */
+  font-size: 1.14rem;
   font-weight: 900;
-  letter-spacing: 0.52em;
-  text-indent: 0.52em; /* 補齊最後字母右側空白，視覺置中 */
-  text-shadow:
-    0 0 16px rgba(201,168,76,0.5),
-    0 1px 3px rgba(0,0,0,0.9);
+  letter-spacing: 0.58em;
+  text-indent: 0.58em;
+  padding: 16px 24px;
+  color: transparent; /* span 覆蓋，避免繼承色影響 */
 }
 
+/* ④ 銀鉻漸層文字（Mercedes 冷銀色階） */
+.start-chrome {
+  background: linear-gradient(
+    175deg,
+    #dde2ec  0%,
+    #b8bfcf 18%,
+    #f4f6fa 42%,
+    #c8cedd 52%,
+    #8e96aa 70%,
+    #b0b8ca 85%,
+    #d4d9e6 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  /* 冷銀深度陰影（投影在 carbon 底紋上的立體感） */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.95))
+          drop-shadow(0 0 8px rgba(200,210,235,0.18));
+}
+
+/* ⑤ hover 用 ::before 做冷白覆膜（極淡） */
 #btn-calc::before {
-  background: rgba(201,168,76,0);
+  background: rgba(255,255,255,0);
   transition: background var(--transition);
 }
 
+/* ⑥ ::after 做金屬光澤掃過動畫（不 hover 時停在左側外） */
+#btn-calc::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent               0%,
+    rgba(255,255,255,0.04)   35%,
+    rgba(255,255,255,0.11)   50%,
+    rgba(255,255,255,0.04)   65%,
+    transparent              100%
+  );
+  transform: skewX(-14deg);
+  pointer-events: none;
+  transition: left 0s; /* 不 hover 時瞬間歸位，無殘影 */
+}
+
 #btn-calc:hover {
-  background-color: #161718;
+  /* Carbon 底紋維持不變，只換邊框與陰影 */
+  background-color: #0b0c0e;
   background-image:
-    linear-gradient(27deg,  #0e0f10 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #0e0f10 5px, transparent 5px) 10px 0,
-    linear-gradient(27deg,  #1c1d20 5px, transparent 5px) 0 10px,
-    linear-gradient(207deg, #1c1d20 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #141516 10px, transparent 10px),
+    linear-gradient(180deg, rgba(255,255,255,0.065) 0%, rgba(255,255,255,0) 48%),
+    linear-gradient(27deg,  #060708 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #060708 5px, transparent 5px) 10px 0,
+    linear-gradient(27deg,  #171920 5px, transparent 5px) 0 10px,
+    linear-gradient(207deg, #171920 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #0a0b0d 10px, transparent 10px),
     linear-gradient(
-      #161718 25%, #121314 25%, #121314 50%,
+      #0c0d10 25%, #080a0c 25%, #080a0c 50%,
       transparent 50%, transparent 75%,
-      #1a1b1e 75%, #1a1b1e
+      #101215 75%, #101215
     );
-  background-size: 20px 20px;
-  border-color: rgba(201,168,76,0.85);
+  background-size:
+    100% 100%,
+    20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
+  border-top-color:    rgba(230,234,245,0.42);
+  border-left-color:   rgba(230,234,245,0.26);
+  border-right-color:  rgba(230,234,245,0.26);
+  border-bottom-color: rgba(201,168,76,0.72);
   box-shadow:
-    0 0 0 1px rgba(201,168,76,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.09),
-    inset 0 -1px 0 rgba(0,0,0,0.4),
-    0 7px 32px rgba(0,0,0,0.75),
-    0 0 28px rgba(201,168,76,0.18);
-  color: #e2bb5e;
-  text-shadow:
-    0 0 24px rgba(201,168,76,0.75),
-    0 1px 3px rgba(0,0,0,0.9);
+    inset 0 1px 0 rgba(255,255,255,0.11),
+    inset 0 -1px 0 rgba(0,0,0,0.65),
+    0 10px 38px rgba(0,0,0,0.97),
+    0 0 22px rgba(210,220,240,0.07);
   transform: translateY(-1px);
 }
 
-#btn-calc:hover::before { background: rgba(201,168,76,0.06); }
+/* hover 時文字鍍鉻更亮 */
+#btn-calc:hover .start-chrome {
+  background: linear-gradient(
+    175deg,
+    #edf0f8  0%,
+    #ccd3e2 15%,
+    #ffffff  40%,
+    #dde2ef 52%,
+    #a2aabf 68%,
+    #c2c9d8 84%,
+    #e0e4f0 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.95))
+          drop-shadow(0 0 14px rgba(210,220,245,0.28));
+}
+
+/* hover 時光澤掃過 */
+#btn-calc:hover::after {
+  left: 150%;
+  transition: left 0.58s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#btn-calc:hover::before { background: rgba(255,255,255,0.025); }
 
 #btn-calc:active {
   transform: translateY(0);
   box-shadow:
-    0 0 0 1px rgba(201,168,76,0.2),
     inset 0 1px 0 rgba(255,255,255,0.05),
-    0 2px 10px rgba(0,0,0,0.6);
+    inset 0 -1px 0 rgba(0,0,0,0.65),
+    0 2px 10px rgba(0,0,0,0.85);
 }
 
 /* ===== 第二步驟輸入浮動框 ===== */
