@@ -503,17 +503,17 @@
               </div>
             </div>
 
-            <!-- D：保證人工作年資（選填，1~30 正整數） -->
+            <!-- D：保證人工作年資（選填，0.1~30.0 最多一位小數，與車主工作年資相同） -->
             <div class="form-group">
               <label class="form-label" for="s2-guar-seniority">
                 <span class="label-mark"></span>保證人工作年資
               </label>
               <div class="input-unit-wrap">
-                <input type="number" id="s2-guar-seniority" min="1" max="30" step="1"
-                       placeholder="請輸入 1 ～ 30 的正整數（選填）" />
+                <input type="number" id="s2-guar-seniority" min="0.1" max="30" step="0.1"
+                       placeholder="請輸入 0.1 ～ 30.0（選填）" />
                 <span class="input-unit">年</span>
               </div>
-              <span class="error-msg" id="s2-guar-seniority-error">請輸入 1 到 30 之間的正整數</span>
+              <span class="error-msg" id="s2-guar-seniority-error">請輸入 0.1 到 30.0 之間的正數（最多小數點第一位）</span>
             </div>
 
             <!-- E：保證人年收入（選填） -->
@@ -1958,17 +1958,17 @@
           /* C 保證人職業：選填 */
           guarJobVal = s2GuarJob.value;
 
-          /* D 保證人工作年資：選填，1~30 正整數 */
+          /* D 保證人工作年資：選填，0.1~30.0 最多一位小數（與車主工作年資相同） */
           var guarSeniorityRaw = s2GuarSeniority.value.trim();
           if (guarSeniorityRaw !== '') {
             var guarSeniorityNum = parseFloat(guarSeniorityRaw);
             var guarSeniorityOk  = !isNaN(guarSeniorityNum) &&
-                                   guarSeniorityNum === Math.floor(guarSeniorityNum) &&
-                                   guarSeniorityNum >= 1 && guarSeniorityNum <= 30;
+                                   guarSeniorityNum >= 0.1 && guarSeniorityNum <= 30 &&
+                                   /^\d+(\.\d)?$/.test(guarSeniorityRaw);
             s2GuarSeniority.classList.toggle('invalid', !guarSeniorityOk);
             s2GuarSeniorityErr.classList.toggle('show', !guarSeniorityOk);
             if (!guarSeniorityOk) hasErr = true;
-            else guarSeniorityVal = guarSeniorityRaw;
+            else guarSeniorityVal = guarSeniorityNum.toFixed(1);
           } else {
             s2GuarSeniority.classList.remove('invalid');
             s2GuarSeniorityErr.classList.remove('show');
@@ -2192,6 +2192,18 @@
           s2OwnerSeniority.value = val.toFixed(1);
           s2OwnerSeniority.classList.remove('invalid');
           s2OwnerSeniorityErr.classList.remove('show');
+        }
+      });
+
+      /* ── 保證人工作年資：離開輸入框自動補齊為小數第一位（與車主工作年資相同） ── */
+      s2GuarSeniority.addEventListener('blur', function () {
+        var raw = s2GuarSeniority.value.trim();
+        if (raw === '') return;
+        var val = parseFloat(raw);
+        if (!isNaN(val) && val >= 0.1 && val <= 30 && /^\d+(\.\d?)?$/.test(raw)) {
+          s2GuarSeniority.value = val.toFixed(1);
+          s2GuarSeniority.classList.remove('invalid');
+          s2GuarSeniorityErr.classList.remove('show');
         }
       });
 
