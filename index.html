@@ -1409,8 +1409,9 @@
         if (suppArr.length > 0) {
           var suppItems = suppArr.map(function (cond, idx) {
             var lines    = cond.split('\n').filter(function (l) { return l.trim() !== ''; });
-            var mainText = lines[0] || '';
-            var subLines = lines.slice(1);
+            var isCombo  = lines.length > 1 && lines[1] === '並且以下條件都要具備滿足：';
+            var mainText = isCombo ? lines[0] + '<br>' + lines[1] : (lines[0] || '');
+            var subLines = isCombo ? lines.slice(2) : lines.slice(1);
             var subHtml  = subLines.map(function (line, si) {
               return '<div class="supp-sub-item supp-sub-c' + Math.floor(Math.random() * 5) + '">' +
                        '<span class="supp-sub-dot"></span>' +
