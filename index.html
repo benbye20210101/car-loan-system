@@ -715,7 +715,7 @@
   <div class="toast-success" id="toast-success">登入成功</div>
 
   <!-- ===== 自動登出提示框 ===== -->
-  <div class="toast-autologout" id="toast-autologout">閒置逾 3 分鐘，已自動登出</div>
+  <div class="toast-autologout" id="toast-autologout">閒置逾 30 分鐘，已自動登出</div>
 
   <!-- ===== 頻率限制警示框 ===== -->
   <div class="toast-ratelimit" id="toast-ratelimit">請求過於頻繁，請稍後再試</div>
@@ -1026,9 +1026,9 @@
       }
 
       /* ════════════════════════════════════════════════════════════
-         閒置自動登出（3 分鐘無操作）
+         閒置自動登出（30 分鐘無操作）
       ════════════════════════════════════════════════════════════ */
-      var INACTIVITY_MS   = 3 * 60 * 1000;  /* 3 分鐘 */
+      var INACTIVITY_MS   = 30 * 60 * 1000;  /* 30 分鐘 */
       var inactivityTimer = null;
       var ACTIVITY_EVENTS = ['mousemove', 'click', 'keydown', 'touchstart', 'scroll'];
 
