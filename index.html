@@ -188,7 +188,7 @@
             <span class="input-unit">萬</span>
           </div>
           <span class="error-msg" id="s2-price-error">請輸入大於 20 的正整數</span>
-          <span class="error-msg" id="s2-price-gteamount-error">高SC時，權威車價/新車價須大於或等於貸款金額</span>
+          <span class="error-msg" id="s2-price-gteamount-error">貸款金額必須小於權威車價/新車價</span>
         </div>
 
         <!-- C：貸款金額 -->
@@ -202,6 +202,7 @@
             <span class="input-unit">萬</span>
           </div>
           <span class="error-msg" id="s2-amount-error">請輸入大於 20 的正整數</span>
+          <span class="error-msg" id="s2-amount-gteamount-error">貸款金額必須小於權威車價/新車價</span>
         </div>
 
         <!-- D：還款方式 -->
@@ -913,7 +914,8 @@
       var s2Payment       = document.getElementById('s2-payment');
       var s2PeriodErr     = document.getElementById('s2-period-error');
       var s2PriceErr          = document.getElementById('s2-price-error');
-      var s2PriceGteAmountErr = document.getElementById('s2-price-gteamount-error');
+      var s2PriceGteAmountErr  = document.getElementById('s2-price-gteamount-error');
+      var s2AmountGteAmountErr = document.getElementById('s2-amount-gteamount-error');
       var s2AmountErr     = document.getElementById('s2-amount-error');
       var s2PaymentErr    = document.getElementById('s2-payment-error');
       var s2OwnerAge      = document.getElementById('s2-owner-age');
@@ -1777,9 +1779,11 @@
           s2Price.classList.add('invalid');
           s2Amount.classList.add('invalid');
           s2PriceGteAmountErr.classList.add('show');
+          s2AmountGteAmountErr.classList.add('show');
           hasErr = true;
         } else {
           s2PriceGteAmountErr.classList.remove('show');
+          s2AmountGteAmountErr.classList.remove('show');
         }
 
         /* D 還款方式：必選 */
