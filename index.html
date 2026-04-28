@@ -1509,30 +1509,22 @@
         return (highBrands.indexOf(brand) !== -1 && newCarTypes.indexOf(loanType) !== -1) ? '高SC' : '低SC';
       }
 
-      /* ── 依 SC 類別動態更新「送件借貸公司」下拉選項 ── */
-      function updateSubmitCompanyOptions(scCategory) {
-        var options = [
-          { val: '台灣賓士',    highOnly: true  },
-          { val: '福斯財務',    highOnly: false },
-          { val: '財盟',        highOnly: false },
-          { val: '合迪',        highOnly: false },
-          { val: '和潤',        highOnly: false },
-          { val: '日盛',        highOnly: false },
-          { val: '台新大安租',  highOnly: false },
-          { val: '中信資融',    highOnly: false },
-          { val: '裕融',        highOnly: false },
-          { val: '遠信資融',    highOnly: false },
-          { val: '其他租賃公司',highOnly: false },
-          { val: '銀行',        highOnly: true  }
-        ];
+      /* ── 依 SC 類別＋貸款類型動態更新「送件借貸公司」下拉選項 ── */
+      function updateSubmitCompanyOptions(scCategory, loanType) {
+        var list;
+        if (scCategory === '高SC' && loanType === '新車0利率') {
+          list = ['台灣賓士', '福斯財務', '中信資融', '銀行'];
+        } else if (scCategory === '高SC' && loanType === '新車有利率') {
+          list = ['台灣賓士', '福斯財務', '合迪', '和潤', '日盛', '台新大安租', '中信資融', '裕融', '其他租賃公司', '銀行'];
+        } else {
+          list = ['福斯財務', '合迪', '和潤', '日盛', '台新大安租', '中信資融', '裕融', '其他租賃公司'];
+        }
         s2SubmitCompany.innerHTML = '<option value="">─ 請選擇送件公司 ─</option>';
-        options.forEach(function (opt) {
-          if (!opt.highOnly || scCategory === '高SC') {
-            var o = document.createElement('option');
-            o.value       = opt.val;
-            o.textContent = opt.val;
-            s2SubmitCompany.appendChild(o);
-          }
+        list.forEach(function (val) {
+          var o = document.createElement('option');
+          o.value       = val;
+          o.textContent = val;
+          s2SubmitCompany.appendChild(o);
         });
       }
 
@@ -1549,7 +1541,7 @@
           el.classList.remove('show');
         });
         resetNewFields();
-        updateSubmitCompanyOptions(currentScCategory);
+        updateSubmitCompanyOptions(currentScCategory, currentLoanType);
         /* 有勾選「有保證人」才顯示保證人資料區塊 */
         s2GuarSection.style.display = checkGuarantor.checked ? '' : 'none';
         step2Overlay.classList.add('show');
