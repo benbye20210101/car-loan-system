@@ -1004,9 +1004,9 @@
         } catch (e) { return null; }
       }
 
-      function setSession(account) {
+      function setSession(account, spreadsheetId) {
         try {
-          sessionStorage.setItem(SESSION_KEY, JSON.stringify({ account: account }));
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify({ account: account, spreadsheetId: spreadsheetId || '' }));
         } catch (e) {}
       }
 
@@ -1351,14 +1351,15 @@
               method:   'POST',
               headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
               body:     JSON.stringify({
-                action:    'sc_query',
-                token:     GAS_API_TOKEN,
-                account:   cachedAccount,
-                brand:     pendingFormData.brand,
-                model:     pendingFormData.model,
-                age:       pendingFormData.age,
-                loanType:  pendingFormData.loanType,
-                guarantor: pendingFormData.guarantor
+                action:        'sc_query',
+                token:         GAS_API_TOKEN,
+                account:       cachedAccount,
+                spreadsheetId: (getSession() || {}).spreadsheetId || '',
+                brand:         pendingFormData.brand,
+                model:         pendingFormData.model,
+                age:           pendingFormData.age,
+                loanType:      pendingFormData.loanType,
+                guarantor:     pendingFormData.guarantor
               }),
               redirect: 'follow'
             })
@@ -2102,6 +2103,7 @@
               action:          'sc_extra',
               token:           GAS_API_TOKEN,
               account:         s2Account,
+              spreadsheetId:   s2Session ? (s2Session.spreadsheetId || '') : '',
               loanPeriod:      String(period),
               loanPrice:       String(price),
               loanRatio:       String(loanRatio),
@@ -2322,8 +2324,8 @@
 
               if (data.success) {
                 closeModal();
-                /* 儲存登入狀態，顯示帳號，啟動閒置計時器 */
-                setSession(account);
+                /* 儲存登入狀態（含使用者個人試算表ID），顯示帳號，啟動閒置計時器 */
+                setSession(account, data.spreadsheetId);
                 showLoginStatus(account);
                 startInactivityTimer(account);
                 /* 暫存第一步驟摘要，待第二步驟提交後合併顯示 */
