@@ -748,6 +748,10 @@ input.invalid, select.invalid {
   letter-spacing: 0.06em;
 }
 
+.ai-risk-icon {
+  color: #e05050;
+}
+
 /* ── 建議增補條件區塊 ── */
 .supp-section {
   grid-column: 1 / -1;
