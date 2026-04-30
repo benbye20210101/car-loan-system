@@ -735,6 +735,19 @@ input.invalid, select.invalid {
   line-height: 1.7;
 }
 
+.ai-risk-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 9px;
+  background: rgba(180, 72, 72, 0.10);
+  border: 1px solid rgba(180, 72, 72, 0.32);
+  border-radius: 3px;
+  font-size: 0.70rem;
+  font-weight: 600;
+  color: #b86464;
+  letter-spacing: 0.06em;
+}
+
 /* ── 建議增補條件區塊 ── */
 .supp-section {
   grid-column: 1 / -1;

@@ -1402,9 +1402,18 @@
         var items = allItems || pendingItems;
         if (!items) return;
 
+        var aiLines  = (aiSuggestion || '（無建議）').split('\n');
+        var isReject = aiLines[0].indexOf('被直接婉拒') >= 0;
+        var aiValHtml;
+        if (isReject && aiLines.length > 1) {
+          var badgeText = aiLines[1].replace(/^\[|\]$/g, '');
+          aiValHtml = aiLines[0] + '<br><span class="ai-risk-badge">' + badgeText + '</span>';
+        } else {
+          aiValHtml = aiLines.join('<br>');
+        }
         var aiRow = '<div class="result-item result-item-ai">' +
                       '<div class="item-key">AI建議</div>' +
-                      '<div class="item-val item-val-ai">' + (aiSuggestion || '（無建議）') + '</div>' +
+                      '<div class="item-val item-val-ai">' + aiValHtml + '</div>' +
                     '</div>';
 
         var suppHtml = '';
