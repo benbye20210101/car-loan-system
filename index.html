@@ -21,8 +21,86 @@
     </div>
   </header>
 
+  <!-- ===== ADMIN 模式切換列（ADMIN 登入後顯示）===== -->
+  <div class="admin-modebar" id="admin-modebar">
+    <button class="admin-mode-btn active" id="btn-mode-calc" type="button">試算功能</button>
+    <button class="admin-mode-btn" id="btn-mode-admin" type="button">管理後台</button>
+  </div>
+
   <!-- ===== 主要內容 ===== -->
   <main class="main-wrap">
+
+    <!-- ===== 管理後台面板（ADMIN 登入後可切換）===== -->
+    <div class="admin-panel" id="admin-panel">
+
+      <!-- 後台 Tab 導覽 -->
+      <div class="admin-panel-tabs">
+        <button class="admin-panel-tab active" id="admin-tab-btn-users" type="button">使用者管理</button>
+        <button class="admin-panel-tab coming-soon" id="admin-tab-btn-notices" type="button">公告通知</button>
+        <button class="admin-panel-tab coming-soon" id="admin-tab-btn-rates" type="button">核准補件率</button>
+      </div>
+
+      <!-- ── 使用者管理 Tab ── -->
+      <div class="admin-tab-pane" id="admin-pane-users">
+        <div class="admin-card">
+          <p class="admin-card-title">新增使用者</p>
+          <div class="admin-form">
+
+            <div class="admin-form-group">
+              <label class="admin-form-label">帳號名稱</label>
+              <input type="text" class="admin-input" id="admin-new-account"
+                     placeholder="請輸入帳號名稱" autocomplete="off" />
+              <span class="error-msg" id="admin-new-account-err"></span>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-form-label">密碼</label>
+              <div class="password-wrap">
+                <input type="password" class="admin-input" id="admin-new-password"
+                       placeholder="請輸入密碼" autocomplete="new-password" />
+                <button type="button" class="btn-eye" id="admin-pwd-eye" aria-label="切換密碼可見">
+                  <span id="admin-pwd-eye-icon">&#128065;</span>
+                </button>
+              </div>
+              <span class="error-msg" id="admin-new-password-err"></span>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-form-label">確認密碼</label>
+              <div class="password-wrap">
+                <input type="password" class="admin-input" id="admin-confirm-password"
+                       placeholder="請再次輸入密碼" autocomplete="new-password" />
+                <button type="button" class="btn-eye" id="admin-confirm-pwd-eye" aria-label="切換密碼可見">
+                  <span id="admin-confirm-eye-icon">&#128065;</span>
+                </button>
+              </div>
+              <span class="error-msg" id="admin-confirm-password-err"></span>
+            </div>
+
+            <button class="admin-submit-btn" id="admin-create-user-btn" type="button">新增使用者</button>
+            <div class="admin-result-msg" id="admin-create-result"></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 公告通知 Tab（Phase 8 預留）── -->
+      <div class="admin-tab-pane" id="admin-pane-notices" style="display:none;">
+        <div class="admin-card admin-placeholder">
+          <p class="admin-placeholder-title">公告通知管理</p>
+          <p class="admin-placeholder-note">Phase 8 待實作</p>
+        </div>
+      </div>
+
+      <!-- ── 核准補件率 Tab（Phase 8 預留）── -->
+      <div class="admin-tab-pane" id="admin-pane-rates" style="display:none;">
+        <div class="admin-card admin-placeholder">
+          <p class="admin-placeholder-title">核准補件率管理</p>
+          <p class="admin-placeholder-note">Phase 8 待實作</p>
+        </div>
+      </div>
+
+    </div><!-- /admin-panel -->
 
     <!-- 試算表單卡片 -->
     <div class="card">
@@ -647,69 +725,240 @@
     </div>
   </div>
 
-  <!-- ===== 身份驗證浮動框 ===== -->
+  <!-- ===== 身份驗證浮動框（多面板）===== -->
   <div class="modal-overlay" id="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box auth-modal-box">
       <button class="modal-close" id="modal-close" type="button" aria-label="關閉">✕</button>
-      <p class="modal-title">身份驗證</p>
 
-      <!-- A輸入框：帳號 -->
-      <div class="modal-form-group">
-        <label class="form-label" for="modal-account">
-          <span class="label-mark"></span>帳號
-        </label>
-        <input
-          type="text"
-          id="modal-account"
-          placeholder="請輸入帳號（英文或數字）"
-          maxlength="50"
-          autocomplete="off"
-        />
-      </div>
+      <!-- ══ Panel 1：登入 ══ -->
+      <div class="auth-panel" id="auth-panel-login">
+        <p class="modal-title">身份驗證</p>
 
-      <!-- B輸入框：密碼 -->
-      <div class="modal-form-group">
-        <label class="form-label" for="modal-password">
-          <span class="label-mark"></span>密碼
-        </label>
-        <div class="password-wrap">
-          <input
-            type="password"
-            id="modal-password"
-            placeholder="請輸入密碼（英文或數字）"
-            maxlength="50"
-            autocomplete="off"
-          />
-          <button class="btn-eye" id="btn-eye" type="button" aria-label="切換密碼顯示">
-            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
+        <div class="modal-form-group">
+          <label class="form-label" for="modal-account">
+            <span class="label-mark"></span>帳號
+          </label>
+          <input type="text" id="modal-account"
+                 placeholder="請輸入帳號或 Email" maxlength="100" autocomplete="off" />
         </div>
-      </div>
 
-      <!-- C輸入框：驗證碼 + 顯示屏 -->
-      <div class="modal-form-group">
-        <label class="form-label" for="modal-captcha">
-          <span class="label-mark"></span>驗證碼
-        </label>
-        <div class="captcha-row">
-          <input
-            type="text"
-            id="modal-captcha"
-            placeholder="請輸入右側6位數字"
-            maxlength="6"
-            autocomplete="off"
-          />
-          <div class="captcha-display" id="captcha-display">──────</div>
-          <button class="btn-captcha-refresh" id="btn-captcha-refresh" type="button" aria-label="重新產生驗證碼" title="重新產生驗證碼">↻</button>
+        <div class="modal-form-group">
+          <label class="form-label" for="modal-password">
+            <span class="label-mark"></span>密碼
+          </label>
+          <div class="password-wrap">
+            <input type="password" id="modal-password"
+                   placeholder="請輸入密碼" maxlength="50" autocomplete="off" />
+            <button class="btn-eye" id="btn-eye" type="button" aria-label="切換密碼顯示">
+              <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- 登入按鈕 -->
-      <div class="btn-wrap" style="margin-top:28px;">
-        <button class="btn-login" id="btn-login" type="button">登　入</button>
-      </div>
-    </div>
-  </div>
+        <div class="modal-form-group">
+          <label class="form-label" for="modal-captcha">
+            <span class="label-mark"></span>驗證碼
+          </label>
+          <div class="captcha-row">
+            <input type="text" id="modal-captcha"
+                   placeholder="請輸入右側6位數字" maxlength="6" autocomplete="off" />
+            <div class="captcha-display" id="captcha-display">──────</div>
+            <button class="btn-captcha-refresh" id="btn-captcha-refresh" type="button"
+                    aria-label="重新產生驗證碼" title="重新產生驗證碼">↻</button>
+          </div>
+        </div>
+
+        <div class="btn-wrap" style="margin-top:24px;">
+          <button class="btn-login" id="btn-login" type="button">登　入</button>
+        </div>
+
+        <!-- 底部功能連結 -->
+        <div class="auth-footer-links">
+          <button class="auth-link" id="link-register" type="button">新帳號申請</button>
+          <span class="auth-link-sep">｜</span>
+          <button class="auth-link" id="link-forgot-account" type="button">忘記帳號</button>
+          <span class="auth-link-sep">｜</span>
+          <button class="auth-link" id="link-forgot-password" type="button">忘記密碼</button>
+        </div>
+      </div><!-- /auth-panel-login -->
+
+      <!-- ══ Panel 2：新帳號申請 ══ -->
+      <div class="auth-panel" id="auth-panel-register" style="display:none;">
+        <button class="auth-back-btn" id="reg-back" type="button">← 返回登入</button>
+        <p class="modal-title">新帳號申請</p>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>帳號（Email）</label>
+          <input type="email" id="reg-email" placeholder="請輸入 Email（作為登入帳號）"
+                 maxlength="100" autocomplete="off" />
+          <span class="error-msg" id="reg-email-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>密碼</label>
+          <div class="password-wrap">
+            <input type="password" id="reg-password"
+                   placeholder="最少 6 碼，需含英文與數字" maxlength="50" autocomplete="new-password" />
+            <button class="btn-eye" id="reg-pwd-eye" type="button" aria-label="切換密碼顯示">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="error-msg" id="reg-password-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>確認密碼</label>
+          <div class="password-wrap">
+            <input type="password" id="reg-confirm-pwd"
+                   placeholder="請再次輸入密碼" maxlength="50" autocomplete="new-password" />
+            <button class="btn-eye" id="reg-confirm-eye" type="button" aria-label="切換密碼顯示">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="error-msg" id="reg-confirm-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>申請人身分</label>
+          <div class="select-wrap">
+            <select id="reg-identity">
+              <option value="">─ 請選擇身分 ─</option>
+              <option value="汽車貸款業務">汽車貸款業務</option>
+              <option value="中古車商業務">中古車商業務</option>
+              <option value="原廠經銷商業務">原廠經銷商業務</option>
+            </select>
+          </div>
+          <span class="error-msg" id="reg-identity-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>手機號碼</label>
+          <input type="tel" id="reg-phone" placeholder="請輸入手機號碼（忘記帳號時查詢用）"
+                 maxlength="20" autocomplete="off" />
+          <span class="error-msg" id="reg-phone-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label" style="color:var(--text-secondary);">所屬公司（選填）</label>
+          <input type="text" id="reg-company" placeholder="請輸入所屬公司名稱"
+                 maxlength="50" autocomplete="off" />
+        </div>
+
+        <div class="btn-wrap" style="margin-top:20px;">
+          <button class="btn-login" id="btn-register" type="button">送出申請</button>
+        </div>
+        <div class="auth-result-msg" id="reg-result"></div>
+      </div><!-- /auth-panel-register -->
+
+      <!-- ══ Panel 3：Email 驗證碼 ══ -->
+      <div class="auth-panel" id="auth-panel-verify" style="display:none;">
+        <p class="modal-title">Email 驗證</p>
+        <p class="auth-hint-text">驗證碼已寄至<br><strong id="verify-email-hint"></strong><br>請於 10 分鐘內輸入</p>
+
+        <div class="modal-form-group" style="margin-top:20px;">
+          <label class="form-label"><span class="label-mark"></span>驗證碼</label>
+          <input type="text" id="verify-code-input" placeholder="請輸入 6 位數驗證碼"
+                 maxlength="6" autocomplete="off" inputmode="numeric" />
+          <span class="error-msg" id="verify-code-err"></span>
+        </div>
+
+        <div class="btn-wrap" style="margin-top:20px;">
+          <button class="btn-login" id="btn-verify" type="button">確認驗證</button>
+        </div>
+        <div class="auth-result-msg" id="verify-result"></div>
+        <div style="text-align:center;margin-top:14px;">
+          <button class="auth-link" id="btn-resend-reg" type="button">重新寄送驗證碼</button>
+        </div>
+      </div><!-- /auth-panel-verify -->
+
+      <!-- ══ Panel 4：忘記密碼 Step 1 ══ -->
+      <div class="auth-panel" id="auth-panel-forgot-pwd-1" style="display:none;">
+        <button class="auth-back-btn" id="forgot-pwd-1-back" type="button">← 返回登入</button>
+        <p class="modal-title">忘記密碼</p>
+        <p class="auth-hint-text">請輸入申請帳號時使用的 Email，系統將寄送重設碼</p>
+
+        <div class="modal-form-group" style="margin-top:16px;">
+          <label class="form-label"><span class="label-mark"></span>帳號（Email）</label>
+          <input type="email" id="forgot-pwd-email" placeholder="請輸入您的 Email"
+                 maxlength="100" autocomplete="off" />
+          <span class="error-msg" id="forgot-pwd-email-err"></span>
+        </div>
+
+        <div class="btn-wrap" style="margin-top:20px;">
+          <button class="btn-login" id="btn-send-reset-code" type="button">發送重設碼</button>
+        </div>
+        <div class="auth-result-msg" id="forgot-pwd-1-result"></div>
+      </div><!-- /auth-panel-forgot-pwd-1 -->
+
+      <!-- ══ Panel 5：忘記密碼 Step 2 ══ -->
+      <div class="auth-panel" id="auth-panel-forgot-pwd-2" style="display:none;">
+        <p class="modal-title">重設密碼</p>
+        <p class="auth-hint-text">重設碼已寄至<br><strong id="reset-email-hint"></strong></p>
+
+        <div class="modal-form-group" style="margin-top:16px;">
+          <label class="form-label"><span class="label-mark"></span>重設碼</label>
+          <input type="text" id="reset-code-input" placeholder="請輸入 6 位數重設碼"
+                 maxlength="6" autocomplete="off" inputmode="numeric" />
+          <span class="error-msg" id="reset-code-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>新密碼</label>
+          <div class="password-wrap">
+            <input type="password" id="reset-new-pwd"
+                   placeholder="最少 6 碼，需含英文與數字" maxlength="50" autocomplete="new-password" />
+            <button class="btn-eye" id="reset-pwd-eye" type="button" aria-label="切換密碼顯示">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="error-msg" id="reset-new-pwd-err"></span>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="form-label"><span class="label-mark"></span>確認新密碼</label>
+          <div class="password-wrap">
+            <input type="password" id="reset-confirm-pwd"
+                   placeholder="請再次輸入新密碼" maxlength="50" autocomplete="new-password" />
+            <button class="btn-eye" id="reset-confirm-eye" type="button" aria-label="切換密碼顯示">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="error-msg" id="reset-confirm-err"></span>
+        </div>
+
+        <div class="btn-wrap" style="margin-top:20px;">
+          <button class="btn-login" id="btn-reset-password" type="button">確認重設密碼</button>
+        </div>
+        <div class="auth-result-msg" id="forgot-pwd-2-result"></div>
+        <div style="text-align:center;margin-top:14px;">
+          <button class="auth-link" id="btn-resend-reset" type="button">重新寄送重設碼</button>
+        </div>
+      </div><!-- /auth-panel-forgot-pwd-2 -->
+
+      <!-- ══ Panel 6：忘記帳號 ══ -->
+      <div class="auth-panel" id="auth-panel-forgot-acct" style="display:none;">
+        <button class="auth-back-btn" id="forgot-acct-back" type="button">← 返回登入</button>
+        <p class="modal-title">忘記帳號</p>
+        <p class="auth-hint-text">請輸入申請時填寫的手機號碼，系統將顯示對應帳號</p>
+
+        <div class="modal-form-group" style="margin-top:16px;">
+          <label class="form-label"><span class="label-mark"></span>手機號碼</label>
+          <input type="tel" id="forgot-acct-phone" placeholder="請輸入手機號碼"
+                 maxlength="20" autocomplete="off" />
+          <span class="error-msg" id="forgot-acct-phone-err"></span>
+        </div>
+
+        <div class="btn-wrap" style="margin-top:20px;">
+          <button class="btn-login" id="btn-find-account" type="button">查詢帳號</button>
+        </div>
+        <div class="auth-result-msg" id="forgot-acct-result"></div>
+        <p class="auth-hint-text" style="margin-top:18px;font-size:0.78rem;">
+          若無法查詢到帳號，請聯絡管理員協助處理。
+        </p>
+      </div><!-- /auth-panel-forgot-acct -->
+
+    </div><!-- /auth-modal-box -->
+  </div><!-- /modal-overlay -->
 
   <!-- ===== 登入成功提示框 ===== -->
   <div class="toast-success" id="toast-success">登入成功</div>
@@ -896,10 +1145,89 @@
       var btnLogout       = document.getElementById('btn-logout');
       var toastAutoLogout = document.getElementById('toast-autologout');
 
+      /* ── ADMIN 管理後台 ── */
+      var adminModebar        = document.getElementById('admin-modebar');
+      var btnModeCalc         = document.getElementById('btn-mode-calc');
+      var btnModeAdmin        = document.getElementById('btn-mode-admin');
+      var adminPanel          = document.getElementById('admin-panel');
+      var calcCard            = document.querySelector('.card');
+      var siteFooter          = document.querySelector('.site-footer');
+      var adminTabBtns        = document.querySelectorAll('.admin-panel-tab');
+      var adminTabPanes       = document.querySelectorAll('.admin-tab-pane');
+      var adminNewAccount     = document.getElementById('admin-new-account');
+      var adminNewAccountErr  = document.getElementById('admin-new-account-err');
+      var adminNewPassword    = document.getElementById('admin-new-password');
+      var adminNewPasswordErr = document.getElementById('admin-new-password-err');
+      var adminConfirmPwd     = document.getElementById('admin-confirm-password');
+      var adminConfirmPwdErr  = document.getElementById('admin-confirm-password-err');
+      var adminCreateBtn      = document.getElementById('admin-create-user-btn');
+      var adminCreateResult   = document.getElementById('admin-create-result');
+      var adminPwdEye         = document.getElementById('admin-pwd-eye');
+      var adminPwdEyeIcon     = document.getElementById('admin-pwd-eye-icon');
+      var adminConfirmPwdEye  = document.getElementById('admin-confirm-pwd-eye');
+      var adminConfirmEyeIcon = document.getElementById('admin-confirm-eye-icon');
+
       /* ── 密碼眼睛切換 ── */
       var btnEye          = document.getElementById('btn-eye');
       var eyeIcon         = document.getElementById('eye-icon');
       var passwordVisible = false;
+
+      /* ── 帳號申請 / 忘記帳號 / 忘記密碼 面板元素 ── */
+      var authPanels = {
+        login:      document.getElementById('auth-panel-login'),
+        register:   document.getElementById('auth-panel-register'),
+        verify:     document.getElementById('auth-panel-verify'),
+        forgotPwd1: document.getElementById('auth-panel-forgot-pwd-1'),
+        forgotPwd2: document.getElementById('auth-panel-forgot-pwd-2'),
+        forgotAcct: document.getElementById('auth-panel-forgot-acct')
+      };
+      var linkRegister        = document.getElementById('link-register');
+      var linkForgotAccount   = document.getElementById('link-forgot-account');
+      var linkForgotPassword  = document.getElementById('link-forgot-password');
+      /* 申請面板 */
+      var regEmail            = document.getElementById('reg-email');
+      var regEmailErr         = document.getElementById('reg-email-err');
+      var regPassword         = document.getElementById('reg-password');
+      var regPasswordErr      = document.getElementById('reg-password-err');
+      var regConfirmPwd       = document.getElementById('reg-confirm-pwd');
+      var regConfirmErr       = document.getElementById('reg-confirm-err');
+      var regIdentity         = document.getElementById('reg-identity');
+      var regIdentityErr      = document.getElementById('reg-identity-err');
+      var regPhone            = document.getElementById('reg-phone');
+      var regPhoneErr         = document.getElementById('reg-phone-err');
+      var regCompany          = document.getElementById('reg-company');
+      var btnRegister         = document.getElementById('btn-register');
+      var regResult           = document.getElementById('reg-result');
+      /* 驗證碼面板 */
+      var verifyEmailHint     = document.getElementById('verify-email-hint');
+      var verifyCodeInput     = document.getElementById('verify-code-input');
+      var verifyCodeErr       = document.getElementById('verify-code-err');
+      var btnVerify           = document.getElementById('btn-verify');
+      var verifyResult        = document.getElementById('verify-result');
+      var btnResendReg        = document.getElementById('btn-resend-reg');
+      /* 忘記密碼面板 */
+      var forgotPwdEmail      = document.getElementById('forgot-pwd-email');
+      var forgotPwdEmailErr   = document.getElementById('forgot-pwd-email-err');
+      var btnSendResetCode    = document.getElementById('btn-send-reset-code');
+      var forgotPwd1Result    = document.getElementById('forgot-pwd-1-result');
+      var resetEmailHint      = document.getElementById('reset-email-hint');
+      var resetCodeInput      = document.getElementById('reset-code-input');
+      var resetCodeErr        = document.getElementById('reset-code-err');
+      var resetNewPwd         = document.getElementById('reset-new-pwd');
+      var resetNewPwdErr      = document.getElementById('reset-new-pwd-err');
+      var resetConfirmPwd     = document.getElementById('reset-confirm-pwd');
+      var resetConfirmErr     = document.getElementById('reset-confirm-err');
+      var btnResetPassword    = document.getElementById('btn-reset-password');
+      var forgotPwd2Result    = document.getElementById('forgot-pwd-2-result');
+      var btnResendReset      = document.getElementById('btn-resend-reset');
+      /* 忘記帳號面板 */
+      var forgotAcctPhone     = document.getElementById('forgot-acct-phone');
+      var forgotAcctPhoneErr  = document.getElementById('forgot-acct-phone-err');
+      var btnFindAccount      = document.getElementById('btn-find-account');
+      var forgotAcctResult    = document.getElementById('forgot-acct-result');
+      /* 暫存 email（供驗證面板顯示） */
+      var pendingRegEmail     = '';
+      var pendingResetEmail   = '';
 
       /* ── 驗證碼重新產生 ── */
       var btnCaptchaRefresh = document.getElementById('btn-captcha-refresh');
@@ -1018,11 +1346,16 @@
       function showLoginStatus(account) {
         loginStatusText.textContent = account + '　已登入';
         loginStatus.classList.add('show');
+        if (account === 'ADMIN') {
+          adminModebar.classList.add('show');
+        }
       }
 
       function hideLoginStatus() {
         loginStatus.classList.remove('show');
         loginStatusText.textContent = '';
+        adminModebar.classList.remove('show');
+        setCalcMode();
       }
 
       /* ════════════════════════════════════════════════════════════
@@ -1076,6 +1409,133 @@
         var s = getSession();
         if (s) { showLoginStatus(s.account); startInactivityTimer(s.account); }
       })();
+
+      /* ════════════════════════════════════════════════════════════
+         ADMIN 後台模式切換
+      ════════════════════════════════════════════════════════════ */
+
+      function setCalcMode() {
+        calcCard.style.display   = '';
+        siteFooter.style.display = '';
+        adminPanel.style.display = 'none';
+        btnModeCalc.classList.add('active');
+        btnModeAdmin.classList.remove('active');
+      }
+
+      function setAdminMode() {
+        calcCard.style.display   = 'none';
+        siteFooter.style.display = 'none';
+        adminPanel.style.display = '';
+        btnModeAdmin.classList.add('active');
+        btnModeCalc.classList.remove('active');
+      }
+
+      btnModeCalc.addEventListener('click', setCalcMode);
+      btnModeAdmin.addEventListener('click', setAdminMode);
+
+      /* ── 後台 Tab 切換 ── */
+      adminTabBtns.forEach(function (btn, idx) {
+        btn.addEventListener('click', function () {
+          if (btn.classList.contains('coming-soon')) return;
+          adminTabBtns.forEach(function (b) { b.classList.remove('active'); });
+          adminTabPanes.forEach(function (p) { p.style.display = 'none'; });
+          btn.classList.add('active');
+          adminTabPanes[idx].style.display = '';
+        });
+      });
+
+      /* ── 密碼眼睛切換（新增使用者欄位）── */
+      adminPwdEye.addEventListener('click', function () {
+        var show = adminNewPassword.type === 'password';
+        adminNewPassword.type       = show ? 'text' : 'password';
+        adminPwdEyeIcon.textContent = show ? '🙈' : '👁';
+      });
+      adminConfirmPwdEye.addEventListener('click', function () {
+        var show = adminConfirmPwd.type === 'password';
+        adminConfirmPwd.type          = show ? 'text' : 'password';
+        adminConfirmEyeIcon.textContent = show ? '🙈' : '👁';
+      });
+
+      /* ── 新增使用者 ── */
+      adminCreateBtn.addEventListener('click', function () {
+        var acc  = adminNewAccount.value.trim();
+        var pwd  = adminNewPassword.value.trim();
+        var conf = adminConfirmPwd.value.trim();
+        var hasErr = false;
+
+        adminNewAccountErr.classList.remove('show');
+        adminNewPasswordErr.classList.remove('show');
+        adminConfirmPwdErr.classList.remove('show');
+        adminCreateResult.textContent = '';
+        adminCreateResult.className   = 'admin-result-msg';
+
+        if (!acc) {
+          adminNewAccountErr.textContent = '請輸入帳號名稱';
+          adminNewAccountErr.classList.add('show');
+          hasErr = true;
+        }
+        if (!pwd) {
+          adminNewPasswordErr.textContent = '請輸入密碼';
+          adminNewPasswordErr.classList.add('show');
+          hasErr = true;
+        }
+        if (pwd && !conf) {
+          adminConfirmPwdErr.textContent = '請再次輸入確認密碼';
+          adminConfirmPwdErr.classList.add('show');
+          hasErr = true;
+        }
+        if (pwd && conf && pwd !== conf) {
+          adminConfirmPwdErr.textContent = '兩次密碼不一致';
+          adminConfirmPwdErr.classList.add('show');
+          hasErr = true;
+        }
+        if (hasErr) return;
+
+        var session = getSession();
+        if (!session) { alert('登入逾時，請重新登入'); return; }
+
+        adminCreateBtn.disabled    = true;
+        adminCreateBtn.textContent = '處理中…';
+
+        fetch(GAS_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            token:       API_TOKEN,
+            action:      'create_user',
+            account:     session.account,
+            newAccount:  acc,
+            newPassword: pwd
+          })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          adminCreateBtn.disabled    = false;
+          adminCreateBtn.textContent = '新增使用者';
+          if (data.success) {
+            adminNewAccount.value  = '';
+            adminNewPassword.value = '';
+            adminConfirmPwd.value  = '';
+            adminCreateResult.textContent = '使用者「' + acc + '」新增成功！';
+            adminCreateResult.classList.add('ok');
+          } else if (data.error === 'account_exists') {
+            adminCreateResult.textContent = '帳號「' + acc + '」已存在，請使用不同名稱。';
+            adminCreateResult.classList.add('err');
+          } else if (data.error === 'unauthorized') {
+            adminCreateResult.textContent = '權限不足，僅限 ADMIN 帳號操作。';
+            adminCreateResult.classList.add('err');
+          } else {
+            adminCreateResult.textContent = '新增失敗：' + (data.error || '未知錯誤');
+            adminCreateResult.classList.add('err');
+          }
+        })
+        .catch(function () {
+          adminCreateBtn.disabled    = false;
+          adminCreateBtn.textContent = '新增使用者';
+          adminCreateResult.textContent = '連線失敗，請確認網路或聯絡開發者。';
+          adminCreateResult.classList.add('err');
+        });
+      });
 
       /* ════════════════════════════════════════════════════════════
          頻率限制（Rate Limiting）
@@ -1626,11 +2086,19 @@
         captchaDisplay.textContent = code;
       }
 
+      /* ── 面板切換輔助 ── */
+      function showAuthPanel(name) {
+        Object.keys(authPanels).forEach(function (k) {
+          authPanels[k].style.display = (k === name) ? '' : 'none';
+        });
+      }
+
       function openModal() {
         generateCaptcha();
         resetField(modalAccount,  'text');
         resetField(modalPassword, 'password');
         resetField(modalCaptcha,  'text');
+        showAuthPanel('login');
         modalOverlay.classList.add('show');
       }
 
@@ -1639,6 +2107,328 @@
       }
 
       btnModalClose.addEventListener('click', closeModal);
+
+      /* ── 底部連結切換面板 ── */
+      linkRegister.addEventListener('click', function () { showAuthPanel('register'); });
+      linkForgotPassword.addEventListener('click', function () { showAuthPanel('forgotPwd1'); });
+      linkForgotAccount.addEventListener('click', function () { showAuthPanel('forgotAcct'); });
+      document.getElementById('reg-back').addEventListener('click', function () { showAuthPanel('login'); });
+      document.getElementById('forgot-pwd-1-back').addEventListener('click', function () { showAuthPanel('login'); });
+      document.getElementById('forgot-acct-back').addEventListener('click', function () { showAuthPanel('login'); });
+
+      /* ── 申請面板：眼睛切換 ── */
+      document.getElementById('reg-pwd-eye').addEventListener('click', function () {
+        regPassword.type = regPassword.type === 'password' ? 'text' : 'password';
+      });
+      document.getElementById('reg-confirm-eye').addEventListener('click', function () {
+        regConfirmPwd.type = regConfirmPwd.type === 'password' ? 'text' : 'password';
+      });
+      document.getElementById('reset-pwd-eye').addEventListener('click', function () {
+        resetNewPwd.type = resetNewPwd.type === 'password' ? 'text' : 'password';
+      });
+      document.getElementById('reset-confirm-eye').addEventListener('click', function () {
+        resetConfirmPwd.type = resetConfirmPwd.type === 'password' ? 'text' : 'password';
+      });
+
+      /* ── 重送倒數計時器 ── */
+      function startResendCooldown(btn, seconds) {
+        btn.disabled = true;
+        var remaining = seconds;
+        btn.dataset.origText = btn.dataset.origText || btn.textContent;
+        btn.textContent = btn.dataset.origText + ' (' + remaining + '秒)';
+        var timer = setInterval(function () {
+          remaining--;
+          if (remaining <= 0) {
+            clearInterval(timer);
+            btn.disabled    = false;
+            btn.textContent = btn.dataset.origText;
+          } else {
+            btn.textContent = btn.dataset.origText + ' (' + remaining + '秒)';
+          }
+        }, 1000);
+      }
+
+      /* ── GAS fetch 共用函式 ── */
+      function gasPost(payload, onSuccess, onError) {
+        fetch(GAS_WEBAPP_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(Object.assign({ token: GAS_API_TOKEN }, payload))
+        })
+        .then(function (r) { return r.json(); })
+        .then(onSuccess)
+        .catch(onError || function () { alert('連線失敗，請確認網路或稍後再試。'); });
+      }
+
+      /* ════════════════════════════════════════════════════
+         新帳號申請
+      ════════════════════════════════════════════════════ */
+      btnRegister.addEventListener('click', function () {
+        var email   = regEmail.value.trim().toLowerCase();
+        var pwd     = regPassword.value.trim();
+        var conf    = regConfirmPwd.value.trim();
+        var ident   = regIdentity.value;
+        var hasErr  = false;
+
+        [regEmailErr, regPasswordErr, regConfirmErr, regIdentityErr, regPhoneErr].forEach(function (e) {
+          e.classList.remove('show'); e.textContent = '';
+        });
+        regResult.textContent = '';
+        regResult.className   = 'auth-result-msg';
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          regEmailErr.textContent = '請輸入有效的 Email'; regEmailErr.classList.add('show'); hasErr = true;
+        }
+        if (!pwd || pwd.length < 6 || !/[a-zA-Z]/.test(pwd) || !/[0-9]/.test(pwd)) {
+          regPasswordErr.textContent = '密碼最少 6 碼且需含英文與數字'; regPasswordErr.classList.add('show'); hasErr = true;
+        }
+        if (pwd && conf && pwd !== conf) {
+          regConfirmErr.textContent = '兩次密碼不一致'; regConfirmErr.classList.add('show'); hasErr = true;
+        }
+        if (!ident) {
+          regIdentityErr.textContent = '請選擇申請人身分'; regIdentityErr.classList.add('show'); hasErr = true;
+        }
+        if (!regPhone.value.trim()) {
+          regPhoneErr.textContent = '請輸入手機號碼'; regPhoneErr.classList.add('show'); hasErr = true;
+        }
+        if (hasErr) return;
+
+        btnRegister.disabled    = true;
+        btnRegister.textContent = '處理中…';
+
+        gasPost({
+          action:   'register',
+          email:    email,
+          password: regPassword.value.trim(),
+          identity: ident,
+          phone:    regPhone.value.trim(),
+          company:  regCompany.value.trim()
+        }, function (data) {
+          btnRegister.disabled    = false;
+          btnRegister.textContent = '送出申請';
+          if (data.success && data.step === 'verify') {
+            pendingRegEmail = email;
+            verifyEmailHint.textContent = email;
+            verifyCodeInput.value = '';
+            verifyCodeErr.classList.remove('show');
+            verifyResult.textContent = '';
+            startResendCooldown(btnResendReg, 60);
+            showAuthPanel('verify');
+          } else if (data.error === 'account_exists') {
+            regEmailErr.textContent = '此 Email 已申請過帳號，請直接登入'; regEmailErr.classList.add('show');
+          } else if (data.error === 'resend_cooldown') {
+            regResult.textContent = '請稍候 ' + (data.waitSec || 60) + ' 秒後再重新寄送';
+            regResult.classList.add('err');
+          } else {
+            regResult.textContent = '申請失敗：' + (data.error || '未知錯誤');
+            regResult.classList.add('err');
+          }
+        }, function () {
+          btnRegister.disabled    = false;
+          btnRegister.textContent = '送出申請';
+          regResult.textContent = '連線失敗，請稍後再試。';
+          regResult.classList.add('err');
+        });
+      });
+
+      /* ── Email 驗證碼確認 ── */
+      btnVerify.addEventListener('click', function () {
+        var code = verifyCodeInput.value.trim();
+        verifyCodeErr.classList.remove('show');
+        verifyResult.textContent = '';
+        verifyResult.className   = 'auth-result-msg';
+
+        if (!code || code.length !== 6) {
+          verifyCodeErr.textContent = '請輸入 6 位數驗證碼'; verifyCodeErr.classList.add('show'); return;
+        }
+
+        btnVerify.disabled    = true;
+        btnVerify.textContent = '驗證中…';
+
+        gasPost({ action: 'verify_email', email: pendingRegEmail, code: code },
+          function (data) {
+            btnVerify.disabled    = false;
+            btnVerify.textContent = '確認驗證';
+            if (data.success) {
+              verifyResult.textContent = '帳號申請成功！請關閉此視窗後重新登入。';
+              verifyResult.classList.add('ok');
+              btnVerify.style.display       = 'none';
+              btnResendReg.style.display    = 'none';
+            } else if (data.error === 'wrong_code') {
+              verifyCodeErr.textContent = '驗證碼錯誤，請確認後重試'; verifyCodeErr.classList.add('show');
+            } else if (data.error === 'expired') {
+              verifyResult.textContent = '驗證碼已過期，請重新申請';
+              verifyResult.classList.add('err');
+            } else {
+              verifyResult.textContent = '驗證失敗：' + (data.error || '未知錯誤');
+              verifyResult.classList.add('err');
+            }
+          });
+      });
+
+      /* ── 重新寄送驗證碼 ── */
+      btnResendReg.addEventListener('click', function () {
+        gasPost({
+          action:   'register',
+          email:    pendingRegEmail,
+          password: regPassword.value.trim() || '________',
+          identity: regIdentity.value || '汽車貸款業務',
+          phone:    regPhone.value.trim(),
+          company:  regCompany.value.trim()
+        }, function (data) {
+          if (data.success) {
+            startResendCooldown(btnResendReg, 60);
+            verifyResult.textContent = '驗證碼已重新寄出，請查收 Email。';
+            verifyResult.className   = 'auth-result-msg ok';
+          } else if (data.error === 'resend_cooldown') {
+            startResendCooldown(btnResendReg, data.waitSec || 60);
+          } else if (data.error === 'account_exists') {
+            verifyResult.textContent = '此帳號已完成驗證，請直接登入。';
+            verifyResult.className   = 'auth-result-msg ok';
+          }
+        });
+      });
+
+      /* ════════════════════════════════════════════════════
+         忘記密碼
+      ════════════════════════════════════════════════════ */
+      btnSendResetCode.addEventListener('click', function () {
+        var email = forgotPwdEmail.value.trim().toLowerCase();
+        forgotPwdEmailErr.classList.remove('show');
+        forgotPwd1Result.textContent = '';
+        forgotPwd1Result.className   = 'auth-result-msg';
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          forgotPwdEmailErr.textContent = '請輸入有效的 Email'; forgotPwdEmailErr.classList.add('show'); return;
+        }
+
+        btnSendResetCode.disabled    = true;
+        btnSendResetCode.textContent = '寄送中…';
+
+        gasPost({ action: 'forgot_password', email: email },
+          function (data) {
+            btnSendResetCode.disabled    = false;
+            btnSendResetCode.textContent = '發送重設碼';
+            if (data.success) {
+              pendingResetEmail = email;
+              resetEmailHint.textContent = email;
+              resetCodeInput.value = '';
+              resetNewPwd.value    = '';
+              resetConfirmPwd.value = '';
+              [resetCodeErr, resetNewPwdErr, resetConfirmErr].forEach(function (e) { e.classList.remove('show'); });
+              forgotPwd2Result.textContent = '';
+              startResendCooldown(btnResendReset, 60);
+              showAuthPanel('forgotPwd2');
+            } else if (data.error === 'account_not_found') {
+              forgotPwdEmailErr.textContent = '查無此 Email，請確認是否已申請帳號'; forgotPwdEmailErr.classList.add('show');
+            } else if (data.error === 'account_pending') {
+              forgotPwd1Result.textContent = '此帳號尚未完成 Email 驗證，請先完成驗證。';
+              forgotPwd1Result.classList.add('err');
+            } else if (data.error === 'resend_cooldown') {
+              startResendCooldown(btnSendResetCode, data.waitSec || 60);
+              pendingResetEmail = email;
+              resetEmailHint.textContent = email;
+              showAuthPanel('forgotPwd2');
+            } else {
+              forgotPwd1Result.textContent = '發送失敗：' + (data.error || '未知錯誤');
+              forgotPwd1Result.classList.add('err');
+            }
+          });
+      });
+
+      /* ── 確認重設密碼 ── */
+      btnResetPassword.addEventListener('click', function () {
+        var code = resetCodeInput.value.trim();
+        var npwd = resetNewPwd.value.trim();
+        var cpwd = resetConfirmPwd.value.trim();
+        var hasErr = false;
+        [resetCodeErr, resetNewPwdErr, resetConfirmErr].forEach(function (e) { e.classList.remove('show'); e.textContent = ''; });
+        forgotPwd2Result.textContent = '';
+        forgotPwd2Result.className   = 'auth-result-msg';
+
+        if (!code || code.length !== 6) {
+          resetCodeErr.textContent = '請輸入 6 位數重設碼'; resetCodeErr.classList.add('show'); hasErr = true;
+        }
+        if (!npwd || npwd.length < 6 || !/[a-zA-Z]/.test(npwd) || !/[0-9]/.test(npwd)) {
+          resetNewPwdErr.textContent = '密碼最少 6 碼且需含英文與數字'; resetNewPwdErr.classList.add('show'); hasErr = true;
+        }
+        if (npwd && cpwd && npwd !== cpwd) {
+          resetConfirmErr.textContent = '兩次密碼不一致'; resetConfirmErr.classList.add('show'); hasErr = true;
+        }
+        if (hasErr) return;
+
+        btnResetPassword.disabled    = true;
+        btnResetPassword.textContent = '重設中…';
+
+        gasPost({ action: 'reset_password', email: pendingResetEmail, code: code, newPassword: npwd },
+          function (data) {
+            btnResetPassword.disabled    = false;
+            btnResetPassword.textContent = '確認重設密碼';
+            if (data.success) {
+              forgotPwd2Result.textContent = '密碼重設成功！請關閉此視窗後重新登入。';
+              forgotPwd2Result.classList.add('ok');
+              btnResetPassword.style.display  = 'none';
+              btnResendReset.style.display    = 'none';
+            } else if (data.error === 'wrong_code') {
+              resetCodeErr.textContent = '重設碼錯誤，請確認後重試'; resetCodeErr.classList.add('show');
+            } else if (data.error === 'expired') {
+              forgotPwd2Result.textContent = '重設碼已過期，請重新申請。';
+              forgotPwd2Result.classList.add('err');
+            } else if (data.error === 'weak_password') {
+              resetNewPwdErr.textContent = '密碼強度不足，最少 6 碼且需含英文與數字'; resetNewPwdErr.classList.add('show');
+            } else {
+              forgotPwd2Result.textContent = '重設失敗：' + (data.error || '未知錯誤');
+              forgotPwd2Result.classList.add('err');
+            }
+          });
+      });
+
+      /* ── 重新寄送重設碼 ── */
+      btnResendReset.addEventListener('click', function () {
+        gasPost({ action: 'forgot_password', email: pendingResetEmail },
+          function (data) {
+            if (data.success) {
+              startResendCooldown(btnResendReset, 60);
+              forgotPwd2Result.textContent = '重設碼已重新寄出，請查收 Email。';
+              forgotPwd2Result.className   = 'auth-result-msg ok';
+            } else if (data.error === 'resend_cooldown') {
+              startResendCooldown(btnResendReset, data.waitSec || 60);
+            }
+          });
+      });
+
+      /* ════════════════════════════════════════════════════
+         忘記帳號
+      ════════════════════════════════════════════════════ */
+      btnFindAccount.addEventListener('click', function () {
+        var phone = forgotAcctPhone.value.trim();
+        forgotAcctPhoneErr.classList.remove('show');
+        forgotAcctResult.textContent = '';
+        forgotAcctResult.className   = 'auth-result-msg';
+
+        if (!phone) {
+          forgotAcctPhoneErr.textContent = '請輸入手機號碼'; forgotAcctPhoneErr.classList.add('show'); return;
+        }
+
+        btnFindAccount.disabled    = true;
+        btnFindAccount.textContent = '查詢中…';
+
+        gasPost({ action: 'find_account', phone: phone },
+          function (data) {
+            btnFindAccount.disabled    = false;
+            btnFindAccount.textContent = '查詢帳號';
+            if (data.success) {
+              forgotAcctResult.textContent = '您的帳號為：' + data.maskedEmail;
+              forgotAcctResult.classList.add('ok');
+            } else if (data.error === 'not_found') {
+              forgotAcctResult.textContent = '查無此手機號碼對應的帳號，請聯絡管理員。';
+              forgotAcctResult.classList.add('err');
+            } else {
+              forgotAcctResult.textContent = '查詢失敗：' + (data.error || '未知錯誤');
+              forgotAcctResult.classList.add('err');
+            }
+          });
+      });
 
       /* ── 輸入框工具函式 ── */
       function resetField(el, type) {
@@ -2357,6 +3147,12 @@
                   setFieldError(modalAccount, '帳號');
                 } else if (data.error === 'wrong_password') {
                   setFieldError(modalPassword, '密碼');
+                } else if (data.error === 'account_pending') {
+                  setFieldError(modalAccount, '帳號');
+                  alert('此帳號尚未完成 Email 驗證，請先至 Email 收取驗證碼完成驗證。');
+                } else if (data.error === 'account_disabled') {
+                  setFieldError(modalAccount, '帳號');
+                  alert('此帳號已被停用，請聯絡管理員。');
                 } else {
                   alert('伺服器錯誤，請稍後再試。');
                 }

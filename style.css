@@ -1372,3 +1372,249 @@ input.invalid, select.invalid {
   user-select: none;
   letter-spacing: 0.04em;
 }
+
+/* ===== ADMIN 模式切換列 ===== */
+.admin-modebar {
+  display: none;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0;
+  width: 100%;
+  background: linear-gradient(135deg, #13161e 0%, #1a1e2a 100%);
+  border-bottom: 2px solid var(--accent);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+.admin-modebar.show {
+  display: flex;
+}
+.admin-mode-btn {
+  padding: 7px 28px;
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.admin-mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0e0f13;
+}
+.admin-mode-btn:not(.active):hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+/* ===== 管理後台面板 ===== */
+.admin-panel {
+  display: none;
+  width: 100%;
+  max-width: 640px;
+  margin: 32px auto 0;
+}
+
+/* 後台 Tab 導覽 */
+.admin-panel-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 24px;
+}
+.admin-panel-tab {
+  padding: 10px 22px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+}
+.admin-panel-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.admin-panel-tab.coming-soon {
+  color: #484c5e;
+  cursor: not-allowed;
+  font-style: italic;
+}
+.admin-panel-tab:not(.coming-soon):not(.active):hover {
+  color: var(--text-primary);
+}
+
+/* Admin Card */
+.admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+}
+.admin-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Admin Form */
+.admin-form-group {
+  margin-bottom: 18px;
+}
+.admin-form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-label);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.admin-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  transition: border-color var(--transition);
+}
+.admin-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+/* Admin Submit Button */
+.admin-submit-btn {
+  display: inline-block;
+  padding: 10px 32px;
+  background: var(--accent);
+  border: none;
+  border-radius: 24px;
+  color: #0e0f13;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: opacity var(--transition);
+  margin-top: 6px;
+}
+.admin-submit-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.admin-submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Admin Result Message */
+.admin-result-msg {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-height: 1.4em;
+}
+.admin-result-msg.ok  { color: #6fcf7a; }
+.admin-result-msg.err { color: #e07070; }
+
+/* Placeholder Tabs */
+.admin-placeholder {
+  text-align: center;
+  padding: 48px 24px;
+}
+.admin-placeholder-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.admin-placeholder-note {
+  font-size: 0.85rem;
+  color: #484c5e;
+}
+
+/* ===== Auth Modal 多面板 ===== */
+.auth-modal-box {
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+/* 底部連結列 */
+.auth-footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.auth-link {
+  background: none;
+  border: none;
+  color: var(--border-focus);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  text-decoration: underline;
+  transition: color var(--transition);
+}
+.auth-link:hover { color: var(--accent); }
+.auth-link-sep {
+  color: var(--border);
+  font-size: 0.8rem;
+  user-select: none;
+}
+
+/* 返回按鈕 */
+.auth-back-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+  transition: color var(--transition);
+}
+.auth-back-btn:hover { color: var(--accent); }
+
+/* 提示文字 */
+.auth-hint-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+.auth-hint-text strong {
+  color: var(--text-primary);
+}
+
+/* 申請/找回 結果訊息 */
+.auth-result-msg {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+  min-height: 1.3em;
+}
+.auth-result-msg.ok  { color: #6fcf7a; }
+.auth-result-msg.err { color: #e07070; }
