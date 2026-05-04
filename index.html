@@ -1497,11 +1497,11 @@
         adminCreateBtn.disabled    = true;
         adminCreateBtn.textContent = '處理中…';
 
-        fetch(GAS_URL, {
+        fetch(GAS_WEBAPP_URL, {
           method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
           body:    JSON.stringify({
-            token:       API_TOKEN,
+            token:       GAS_API_TOKEN,
             action:      'create_user',
             account:     session.account,
             newAccount:  acc,
@@ -2152,7 +2152,7 @@
       function gasPost(payload, onSuccess, onError) {
         fetch(GAS_WEBAPP_URL, {
           method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
           body:    JSON.stringify(Object.assign({ token: GAS_API_TOKEN }, payload))
         })
         .then(function (r) { return r.text(); })
