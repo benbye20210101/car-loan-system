@@ -1104,14 +1104,14 @@ input.invalid, select.invalid {
 .captcha-row input { flex: 1; }
 
 .captcha-display {
-  min-width: 112px;
+  min-width: 130px;
   padding: 12px 12px;
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.28em;
   color: var(--accent);
   text-align: center;
   user-select: none;
@@ -1296,9 +1296,9 @@ input.invalid, select.invalid {
   .modal-box { padding: 28px 20px 32px; }
   .step2-modal-box { padding: 28px 18px 32px; }
   .captcha-display {
-    min-width: 90px;
-    font-size: 0.95rem;
-    letter-spacing: 0.16em;
+    min-width: 110px;
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
   }
 }
 

@@ -2226,6 +2226,8 @@
             showAuthPanel('verify');
           } else if (data.error === 'account_exists') {
             regEmailErr.textContent = '此 Email 已申請過帳號，請直接登入'; regEmailErr.classList.add('show');
+          } else if (data.error === 'phone_exists') {
+            regPhoneErr.textContent = '此手機號碼已被其他帳號使用，請確認或聯絡管理員'; regPhoneErr.classList.add('show');
           } else if (data.error === 'resend_cooldown') {
             regResult.textContent = '請稍候 ' + (data.waitSec || 60) + ' 秒後再重新寄送';
             regResult.classList.add('err');
