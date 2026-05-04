@@ -956,7 +956,7 @@ input.invalid, select.invalid {
   border-radius: var(--radius);
   box-shadow: 0 16px 60px rgba(0, 0, 0, 0.7);
   width: 100%;
-  max-width: 420px;
+  max-width: 460px;
   padding: 36px 36px 40px;
   position: relative;
   animation: fadeIn 0.28s ease;
@@ -1013,23 +1013,57 @@ input.invalid, select.invalid {
 .modal-form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 /* ── 登入框內文字加大加粗 ── */
 .modal-box .form-label {
-  font-size: 0.92rem;
+  font-size: 1.0rem;
   font-weight: 700;
 }
 
 .modal-box input[type="text"],
-.modal-box input[type="password"] {
-  font-size: 0.97rem;
+.modal-box input[type="password"],
+.modal-box input[type="email"],
+.modal-box input[type="tel"] {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1.05rem;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.modal-box input[type="text"]:focus,
+.modal-box input[type="password"]:focus,
+.modal-box input[type="email"]:focus,
+.modal-box input[type="tel"]:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(123,140,222,0.15);
+  background: #2b2f3d;
+}
+
+.modal-box input[type="text"]:hover,
+.modal-box input[type="password"]:hover,
+.modal-box input[type="email"]:hover,
+.modal-box input[type="tel"]:hover {
+  border-color: #4a5068;
+}
+
+.modal-box select {
+  font-size: 1.05rem;
+  padding: 13px 16px;
 }
 
 .modal-title {
-  font-size: 0.92rem !important;
+  font-size: 1.0rem !important;
 }
 
 /* ── 密碼顯示切換 ── */
@@ -1569,7 +1603,7 @@ input.invalid, select.invalid {
   border: none;
   color: var(--border-focus);
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   cursor: pointer;
   padding: 2px 4px;
   text-decoration: underline;
@@ -1578,7 +1612,7 @@ input.invalid, select.invalid {
 .auth-link:hover { color: var(--accent); }
 .auth-link-sep {
   color: var(--border);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   user-select: none;
 }
 
@@ -1588,7 +1622,7 @@ input.invalid, select.invalid {
   border: none;
   color: var(--text-secondary);
   font-family: inherit;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   cursor: pointer;
   padding: 0;
   margin-bottom: 12px;
@@ -1598,7 +1632,7 @@ input.invalid, select.invalid {
 
 /* 提示文字 */
 .auth-hint-text {
-  font-size: 0.85rem;
+  font-size: 0.93rem;
   color: var(--text-secondary);
   text-align: center;
   line-height: 1.6;
@@ -1611,7 +1645,7 @@ input.invalid, select.invalid {
 /* 申請/找回 結果訊息 */
 .auth-result-msg {
   margin-top: 12px;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 600;
   text-align: center;
   min-height: 1.3em;

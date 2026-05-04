@@ -798,7 +798,7 @@
           <label class="form-label"><span class="label-mark"></span>密碼</label>
           <div class="password-wrap">
             <input type="password" id="reg-password"
-                   placeholder="最少 6 碼，需含英文與數字" maxlength="50" autocomplete="new-password" />
+                   placeholder="英文大小寫+數字共6位以上" maxlength="50" autocomplete="new-password" />
             <button class="btn-eye" id="reg-pwd-eye" type="button" aria-label="切換密碼顯示">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
@@ -906,7 +906,7 @@
           <label class="form-label"><span class="label-mark"></span>新密碼</label>
           <div class="password-wrap">
             <input type="password" id="reset-new-pwd"
-                   placeholder="最少 6 碼，需含英文與數字" maxlength="50" autocomplete="new-password" />
+                   placeholder="英文大小寫+數字共6位以上" maxlength="50" autocomplete="new-password" />
             <button class="btn-eye" id="reset-pwd-eye" type="button" aria-label="切換密碼顯示">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
@@ -2155,7 +2155,17 @@
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify(Object.assign({ token: GAS_API_TOKEN }, payload))
         })
-        .then(function (r) { return r.json(); })
+        .then(function (r) { return r.text(); })
+        .then(function (text) {
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            console.error('[GAS 回傳非 JSON，可能是授權問題或未部署]\n', text.substring(0, 800));
+            var err = new Error('non_json');
+            err.rawText = text.substring(0, 200);
+            throw err;
+          }
+        })
         .then(onSuccess)
         .catch(onError || function () { alert('連線失敗，請確認網路或稍後再試。'); });
       }
@@ -2179,8 +2189,8 @@
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           regEmailErr.textContent = '請輸入有效的 Email'; regEmailErr.classList.add('show'); hasErr = true;
         }
-        if (!pwd || pwd.length < 6 || !/[a-zA-Z]/.test(pwd) || !/[0-9]/.test(pwd)) {
-          regPasswordErr.textContent = '密碼最少 6 碼且需含英文與數字'; regPasswordErr.classList.add('show'); hasErr = true;
+        if (!pwd || pwd.length < 6 || !/[A-Z]/.test(pwd) || !/[a-z]/.test(pwd) || !/[0-9]/.test(pwd)) {
+          regPasswordErr.textContent = '密碼須包含大寫英文、小寫英文及數字，共6碼以上'; regPasswordErr.classList.add('show'); hasErr = true;
         }
         if (pwd && conf && pwd !== conf) {
           regConfirmErr.textContent = '兩次密碼不一致'; regConfirmErr.classList.add('show'); hasErr = true;
@@ -2223,10 +2233,12 @@
             regResult.textContent = '申請失敗：' + (data.error || '未知錯誤');
             regResult.classList.add('err');
           }
-        }, function () {
+        }, function (err) {
           btnRegister.disabled    = false;
           btnRegister.textContent = '送出申請';
-          regResult.textContent = '連線失敗，請稍後再試。';
+          regResult.textContent = (err && err.message === 'non_json')
+            ? 'GAS 伺服器回應異常（可能需重新部署或完成 MailApp 授權），請聯絡管理員。'
+            : '連線失敗，請確認網路後再試。';
           regResult.classList.add('err');
         });
       });
@@ -2349,8 +2361,8 @@
         if (!code || code.length !== 6) {
           resetCodeErr.textContent = '請輸入 6 位數重設碼'; resetCodeErr.classList.add('show'); hasErr = true;
         }
-        if (!npwd || npwd.length < 6 || !/[a-zA-Z]/.test(npwd) || !/[0-9]/.test(npwd)) {
-          resetNewPwdErr.textContent = '密碼最少 6 碼且需含英文與數字'; resetNewPwdErr.classList.add('show'); hasErr = true;
+        if (!npwd || npwd.length < 6 || !/[A-Z]/.test(npwd) || !/[a-z]/.test(npwd) || !/[0-9]/.test(npwd)) {
+          resetNewPwdErr.textContent = '密碼須包含大寫英文、小寫英文及數字，共6碼以上'; resetNewPwdErr.classList.add('show'); hasErr = true;
         }
         if (npwd && cpwd && npwd !== cpwd) {
           resetConfirmErr.textContent = '兩次密碼不一致'; resetConfirmErr.classList.add('show'); hasErr = true;
@@ -2375,7 +2387,7 @@
               forgotPwd2Result.textContent = '重設碼已過期，請重新申請。';
               forgotPwd2Result.classList.add('err');
             } else if (data.error === 'weak_password') {
-              resetNewPwdErr.textContent = '密碼強度不足，最少 6 碼且需含英文與數字'; resetNewPwdErr.classList.add('show');
+              resetNewPwdErr.textContent = '密碼強度不足，須包含大寫英文、小寫英文及數字，共6碼以上'; resetNewPwdErr.classList.add('show');
             } else {
               forgotPwd2Result.textContent = '重設失敗：' + (data.error || '未知錯誤');
               forgotPwd2Result.classList.add('err');
