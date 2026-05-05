@@ -1321,6 +1321,7 @@
       var currentCaptcha     = '';
       var currentScCategory  = '低SC'; /* 第一步驟完成後由 computeScCategory() 設定 */
       var currentLoanType    = '';     /* 第一步驟貸款類型文字，供第二步驟零利率驗證使用 */
+      var cachedRates        = [];     /* 登入時由 get_startup_data 取得，供下拉選項顯示核准率 */
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
       var pendingFormData  = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
       var pendingStep1Items = null; /* 暫存第一步驟摘要，第二步驟提交後合併顯示 */
@@ -2002,11 +2003,18 @@
         } else {
           list = ['福斯財務', '合迪', '和潤', '日盛', '台新大安租', '中信資融', '裕融', '其他租賃公司'];
         }
+        /* 建立核准率查找表；工作表無該公司資料時預設 0% */
+        var rateMap = {};
+        for (var ri = 0; ri < cachedRates.length; ri++) {
+          var r = cachedRates[ri];
+          rateMap[r.company] = (r.rate !== null && r.rate !== undefined) ? r.rate : 0;
+        }
         s2SubmitCompany.innerHTML = '<option value="">─ 請選擇送件公司 ─</option>';
         list.forEach(function (val) {
           var o = document.createElement('option');
+          var rate = (rateMap[val] !== undefined) ? rateMap[val] : 0;
           o.value       = val;
-          o.textContent = val;
+          o.textContent = val + ' (' + rate + '%)';
           s2SubmitCompany.appendChild(o);
         });
       }
@@ -2177,7 +2185,8 @@
             startupBody.innerHTML = '<p class="startup-empty">無法取得公告資訊，請繼續使用系統</p>';
             return;
           }
-          renderStartupContent(data.notices || [], data.rates || []);
+          cachedRates = data.rates || [];
+          renderStartupContent(data.notices || [], cachedRates);
         }, function () {
           startupBody.innerHTML = '<p class="startup-empty">無法載入公告，請繼續使用系統</p>';
         });
