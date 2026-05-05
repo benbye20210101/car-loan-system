@@ -703,13 +703,15 @@
 
             <!-- K：送件借貸公司（必填，選項依SC類別動態更新） -->
             <div class="form-group">
-              <label class="form-label" for="s2-submit-company">
+              <label class="form-label">
                 <span class="label-mark"></span>送件借貸公司
               </label>
-              <div class="select-wrap">
-                <select id="s2-submit-company">
-                  <option value="">─ 請選擇送件公司 ─</option>
-                </select>
+              <div class="cs-wrap" id="s2-company-wrap">
+                <div class="cs-trigger" id="s2-company-trigger" tabindex="0">
+                  <span id="s2-company-selected"><span class="cs-placeholder">─ 請選擇送件公司 ─</span></span>
+                  <span class="cs-arrow">▾</span>
+                </div>
+                <ul class="cs-dropdown" id="s2-company-dropdown"></ul>
               </div>
               <span class="error-msg" id="s2-submit-company-error">請選擇送件借貸公司</span>
             </div>
@@ -1315,8 +1317,12 @@
       var s2ProductLoan      = document.getElementById('s2-product-loan');
       var s2SameCompanyGood  = document.getElementById('s2-same-company-good');
       var s2RecentGood       = document.getElementById('s2-recent-good');
-      var s2SubmitCompany    = document.getElementById('s2-submit-company');
+      var s2CompanyWrap      = document.getElementById('s2-company-wrap');
+      var s2CompanyTrigger   = document.getElementById('s2-company-trigger');
+      var s2CompanySelected  = document.getElementById('s2-company-selected');
+      var s2CompanyDropdown  = document.getElementById('s2-company-dropdown');
       var s2SubmitCompanyErr = document.getElementById('s2-submit-company-error');
+      var s2SubmitCompanyVal = '';
 
       var currentCaptcha     = '';
       var currentScCategory  = '低SC'; /* 第一步驟完成後由 computeScCategory() 設定 */
@@ -1978,11 +1984,12 @@
         s2ProductLoan.checked     = false;
         s2SameCompanyGood.checked = false;
         s2RecentGood.checked      = false;
-        s2SubmitCompany.value     = '';
+        s2SubmitCompanyVal = '';
+        updateCompanyTriggerDisplay('', 0);
+        s2CompanyTrigger.classList.remove('invalid');
         s2LoanRate.classList.remove('invalid');
         s2LoanRateErr.classList.remove('show');
         s2LoanRateZeroErr.classList.remove('show');
-        s2SubmitCompany.classList.remove('invalid');
         s2SubmitCompanyErr.classList.remove('show');
       }
 
@@ -1992,6 +1999,39 @@
         var newCarTypes = ['新車0利率', '新車有利率'];
         return (highBrands.indexOf(brand) !== -1 && newCarTypes.indexOf(loanType) !== -1) ? '高SC' : '低SC';
       }
+
+      /* ── 自製下拉：顯示已選項目 ── */
+      function updateCompanyTriggerDisplay(name, rate) {
+        if (!name) {
+          s2CompanySelected.innerHTML = '<span class="cs-placeholder">─ 請選擇送件公司 ─</span>';
+        } else {
+          s2CompanySelected.innerHTML =
+            '<span class="cs-sel-name">' + escHtml(name) + '</span>' +
+            '<span class="cs-sel-rate">核准補件率 ' + rate + '%</span>';
+        }
+      }
+
+      /* ── 自製下拉：開啟 / 關閉 ── */
+      function openCompanyDropdown() {
+        s2CompanyDropdown.style.display = '';
+        s2CompanyTrigger.classList.add('open');
+      }
+      function closeCompanyDropdown() {
+        s2CompanyDropdown.style.display = 'none';
+        s2CompanyTrigger.classList.remove('open');
+      }
+
+      s2CompanyTrigger.addEventListener('click', function () {
+        if (s2CompanyDropdown.style.display === 'none') openCompanyDropdown();
+        else closeCompanyDropdown();
+      });
+      s2CompanyTrigger.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCompanyDropdown(); }
+        if (e.key === 'Escape') closeCompanyDropdown();
+      });
+      document.addEventListener('click', function (e) {
+        if (!s2CompanyWrap.contains(e.target)) closeCompanyDropdown();
+      });
 
       /* ── 依 SC 類別＋貸款類型動態更新「送件借貸公司」下拉選項 ── */
       function updateSubmitCompanyOptions(scCategory, loanType) {
@@ -2009,14 +2049,33 @@
           var r = cachedRates[ri];
           rateMap[r.company] = (r.rate !== null && r.rate !== undefined) ? r.rate : 0;
         }
-        s2SubmitCompany.innerHTML = '<option value="">─ 請選擇送件公司 ─</option>';
+        s2SubmitCompanyVal = '';
+        updateCompanyTriggerDisplay('', 0);
+        s2CompanyDropdown.innerHTML = '';
         list.forEach(function (val) {
-          var o = document.createElement('option');
           var rate = (rateMap[val] !== undefined) ? rateMap[val] : 0;
-          o.value       = val;
-          o.textContent = val + ' (核准補件率 ' + rate + '%)';
-          s2SubmitCompany.appendChild(o);
+          var li = document.createElement('li');
+          li.className = 'cs-option';
+          li.dataset.value = val;
+          li.innerHTML =
+            '<span class="cs-opt-name">' + escHtml(val) + '</span>' +
+            '<span class="cs-opt-rate">' +
+              '<span class="cs-opt-rate-label">核准補件率</span>' +
+              '<span class="cs-opt-rate-value">' + rate + '%</span>' +
+            '</span>';
+          li.addEventListener('click', function () {
+            s2SubmitCompanyVal = val;
+            updateCompanyTriggerDisplay(val, rate);
+            s2CompanyDropdown.querySelectorAll('.cs-option').forEach(function (el) {
+              el.classList.toggle('selected', el.dataset.value === val);
+            });
+            closeCompanyDropdown();
+            s2CompanyTrigger.classList.remove('invalid');
+            s2SubmitCompanyErr.classList.remove('show');
+          });
+          s2CompanyDropdown.appendChild(li);
         });
+        closeCompanyDropdown();
       }
 
       function openStep2() {
@@ -2961,9 +3020,9 @@
         /* J 近3年有與借貸公司正常往來還款：選填 */
         var recentGoodVal      = s2RecentGood.checked      ? '是' : '';
         /* K 送件借貸公司：必填 */
-        var submitCompanyVal   = s2SubmitCompany.value;
+        var submitCompanyVal   = s2SubmitCompanyVal;
         var submitCompanyOk    = submitCompanyVal !== '';
-        s2SubmitCompany.classList.toggle('invalid', !submitCompanyOk);
+        s2CompanyTrigger.classList.toggle('invalid', !submitCompanyOk);
         s2SubmitCompanyErr.classList.toggle('show', !submitCompanyOk);
         if (!submitCompanyOk) hasErr = true;
 
