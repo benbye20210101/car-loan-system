@@ -2229,8 +2229,9 @@
       }
 
       /* ── 登入後資訊彈窗（公告 + 核准補件率）── */
-      var startupOverlay = document.getElementById('startup-overlay');
-      var startupBody    = document.getElementById('startup-modal-body');
+      var startupOverlay   = document.getElementById('startup-overlay');
+      var startupBody      = document.getElementById('startup-modal-body');
+      var btnStartupEnter  = document.getElementById('btn-startup-enter');
 
       function escHtml(s) {
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -2238,16 +2239,20 @@
 
       function openStartupModal() {
         startupBody.innerHTML = '<div class="startup-loading">載入中…</div>';
+        btnStartupEnter.disabled = true;
         startupOverlay.classList.add('show');
         gasPost({ action: 'get_startup_data' }, function (data) {
           if (!data.success) {
             startupBody.innerHTML = '<p class="startup-empty">無法取得公告資訊，請繼續使用系統</p>';
+            btnStartupEnter.disabled = false;
             return;
           }
           cachedRates = data.rates || [];
           renderStartupContent(data.notices || [], cachedRates);
+          btnStartupEnter.disabled = false;
         }, function () {
           startupBody.innerHTML = '<p class="startup-empty">無法載入公告，請繼續使用系統</p>';
+          btnStartupEnter.disabled = false;
         });
       }
 
@@ -2320,7 +2325,7 @@
         }, 2000);
       }
 
-      document.getElementById('btn-startup-enter').addEventListener('click', closeStartupModal);
+      btnStartupEnter.addEventListener('click', closeStartupModal);
 
       /* ── GAS fetch 共用函式 ── */
       function gasPost(payload, onSuccess, onError) {

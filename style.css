@@ -1367,7 +1367,7 @@ input.invalid, select.invalid {
   padding: 4px 0;
   z-index: 60;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  max-height: 280px;
+  max-height: 420px;
   overflow-y: auto;
 }
 
@@ -1635,9 +1635,15 @@ input.invalid, select.invalid {
   font-weight: 700;
   letter-spacing: 0.08em;
   cursor: pointer;
-  transition: opacity var(--transition);
+  transition: opacity var(--transition), background var(--transition);
 }
-.btn-startup-enter:hover { opacity: 0.82; }
+.btn-startup-enter:hover:not(:disabled) { opacity: 0.82; }
+.btn-startup-enter:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 1;
+}
 
 @media (max-width: 540px) {
   .startup-modal { max-height: 90vh; }
