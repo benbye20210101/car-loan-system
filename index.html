@@ -703,15 +703,13 @@
 
             <!-- K：送件借貸公司（必填，選項依SC類別動態更新） -->
             <div class="form-group">
-              <label class="form-label">
+              <label class="form-label" for="s2-submit-company">
                 <span class="label-mark"></span>送件借貸公司
               </label>
-              <div class="cs-wrap" id="s2-company-wrap">
-                <div class="cs-trigger" id="s2-company-trigger" tabindex="0">
-                  <span id="s2-company-selected"><span class="cs-placeholder">─ 請選擇送件公司 ─</span></span>
-                  <span class="cs-arrow">▾</span>
-                </div>
-                <ul class="cs-dropdown" id="s2-company-dropdown"></ul>
+              <div class="select-wrap">
+                <select id="s2-submit-company">
+                  <option value="">─ 請選擇送件公司 ─</option>
+                </select>
               </div>
               <span class="error-msg" id="s2-submit-company-error">請選擇送件借貸公司</span>
             </div>
@@ -1317,14 +1315,8 @@
       var s2ProductLoan      = document.getElementById('s2-product-loan');
       var s2SameCompanyGood  = document.getElementById('s2-same-company-good');
       var s2RecentGood       = document.getElementById('s2-recent-good');
-      var s2CompanyWrap      = document.getElementById('s2-company-wrap');
-      var s2CompanyTrigger   = document.getElementById('s2-company-trigger');
-      var s2CompanySelected  = document.getElementById('s2-company-selected');
-      var s2CompanyDropdown  = document.getElementById('s2-company-dropdown');
+      var s2SubmitCompany    = document.getElementById('s2-submit-company');
       var s2SubmitCompanyErr = document.getElementById('s2-submit-company-error');
-      /* 將下拉移至 body 最外層（portal），完全跳脫 modal overlay 的 stacking context 與 overflow */
-      document.body.appendChild(s2CompanyDropdown);
-      var s2SubmitCompanyVal = '';
 
       var currentCaptcha     = '';
       var currentScCategory  = '低SC'; /* 第一步驟完成後由 computeScCategory() 設定 */
@@ -1986,12 +1978,11 @@
         s2ProductLoan.checked     = false;
         s2SameCompanyGood.checked = false;
         s2RecentGood.checked      = false;
-        s2SubmitCompanyVal = '';
-        updateCompanyTriggerDisplay('', 0);
-        s2CompanyTrigger.classList.remove('invalid');
+        s2SubmitCompany.value = '';
         s2LoanRate.classList.remove('invalid');
         s2LoanRateErr.classList.remove('show');
         s2LoanRateZeroErr.classList.remove('show');
+        s2SubmitCompany.classList.remove('invalid');
         s2SubmitCompanyErr.classList.remove('show');
       }
 
@@ -2001,47 +1992,6 @@
         var newCarTypes = ['新車0利率', '新車有利率'];
         return (highBrands.indexOf(brand) !== -1 && newCarTypes.indexOf(loanType) !== -1) ? '高SC' : '低SC';
       }
-
-      /* ── 自製下拉：顯示已選項目 ── */
-      function updateCompanyTriggerDisplay(name, rate) {
-        if (!name) {
-          s2CompanySelected.innerHTML = '<span class="cs-placeholder">─ 請選擇送件公司 ─</span>';
-        } else {
-          s2CompanySelected.innerHTML =
-            '<span class="cs-sel-name">' + escHtml(name) + '</span>' +
-            '<span class="cs-sel-rate">核准補件率 ' + rate + '%</span>';
-        }
-      }
-
-      /* ── 自製下拉：開啟 / 關閉 ── */
-      function openCompanyDropdown() {
-        var rect = s2CompanyTrigger.getBoundingClientRect();
-        s2CompanyDropdown.style.top   = (rect.bottom + 4) + 'px';
-        s2CompanyDropdown.style.left  = rect.left + 'px';
-        s2CompanyDropdown.style.width = rect.width + 'px';
-        s2CompanyDropdown.style.display = 'block';
-        s2CompanyTrigger.classList.add('open');
-      }
-      function closeCompanyDropdown() {
-        s2CompanyDropdown.style.display = 'none';
-        s2CompanyTrigger.classList.remove('open');
-      }
-
-      s2CompanyTrigger.addEventListener('click', function () {
-        if (s2CompanyTrigger.classList.contains('open')) closeCompanyDropdown();
-        else openCompanyDropdown();
-      });
-      s2CompanyTrigger.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCompanyDropdown(); }
-        if (e.key === 'Escape') closeCompanyDropdown();
-      });
-      document.addEventListener('click', function (e) {
-        if (!s2CompanyWrap.contains(e.target) && !s2CompanyDropdown.contains(e.target)) closeCompanyDropdown();
-      });
-      /* 捲動時關閉，避免 fixed 定位的下拉與 trigger 位置脫節 */
-      step2Overlay.addEventListener('scroll', function () {
-        if (s2CompanyTrigger.classList.contains('open')) closeCompanyDropdown();
-      });
 
       /* ── 依 SC 類別＋貸款類型動態更新「送件借貸公司」下拉選項 ── */
       function updateSubmitCompanyOptions(scCategory, loanType) {
@@ -2059,33 +2009,14 @@
           var r = cachedRates[ri];
           rateMap[r.company] = (r.rate !== null && r.rate !== undefined) ? r.rate : 0;
         }
-        s2SubmitCompanyVal = '';
-        updateCompanyTriggerDisplay('', 0);
-        s2CompanyDropdown.innerHTML = '';
+        s2SubmitCompany.innerHTML = '<option value="">─ 請選擇送件公司 ─</option>';
         list.forEach(function (val) {
           var rate = (rateMap[val] !== undefined) ? rateMap[val] : 0;
-          var li = document.createElement('li');
-          li.className = 'cs-option';
-          li.dataset.value = val;
-          li.innerHTML =
-            '<span class="cs-opt-name">' + escHtml(val) + '</span>' +
-            '<span class="cs-opt-rate">' +
-              '<span class="cs-opt-rate-label">核准補件率</span>' +
-              '<span class="cs-opt-rate-value">' + rate + '%</span>' +
-            '</span>';
-          li.addEventListener('click', function () {
-            s2SubmitCompanyVal = val;
-            updateCompanyTriggerDisplay(val, rate);
-            s2CompanyDropdown.querySelectorAll('.cs-option').forEach(function (el) {
-              el.classList.toggle('selected', el.dataset.value === val);
-            });
-            closeCompanyDropdown();
-            s2CompanyTrigger.classList.remove('invalid');
-            s2SubmitCompanyErr.classList.remove('show');
-          });
-          s2CompanyDropdown.appendChild(li);
+          var o = document.createElement('option');
+          o.value       = val;
+          o.textContent = val + '  (核補率 ' + rate + '%)';
+          s2SubmitCompany.appendChild(o);
         });
-        closeCompanyDropdown();
       }
 
       function openStep2() {
@@ -3035,9 +2966,9 @@
         /* J 近3年有與借貸公司正常往來還款：選填 */
         var recentGoodVal      = s2RecentGood.checked      ? '是' : '';
         /* K 送件借貸公司：必填 */
-        var submitCompanyVal   = s2SubmitCompanyVal;
+        var submitCompanyVal   = s2SubmitCompany.value;
         var submitCompanyOk    = submitCompanyVal !== '';
-        s2CompanyTrigger.classList.toggle('invalid', !submitCompanyOk);
+        s2SubmitCompany.classList.toggle('invalid', !submitCompanyOk);
         s2SubmitCompanyErr.classList.toggle('show', !submitCompanyOk);
         if (!submitCompanyOk) hasErr = true;
 
