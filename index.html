@@ -969,6 +969,19 @@
   <!-- ===== 頻率限制警示框 ===== -->
   <div class="toast-ratelimit" id="toast-ratelimit">請求過於頻繁，請稍後再試</div>
 
+  <!-- ===== 登入後資訊彈窗（公告 + 核准補件率）===== -->
+  <div class="startup-overlay" id="startup-overlay">
+    <div class="startup-modal">
+      <p class="startup-modal-title">系統公告與核准補件率</p>
+      <div class="startup-modal-body" id="startup-modal-body">
+        <div class="startup-loading">載入中…</div>
+      </div>
+      <div class="startup-modal-footer">
+        <button class="btn-startup-enter" id="btn-startup-enter" type="button">了解，進入試算</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== 等待動畫遮罩 ===== -->
   <div class="loading-overlay" id="loading-overlay">
     <div class="loading-scene">
@@ -2148,6 +2161,74 @@
         }, 1000);
       }
 
+      /* ── 登入後資訊彈窗（公告 + 核准補件率）── */
+      var startupOverlay = document.getElementById('startup-overlay');
+      var startupBody    = document.getElementById('startup-modal-body');
+
+      function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function openStartupModal() {
+        startupBody.innerHTML = '<div class="startup-loading">載入中…</div>';
+        startupOverlay.classList.add('show');
+        gasPost({ action: 'get_startup_data' }, function (data) {
+          if (!data.success) {
+            startupBody.innerHTML = '<p class="startup-empty">無法取得公告資訊，請繼續使用系統</p>';
+            return;
+          }
+          renderStartupContent(data.notices || [], data.rates || []);
+        }, function () {
+          startupBody.innerHTML = '<p class="startup-empty">無法載入公告，請繼續使用系統</p>';
+        });
+      }
+
+      function renderStartupContent(notices, rates) {
+        var html = '';
+
+        /* 公告區 */
+        html += '<div class="startup-section">';
+        html += '<p class="startup-section-title">系統公告</p>';
+        if (notices.length === 0) {
+          html += '<p class="startup-empty">目前無公告</p>';
+        } else {
+          html += '<ul class="startup-notice-list">';
+          for (var ni = 0; ni < notices.length; ni++) {
+            html += '<li class="startup-notice-item">' + escHtml(notices[ni].content) + '</li>';
+          }
+          html += '</ul>';
+        }
+        html += '</div>';
+
+        /* 核准補件率區 */
+        html += '<div class="startup-section">';
+        html += '<p class="startup-section-title">各公司核准補件率</p>';
+        if (rates.length === 0) {
+          html += '<p class="startup-empty">目前無資料</p>';
+        } else {
+          html += '<table class="startup-rate-table"><thead><tr><th>貸款公司</th><th>核准補件率</th></tr></thead><tbody>';
+          for (var ri = 0; ri < rates.length; ri++) {
+            var rDisplay = (rates[ri].rate !== null && rates[ri].rate !== undefined) ? rates[ri].rate + '%' : '─';
+            html += '<tr><td>' + escHtml(rates[ri].company) + '</td><td>' + rDisplay + '</td></tr>';
+          }
+          html += '</tbody></table>';
+        }
+        html += '</div>';
+
+        startupBody.innerHTML = html;
+      }
+
+      function closeStartupModal() {
+        startupOverlay.classList.remove('show');
+        toastSuccess.classList.add('show');
+        setTimeout(function () {
+          toastSuccess.classList.remove('show');
+          openStep2();
+        }, 2000);
+      }
+
+      document.getElementById('btn-startup-enter').addEventListener('click', closeStartupModal);
+
       /* ── GAS fetch 共用函式 ── */
       function gasPost(payload, onSuccess, onError) {
         fetch(GAS_WEBAPP_URL, {
@@ -3144,11 +3225,8 @@
                 pendingStep1Items = pendingItems ? pendingItems.slice() : [];
                 pendingItems    = null;
                 pendingFormData = null;
-                toastSuccess.classList.add('show');
-                setTimeout(function () {
-                  toastSuccess.classList.remove('show');
-                  openStep2();
-                }, 3000);
+                /* 顯示登入後資訊彈窗（公告+核准補件率）；關閉後才進入試算 */
+                openStartupModal();
               } else {
                 /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
                 generateCaptcha();

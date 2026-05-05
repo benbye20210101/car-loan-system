@@ -1302,6 +1302,159 @@ input.invalid, select.invalid {
   }
 }
 
+/* ===== 登入後資訊彈窗（公告 + 核准補件率）===== */
+.startup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.startup-overlay.show { display: flex; }
+
+.startup-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.75);
+  width: 100%;
+  max-width: 580px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: fadeIn 0.28s ease;
+  overflow: hidden;
+}
+.startup-modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #7b8cde 100%);
+}
+
+.startup-modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.1em;
+  padding: 22px 28px 16px;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+
+.startup-modal-body {
+  padding: 20px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.startup-section { margin-bottom: 24px; }
+.startup-section:last-child { margin-bottom: 0; }
+
+.startup-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+
+.startup-notice-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.startup-notice-item {
+  background: rgba(100, 160, 220, 0.07);
+  border: 1px solid rgba(100, 160, 220, 0.18);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.startup-rate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.startup-rate-table th {
+  text-align: left;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.startup-rate-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+.startup-rate-table tr:last-child td { border-bottom: none; }
+.startup-rate-table td:last-child {
+  text-align: right;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.startup-empty {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+  margin: 0;
+}
+
+.startup-loading {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.startup-modal-footer {
+  padding: 16px 28px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-startup-enter {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px 36px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+.btn-startup-enter:hover { opacity: 0.82; }
+
+@media (max-width: 540px) {
+  .startup-modal { max-height: 90vh; }
+  .startup-modal-title { padding: 18px 18px 14px; font-size: 0.98rem; }
+  .startup-modal-body { padding: 16px 18px; }
+  .startup-modal-footer { padding: 14px 18px 18px; }
+}
+
 /* ===== 等待動畫遮罩 ===== */
 .loading-overlay {
   display: none;
