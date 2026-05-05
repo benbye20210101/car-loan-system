@@ -1490,9 +1490,9 @@ input.invalid, select.invalid {
   text-align: right;
   font-weight: 700;
   font-size: 1.05rem;
-  color: #ff7575;
+  color: #e05555;
   letter-spacing: 0.04em;
-  text-shadow: 0 0 10px rgba(255, 100, 100, 0.4);
+  text-shadow: 0 0 6px rgba(180, 50, 50, 0.25);
 }
 
 .startup-empty {
