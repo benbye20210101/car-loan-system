@@ -1322,6 +1322,8 @@
       var s2CompanySelected  = document.getElementById('s2-company-selected');
       var s2CompanyDropdown  = document.getElementById('s2-company-dropdown');
       var s2SubmitCompanyErr = document.getElementById('s2-submit-company-error');
+      /* 將下拉移至 body 最外層（portal），完全跳脫 modal overlay 的 stacking context 與 overflow */
+      document.body.appendChild(s2CompanyDropdown);
       var s2SubmitCompanyVal = '';
 
       var currentCaptcha     = '';
