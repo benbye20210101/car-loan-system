@@ -2013,7 +2013,7 @@
 
       /* ── 自製下拉：開啟 / 關閉 ── */
       function openCompanyDropdown() {
-        s2CompanyDropdown.style.display = '';
+        s2CompanyDropdown.style.display = 'block';
         s2CompanyTrigger.classList.add('open');
       }
       function closeCompanyDropdown() {
@@ -2022,8 +2022,8 @@
       }
 
       s2CompanyTrigger.addEventListener('click', function () {
-        if (s2CompanyDropdown.style.display === 'none') openCompanyDropdown();
-        else closeCompanyDropdown();
+        if (s2CompanyTrigger.classList.contains('open')) closeCompanyDropdown();
+        else openCompanyDropdown();
       });
       s2CompanyTrigger.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCompanyDropdown(); }
