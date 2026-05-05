@@ -2183,6 +2183,23 @@
         });
       }
 
+      /* 公告條目調色盤：左邊框/背景/外框各一組 */
+      var NOTICE_PALETTES = [
+        { lc: '#4dd0e1', bg: 'rgba(77,208,225,0.08)',  bc: 'rgba(77,208,225,0.25)'  },
+        { lc: '#a78bfa', bg: 'rgba(167,139,250,0.08)', bc: 'rgba(167,139,250,0.25)' },
+        { lc: '#6ee7b7', bg: 'rgba(110,231,183,0.08)', bc: 'rgba(110,231,183,0.25)' },
+        { lc: '#fb7185', bg: 'rgba(251,113,133,0.08)', bc: 'rgba(251,113,133,0.25)' },
+        { lc: '#60a5fa', bg: 'rgba(96,165,250,0.08)',  bc: 'rgba(96,165,250,0.25)'  },
+        { lc: '#f97316', bg: 'rgba(249,115,22,0.08)',  bc: 'rgba(249,115,22,0.25)'  }
+      ];
+
+      /* 貸款公司名稱調色盤 */
+      var COMPANY_COLORS = [
+        '#7ec8e3','#98de9a','#e88fca','#ffd166',
+        '#a8c8ff','#ff9f7f','#b5ead7','#f7a35c',
+        '#ffb7c5','#c3f0ca','#ffc8a0','#c8b8ff'
+      ];
+
       function renderStartupContent(notices, rates) {
         var html = '';
 
@@ -2194,7 +2211,11 @@
         } else {
           html += '<ul class="startup-notice-list">';
           for (var ni = 0; ni < notices.length; ni++) {
-            html += '<li class="startup-notice-item">' + escHtml(notices[ni].content) + '</li>';
+            var np = NOTICE_PALETTES[ni % NOTICE_PALETTES.length];
+            var niStyle = 'border-left-color:' + np.lc + ';background:' + np.bg + ';border-color:' + np.bc;
+            html += '<li class="startup-notice-item" style="' + niStyle + '">'
+                  + '<span class="notice-num" style="background:' + np.lc + '">' + (ni + 1) + '</span>'
+                  + escHtml(notices[ni].content) + '</li>';
           }
           html += '</ul>';
         }
@@ -2209,7 +2230,11 @@
           html += '<table class="startup-rate-table"><thead><tr><th>貸款公司</th><th>核准補件率</th></tr></thead><tbody>';
           for (var ri = 0; ri < rates.length; ri++) {
             var rDisplay = (rates[ri].rate !== null && rates[ri].rate !== undefined) ? rates[ri].rate + '%' : '─';
-            html += '<tr><td>' + escHtml(rates[ri].company) + '</td><td>' + rDisplay + '</td></tr>';
+            var cc = COMPANY_COLORS[ri % COMPANY_COLORS.length];
+            html += '<tr>'
+                  + '<td><span class="company-dot" style="background:' + cc + '"></span>'
+                  + '<span style="color:' + cc + '">' + escHtml(rates[ri].company) + '</span></td>'
+                  + '<td>' + rDisplay + '</td></tr>';
           }
           html += '</tbody></table>';
         }
