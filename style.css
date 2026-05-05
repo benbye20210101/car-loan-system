@@ -1307,9 +1307,9 @@ input.invalid, select.invalid {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(4px);
-  z-index: 200;
+  z-index: 210;
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -1335,7 +1335,7 @@ input.invalid, select.invalid {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent) 0%, #7b8cde 100%);
+  background: linear-gradient(90deg, #f5c842 0%, #4dd0e1 100%);
 }
 
 .startup-modal-title {
@@ -1349,21 +1349,36 @@ input.invalid, select.invalid {
 }
 
 .startup-modal-body {
-  padding: 20px 28px;
+  padding: 18px 24px;
   overflow-y: auto;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.startup-section { margin-bottom: 24px; }
-.startup-section:last-child { margin-bottom: 0; }
+/* ── 公告區塊 ── */
+.startup-section--notice {
+  background: rgba(245, 200, 66, 0.05);
+  border: 1px solid rgba(245, 200, 66, 0.22);
+  border-radius: 8px;
+  padding: 14px 18px 16px;
+}
 
-.startup-section-title {
-  font-size: 0.78rem;
+.startup-section--notice .startup-section-title {
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--text-muted);
-  text-transform: uppercase;
+  color: #f5c842;
   margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.startup-section--notice .startup-section-title::before {
+  content: '📢';
+  font-size: 0.85rem;
+  letter-spacing: 0;
 }
 
 .startup-notice-list {
@@ -1372,45 +1387,81 @@ input.invalid, select.invalid {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .startup-notice-item {
-  background: rgba(100, 160, 220, 0.07);
-  border: 1px solid rgba(100, 160, 220, 0.18);
-  border-left: 3px solid var(--accent);
+  background: rgba(245, 200, 66, 0.07);
+  border: 1px solid rgba(245, 200, 66, 0.18);
+  border-left: 3px solid #f5c842;
   border-radius: 6px;
   padding: 10px 14px;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  line-height: 1.6;
+  font-size: 0.93rem;
+  font-weight: 500;
+  color: #f0e6b8;
+  line-height: 1.65;
   white-space: pre-wrap;
+}
+
+/* ── 核准補件率區塊 ── */
+.startup-section--rates {
+  background: rgba(77, 208, 225, 0.04);
+  border: 1px solid rgba(77, 208, 225, 0.2);
+  border-radius: 8px;
+  padding: 14px 18px 16px;
+}
+
+.startup-section--rates .startup-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #4dd0e1;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.startup-section--rates .startup-section-title::before {
+  content: '📊';
+  font-size: 0.85rem;
+  letter-spacing: 0;
 }
 
 .startup-rate-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+}
+.startup-rate-table thead tr {
+  border-bottom: 1px solid rgba(77, 208, 225, 0.25);
 }
 .startup-rate-table th {
   text-align: left;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid var(--border);
-  color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  padding: 7px 12px;
+  background: rgba(77, 208, 225, 0.06);
+  color: #4dd0e1;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
+.startup-rate-table th:last-child { text-align: right; }
+.startup-rate-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.startup-rate-table tbody tr:last-child { border-bottom: none; }
+.startup-rate-table tbody tr:hover td { background: rgba(255, 255, 255, 0.03); }
 .startup-rate-table td {
-  padding: 9px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: var(--text-primary);
+  padding: 10px 12px;
+  color: #e8eaf0;
+  font-size: 0.93rem;
+  font-weight: 600;
 }
-.startup-rate-table tr:last-child td { border-bottom: none; }
 .startup-rate-table td:last-child {
   text-align: right;
   font-weight: 700;
-  color: var(--accent);
+  font-size: 1.02rem;
+  color: #f5c842;
+  letter-spacing: 0.04em;
 }
 
 .startup-empty {
@@ -1451,8 +1502,10 @@ input.invalid, select.invalid {
 @media (max-width: 540px) {
   .startup-modal { max-height: 90vh; }
   .startup-modal-title { padding: 18px 18px 14px; font-size: 0.98rem; }
-  .startup-modal-body { padding: 16px 18px; }
+  .startup-modal-body { padding: 14px 16px; gap: 12px; }
   .startup-modal-footer { padding: 14px 18px 18px; }
+  .startup-section--notice,
+  .startup-section--rates { padding: 12px 14px 14px; }
 }
 
 /* ===== 等待動畫遮罩 ===== */
