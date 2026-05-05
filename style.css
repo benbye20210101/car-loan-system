@@ -1357,16 +1357,14 @@ input.invalid, select.invalid {
 
 .cs-dropdown {
   display: none;
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0; right: 0;
+  position: fixed;
   background: var(--bg-input);
   border: 1px solid var(--border-focus);
   border-radius: var(--radius-sm);
   list-style: none;
   padding: 4px 0;
-  z-index: 60;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 350;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   max-height: 420px;
   overflow-y: auto;
 }

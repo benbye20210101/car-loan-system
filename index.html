@@ -2013,6 +2013,10 @@
 
       /* ── 自製下拉：開啟 / 關閉 ── */
       function openCompanyDropdown() {
+        var rect = s2CompanyTrigger.getBoundingClientRect();
+        s2CompanyDropdown.style.top   = (rect.bottom + 4) + 'px';
+        s2CompanyDropdown.style.left  = rect.left + 'px';
+        s2CompanyDropdown.style.width = rect.width + 'px';
         s2CompanyDropdown.style.display = 'block';
         s2CompanyTrigger.classList.add('open');
       }
@@ -2030,7 +2034,11 @@
         if (e.key === 'Escape') closeCompanyDropdown();
       });
       document.addEventListener('click', function (e) {
-        if (!s2CompanyWrap.contains(e.target)) closeCompanyDropdown();
+        if (!s2CompanyWrap.contains(e.target) && !s2CompanyDropdown.contains(e.target)) closeCompanyDropdown();
+      });
+      /* 捲動時關閉，避免 fixed 定位的下拉與 trigger 位置脫節 */
+      step2Overlay.addEventListener('scroll', function () {
+        if (s2CompanyTrigger.classList.contains('open')) closeCompanyDropdown();
       });
 
       /* ── 依 SC 類別＋貸款類型動態更新「送件借貸公司」下拉選項 ── */
