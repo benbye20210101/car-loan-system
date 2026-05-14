@@ -486,6 +486,11 @@ input.invalid, select.invalid {
   text-shadow: none;
   color: transparent;
   transition: box-shadow 0.26s ease, transform 0.18s ease, background 0s;
+  /* 長按偵測：防止瀏覽器原生長按選單干擾 */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* ── 黃金 LED 光圈（::before） ── */

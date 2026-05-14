@@ -2003,8 +2003,9 @@
       }
 
       /* 長按偵測 */
-      btnCalc.addEventListener('pointerdown', function () {
+      btnCalc.addEventListener('pointerdown', function (e) {
         if (!isFormEmpty()) return;
+        e.preventDefault(); /* 阻止瀏覽器原生長按選單（iOS/Android） */
         btnCalc.classList.add('lp-hold');
         adminLongPressTimer = setTimeout(function () {
           adminLongPressTimer = null;
@@ -2013,7 +2014,8 @@
           openAdminLoginModal();
         }, 5000);
       });
-      ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+      /* 不含 pointerleave：行動端手指輕移即觸發 leave 會誤取消計時 */
+      ['pointerup', 'pointercancel'].forEach(function (ev) {
         btnCalc.addEventListener(ev, function () {
           if (adminLongPressTimer) {
             clearTimeout(adminLongPressTimer);
@@ -2022,6 +2024,8 @@
           btnCalc.classList.remove('lp-hold');
         });
       });
+      /* 阻止右鍵 / 長按系統選單打斷計時 */
+      btnCalc.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
       /* 關閉 ADMIN 登入 modal */
       adminLoginClose.addEventListener('click', closeAdminLoginModal);
