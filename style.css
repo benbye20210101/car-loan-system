@@ -1423,8 +1423,8 @@ input.invalid, select.invalid {
 
 /* ── 核准補件率區塊 ── */
 .startup-section--rates {
-  background: rgba(77, 208, 225, 0.04);
-  border: 1px solid rgba(77, 208, 225, 0.2);
+  background: rgba(91, 141, 184, 0.04);
+  border: 1px solid rgba(91, 141, 184, 0.22);
   border-radius: 8px;
   padding: 14px 18px 16px;
 }
@@ -1433,16 +1433,17 @@ input.invalid, select.invalid {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #4dd0e1;
+  color: #7aaac8;
   margin: 0 0 12px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .startup-section--rates .startup-section-title::before {
-  content: '📊';
-  font-size: 0.85rem;
+  content: '▪';
+  font-size: 1rem;
   letter-spacing: 0;
+  color: #5b8db8;
 }
 
 .startup-rate-table {
@@ -1451,13 +1452,13 @@ input.invalid, select.invalid {
   font-size: 0.9rem;
 }
 .startup-rate-table thead tr {
-  border-bottom: 1px solid rgba(77, 208, 225, 0.25);
+  border-bottom: 1px solid rgba(91, 141, 184, 0.3);
 }
 .startup-rate-table th {
   text-align: left;
   padding: 7px 12px;
-  background: rgba(77, 208, 225, 0.06);
-  color: #4dd0e1;
+  background: rgba(91, 141, 184, 0.07);
+  color: #7aaac8;
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -1483,17 +1484,21 @@ input.invalid, select.invalid {
   display: inline-block;
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: 2px;
   flex-shrink: 0;
-  box-shadow: 0 0 5px currentColor;
+  opacity: 0.85;
+}
+.company-name-text {
+  color: #b8ccd8;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 .startup-rate-table td:last-child {
   text-align: right;
   font-weight: 700;
   font-size: 1.05rem;
-  color: #e05555;
-  letter-spacing: 0.04em;
-  text-shadow: 0 0 6px rgba(180, 50, 50, 0.25);
+  color: #6ab4c8;
+  letter-spacing: 0.06em;
 }
 
 .startup-empty {

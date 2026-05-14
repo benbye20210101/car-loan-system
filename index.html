@@ -2207,11 +2207,10 @@
         { lc: '#f97316', bg: 'rgba(249,115,22,0.08)',  bc: 'rgba(249,115,22,0.25)'  }
       ];
 
-      /* 貸款公司名稱調色盤 */
+      /* 貸款公司名稱調色盤：鋼鐵藍／深青藍系，同色溫但可區分 */
       var COMPANY_COLORS = [
-        '#7ec8e3','#98de9a','#e88fca','#ffd166',
-        '#a8c8ff','#ff9f7f','#b5ead7','#f7a35c',
-        '#ffb7c5','#c3f0ca','#ffc8a0','#c8b8ff'
+        '#5b8db8','#4a9a8a','#6278a8','#4a8898',
+        '#5578a0','#3d8878','#6882b0','#4a7898'
       ];
 
       function renderStartupContent(notices, rates) {
@@ -2246,8 +2245,8 @@
             var rDisplay = (rates[ri].rate !== null && rates[ri].rate !== undefined) ? rates[ri].rate + '%' : '─';
             var cc = COMPANY_COLORS[ri % COMPANY_COLORS.length];
             html += '<tr>'
-                  + '<td><span class="company-dot" style="background:' + cc + '"></span>'
-                  + '<span style="color:' + cc + '">' + escHtml(rates[ri].company) + '</span></td>'
+                  + '<td><span class="company-dot" style="background:' + cc + ';border-color:' + cc + '"></span>'
+                  + '<span class="company-name-text">' + escHtml(rates[ri].company) + '</span></td>'
                   + '<td>' + rDisplay + '</td></tr>';
           }
           html += '</tbody></table>';
