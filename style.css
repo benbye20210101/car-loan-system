@@ -1831,6 +1831,32 @@ input.invalid, select.invalid {
   color: #484c5e;
 }
 
+/* ── ADMIN 特別登入 modal ── */
+.admin-login-box {
+  max-width: 360px;
+}
+.admin-login-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #b8932e, var(--accent));
+  color: #1a1400;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  padding: 3px 16px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* 長按 START 按鈕：脈衝金光反饋 */
+#btn-calc.lp-hold {
+  animation: lp-pulse 0.9s ease-in-out infinite;
+}
+@keyframes lp-pulse {
+  0%   { box-shadow: 0 0 16px 4px rgba(201,168,76,0.55), var(--shadow-btn); }
+  50%  { box-shadow: 0 0 42px 18px rgba(201,168,76,0.95), var(--shadow-btn); }
+  100% { box-shadow: 0 0 16px 4px rgba(201,168,76,0.55), var(--shadow-btn); }
+}
+
 /* ── Admin 帳號列表 ── */
 .admin-users-list-header {
   display: flex;

@@ -995,6 +995,56 @@
     </div>
   </div>
 
+  <!-- ===== ADMIN 管理者特別登入浮動框（長按 START 5 秒後出現）===== -->
+  <div class="modal-overlay" id="admin-login-overlay">
+    <div class="modal-box admin-login-box">
+      <button class="modal-close" id="admin-login-close" type="button" aria-label="關閉">✕</button>
+
+      <div class="admin-login-badge">ADMIN</div>
+      <p class="modal-title">管理者登入</p>
+
+      <div class="modal-form-group">
+        <label class="form-label" for="al-account">
+          <span class="label-mark"></span>帳號
+        </label>
+        <input type="text" id="al-account"
+               placeholder="請輸入帳號" maxlength="20" autocomplete="off" />
+      </div>
+
+      <div class="modal-form-group">
+        <label class="form-label" for="al-password">
+          <span class="label-mark"></span>密碼
+        </label>
+        <div class="password-wrap">
+          <input type="password" id="al-password"
+                 placeholder="請輸入密碼" maxlength="50" autocomplete="off" />
+          <button class="btn-eye" id="al-pwd-eye" type="button" aria-label="切換密碼顯示">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-form-group">
+        <label class="form-label" for="al-captcha">
+          <span class="label-mark"></span>驗證碼
+        </label>
+        <div class="captcha-row">
+          <input type="text" id="al-captcha"
+                 placeholder="請輸入右側6位數字" maxlength="6" autocomplete="off" />
+          <div class="captcha-display" id="al-captcha-display">──────</div>
+          <button class="btn-captcha-refresh" id="al-captcha-refresh" type="button"
+                  aria-label="重新產生驗證碼" title="重新產生驗證碼">↻</button>
+        </div>
+      </div>
+
+      <div class="btn-wrap" style="margin-top:24px;">
+        <button class="btn-login" id="al-submit" type="button">登　入</button>
+      </div>
+
+      <div class="admin-result-msg" id="al-result" style="text-align:center;"></div>
+    </div>
+  </div>
+
   <!-- ===== 等待動畫遮罩 ===== -->
   <div class="loading-overlay" id="loading-overlay">
     <div class="loading-scene">
@@ -1194,6 +1244,18 @@
       var adminConfirmEyeIcon = document.getElementById('admin-confirm-eye-icon');
       var adminReloadUsersBtn = document.getElementById('admin-reload-users-btn');
       var adminUserListWrap   = document.getElementById('admin-user-list-wrap');
+
+      /* ── ADMIN 特別登入 modal ── */
+      var adminLoginOverlay = document.getElementById('admin-login-overlay');
+      var adminLoginClose   = document.getElementById('admin-login-close');
+      var alAccount         = document.getElementById('al-account');
+      var alPassword        = document.getElementById('al-password');
+      var alCaptchaInput    = document.getElementById('al-captcha');
+      var alCaptchaDisplay  = document.getElementById('al-captcha-display');
+      var alCaptchaRefresh  = document.getElementById('al-captcha-refresh');
+      var alPwdEye          = document.getElementById('al-pwd-eye');
+      var alSubmit          = document.getElementById('al-submit');
+      var alResult          = document.getElementById('al-result');
 
       /* ── 密碼眼睛切換 ── */
       var btnEye          = document.getElementById('btn-eye');
@@ -1460,7 +1522,16 @@
         loadAdminUsers();
       }
 
-      btnModeCalc.addEventListener('click', setCalcMode);
+      btnModeCalc.addEventListener('click', function () {
+        setCalcMode();
+        /* ADMIN 第一次選「試算功能」時顯示公告，之後直接進入 */
+        var ms = getSession();
+        if (ms && ms.account === 'ADMIN' && !adminStartupShown) {
+          adminStartupShown = true;
+          adminStartupMode  = true;
+          openStartupModal();
+        }
+      });
       btnModeAdmin.addEventListener('click', setAdminMode);
 
       /* ── 後台 Tab 切換 ── */
@@ -1896,9 +1967,148 @@
       }
 
       /* ════════════════════════════════════════════════════════════
+         ADMIN 長按 START 5 秒登入流程
+      ════════════════════════════════════════════════════════════ */
+      var adminLongPressTimer    = null;
+      var adminLongPressJustFired = false;
+      var adminCurrentCaptcha    = '';
+      var adminStartupMode       = false;  // 控制 closeStartupModal 是否跳 openStep2
+      var adminStartupShown      = false;  // 本次 session 是否已顯示過公告
+
+      function isFormEmpty() {
+        return !selectA.value && !selectB.value &&
+               !inputC.value.trim() && !selectD.value;
+      }
+
+      function generateAdminCaptcha() {
+        var code = '';
+        for (var i = 0; i < 6; i++) code += Math.floor(Math.random() * 10);
+        adminCurrentCaptcha = code;
+        alCaptchaDisplay.textContent = code;
+      }
+
+      function openAdminLoginModal() {
+        generateAdminCaptcha();
+        alAccount.value  = '';
+        alPassword.value = '';
+        alCaptchaInput.value = '';
+        alResult.textContent = '';
+        alResult.className = 'admin-result-msg';
+        alPassword.type = 'password';
+        adminLoginOverlay.classList.add('show');
+      }
+
+      function closeAdminLoginModal() {
+        adminLoginOverlay.classList.remove('show');
+      }
+
+      /* 長按偵測 */
+      btnCalc.addEventListener('pointerdown', function () {
+        if (!isFormEmpty()) return;
+        btnCalc.classList.add('lp-hold');
+        adminLongPressTimer = setTimeout(function () {
+          adminLongPressTimer = null;
+          adminLongPressJustFired = true;
+          btnCalc.classList.remove('lp-hold');
+          openAdminLoginModal();
+        }, 5000);
+      });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+        btnCalc.addEventListener(ev, function () {
+          if (adminLongPressTimer) {
+            clearTimeout(adminLongPressTimer);
+            adminLongPressTimer = null;
+          }
+          btnCalc.classList.remove('lp-hold');
+        });
+      });
+
+      /* 關閉 ADMIN 登入 modal */
+      adminLoginClose.addEventListener('click', closeAdminLoginModal);
+
+      /* 驗證碼眼睛切換 */
+      alPwdEye.addEventListener('click', function () {
+        alPassword.type = alPassword.type === 'password' ? 'text' : 'password';
+      });
+      alCaptchaRefresh.addEventListener('click', generateAdminCaptcha);
+
+      /* ADMIN 登入提交 */
+      alSubmit.addEventListener('click', function () {
+        var acc = alAccount.value.trim();
+        var pwd = alPassword.value.trim();
+        var cap = alCaptchaInput.value.trim();
+
+        alResult.textContent = '';
+        alResult.className   = 'admin-result-msg';
+
+        if (!acc || !pwd || !cap) {
+          alResult.textContent = '請填寫所有欄位';
+          alResult.className += ' err';
+          return;
+        }
+        if (cap !== adminCurrentCaptcha) {
+          alResult.textContent = '驗證碼錯誤，請重新輸入';
+          alResult.className += ' err';
+          generateAdminCaptcha();
+          alCaptchaInput.value = '';
+          return;
+        }
+
+        alSubmit.disabled    = true;
+        alSubmit.textContent = '驗證中…';
+
+        fetch(GAS_WEBAPP_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_login',
+                                   account: acc, password: pwd }),
+          redirect: 'follow'
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          alSubmit.disabled    = false;
+          alSubmit.textContent = '登　入';
+          if (data.success) {
+            if (acc !== 'ADMIN') {
+              alResult.textContent = '此入口僅限 ADMIN 帳號使用';
+              alResult.className += ' err';
+              return;
+            }
+            closeAdminLoginModal();
+            setSession(acc, data.spreadsheetId);
+            showLoginStatus(acc);
+            startInactivityTimer(acc);
+            /* ADMIN 登入後直接顯示切換列，跳過公告 */
+          } else {
+            generateAdminCaptcha();
+            alCaptchaInput.value = '';
+            if (data.error === 'admin_only') {
+              alResult.textContent = '此入口僅限 ADMIN 帳號使用';
+            } else if (data.error === 'wrong_password') {
+              alResult.textContent = '密碼錯誤，請重新輸入';
+            } else if (data.error === 'account_not_found') {
+              alResult.textContent = '帳號不存在';
+            } else if (data.error === 'account_disabled') {
+              alResult.textContent = '帳號已停用';
+            } else {
+              alResult.textContent = '登入失敗：' + (data.error || '未知錯誤');
+            }
+            alResult.className += ' err';
+          }
+        })
+        .catch(function () {
+          alSubmit.disabled    = false;
+          alSubmit.textContent = '登　入';
+          alResult.textContent = '連線失敗，請確認網路後再試';
+          alResult.className += ' err';
+        });
+      });
+
+      /* ════════════════════════════════════════════════════════════
          車貸試算按鈕：驗證表單 → 暫存結果 → 開啟登入框
       ════════════════════════════════════════════════════════════ */
       btnCalc.addEventListener('click', function () {
+        if (adminLongPressJustFired) { adminLongPressJustFired = false; return; }
         var brand    = selectA.value;
         var brandTxt = selectA.options[selectA.selectedIndex].text;
         var model    = selectB.value;
@@ -2414,6 +2624,10 @@
 
       function closeStartupModal() {
         startupOverlay.classList.remove('show');
+        if (adminStartupMode) {
+          adminStartupMode = false;
+          return;  // ADMIN 看完公告後停留在試算輸入畫面，不跳第二步
+        }
         toastSuccess.classList.add('show');
         setTimeout(function () {
           toastSuccess.classList.remove('show');
