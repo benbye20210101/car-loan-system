@@ -1513,6 +1513,15 @@
         btnModeAdmin.classList.remove('active');
       }
 
+      /* ADMIN 登入後初始狀態：無預選，等管理者自行選擇 */
+      function setNeutralMode() {
+        calcCard.style.display   = 'none';
+        siteFooter.style.display = 'none';
+        adminPanel.style.display = 'none';
+        btnModeCalc.classList.remove('active');
+        btnModeAdmin.classList.remove('active');
+      }
+
       function setAdminMode() {
         calcCard.style.display   = 'none';
         siteFooter.style.display = 'none';
@@ -2081,8 +2090,8 @@
             closeAdminLoginModal();
             setSession(acc, data.spreadsheetId);
             showLoginStatus(acc);
+            setNeutralMode(); /* 無預選：讓 ADMIN 自行選擇試算功能或管理後台 */
             startInactivityTimer(acc);
-            /* ADMIN 登入後直接顯示切換列，跳過公告 */
           } else {
             generateAdminCaptcha();
             alCaptchaInput.value = '';
