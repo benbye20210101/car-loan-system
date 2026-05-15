@@ -1769,7 +1769,7 @@
         var users = filtered;  // 後續渲染使用篩選結果
         var html = '<div class="admin-user-table-wrap"><table class="admin-user-table">';
         html += '<thead><tr>' +
-          '<th>帳號</th><th>申請日</th><th>狀態</th><th>月限</th><th>本月</th>' +
+          '<th>帳號</th><th>申請日</th><th>手機</th><th>狀態</th><th>月限</th><th>本月</th>' +
           '<th>總查詢</th><th>月均查</th><th>末查詢</th>' +
           '<th>總登入</th><th>月均登</th><th>末登入</th>' +
           '<th>操作</th></tr></thead><tbody>';
@@ -1780,6 +1780,7 @@
           var limitVal    = u.monthlyLimit > 0 ? u.monthlyLimit : 0;
           var usedLabel   = u.monthlyLimit > 0 ? (u.monthlyUsed + '/' + u.monthlyLimit) : u.monthlyUsed + '';
           var dateStr     = u.createdAt || '—';
+          var phoneStr    = u.phone || '—';
           var totalQ      = (u.totalQueryCount !== undefined) ? u.totalQueryCount : 0;
           var avgQ        = (u.monthlyAvgQuery !== undefined) ? u.monthlyAvgQuery : 0;
           var lastQ       = u.lastQueryTime || '—';
@@ -1796,10 +1797,15 @@
                         '" data-new-status="' + (isStopped ? '啟用' : '停用') + '">' +
                         (isStopped ? '啟用' : '停用') + '</button>';
           }
+          // 重設密碼按鈕（待驗證帳號不可操作）
+          var resetBtn = u.status !== '待驗證'
+            ? '<button class="admin-reset-pwd-btn" data-account="' + escHtml(u.account) + '" style="margin-top:4px;">重設密碼</button>'
+            : '';
 
           html += '<tr>' +
-            '<td style="max-width:140px;word-break:break-all;">' + escHtml(u.account) + '</td>' +
+            '<td style="max-width:120px;word-break:break-all;">' + escHtml(u.account) + '</td>' +
             '<td style="white-space:nowrap;">' + escHtml(dateStr) + '</td>' +
+            '<td style="white-space:nowrap;">' + escHtml(phoneStr) + '</td>' +
             '<td><span class="user-status-badge ' + statusClass + '">' + escHtml(statusLabel) + '</span></td>' +
             '<td style="white-space:nowrap;">' +
               '<input type="number" class="admin-limit-input" min="0" max="9999" value="' + limitVal + '" data-account="' + escHtml(u.account) + '" />' +
@@ -1812,7 +1818,7 @@
             '<td style="text-align:center;">' + totalL + '</td>' +
             '<td style="text-align:center;">' + avgL + '</td>' +
             '<td style="white-space:nowrap;font-size:0.78rem;">' + escHtml(lastL) + '</td>' +
-            '<td>' + toggleBtn + '</td>' +
+            '<td style="white-space:nowrap;">' + toggleBtn + resetBtn + '</td>' +
             '</tr>';
         });
 
@@ -1889,6 +1895,52 @@
             .catch(function () { btn.disabled = false; alert('連線失敗，請重試。'); });
           });
         });
+
+        // 重設密碼
+        adminUserListWrap.querySelectorAll('.admin-reset-pwd-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var acc = btn.getAttribute('data-account');
+            var newPwd = prompt(
+              '重設「' + acc + '」的密碼\n\n' +
+              '規則：需包含大寫英文、小寫英文、數字，共 6 碼以上\n\n' +
+              '請輸入新密碼：'
+            );
+            if (newPwd === null) return;  // 取消
+            newPwd = newPwd.trim();
+            if (!newPwd) { alert('密碼不可為空。'); return; }
+            if (newPwd.length < 6 || !/[A-Z]/.test(newPwd) || !/[a-z]/.test(newPwd) || !/[0-9]/.test(newPwd)) {
+              alert('密碼強度不足！需包含大寫英文、小寫英文及數字，共 6 碼以上。');
+              return;
+            }
+            var session = getSession();
+            if (!session) return;
+            btn.disabled = true;
+            btn.textContent = '重設中…';
+            fetch(GAS_WEBAPP_URL, {
+              method:  'POST',
+              headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_update_user',
+                                       account: session.account, targetAccount: acc,
+                                       updateType: 'password', newPassword: newPwd })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              btn.disabled = false;
+              btn.textContent = '重設密碼';
+              if (data.success) {
+                alert('「' + acc + '」密碼已重設成功。');
+              } else {
+                var msg = data.error === 'weak_password' ? '密碼強度不足，請重新輸入。' : ('重設失敗：' + (data.error || '未知錯誤'));
+                alert(msg);
+              }
+            })
+            .catch(function () {
+              btn.disabled = false;
+              btn.textContent = '重設密碼';
+              alert('連線失敗，請重試。');
+            });
+          });
+        });
       }
 
       adminReloadUsersBtn.addEventListener('click', loadAdminUsers);
@@ -1934,7 +1986,9 @@
               '<span class="notice-status-badge ' + (isActive ? 'notice-badge-on' : 'notice-badge-off') + '">' +
                 (isActive ? '生效中' : '已停用') +
               '</span>' +
-              (isActive ? '<button class="admin-del-notice-btn" data-id="' + n.id + '">停用</button>' : '') +
+              (isActive
+                ? '<button class="admin-del-notice-btn" data-id="' + n.id + '">停用</button>'
+                : '<button class="admin-enable-notice-btn" data-id="' + n.id + '">重啟</button>') +
             '</div>' +
             '<div class="notice-item-content">' + escHtml(n.content) + '</div>' +
           '</div>';
@@ -1942,6 +1996,7 @@
         html += '</div>';
         adminNoticeListWrap.innerHTML = html;
 
+        // 停用按鈕
         adminNoticeListWrap.querySelectorAll('.admin-del-notice-btn').forEach(function (btn) {
           btn.addEventListener('click', function () {
             var id = Number(btn.getAttribute('data-id'));
@@ -1961,6 +2016,32 @@
               } else {
                 btn.disabled = false;
                 alert('停用失敗：' + (data.error || '未知錯誤'));
+              }
+            })
+            .catch(function () { btn.disabled = false; alert('連線失敗，請重試。'); });
+          });
+        });
+
+        // 重啟按鈕（8g）
+        adminNoticeListWrap.querySelectorAll('.admin-enable-notice-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = Number(btn.getAttribute('data-id'));
+            if (!confirm('確認重新啟用此公告？啟用後將再次對使用者顯示。')) return;
+            var session = getSession();
+            if (!session) return;
+            btn.disabled = true;
+            fetch(GAS_WEBAPP_URL, {
+              method:  'POST',
+              headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_enable_notice', account: session.account, id: id })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (data.success) {
+                loadAdminNotices();
+              } else {
+                btn.disabled = false;
+                alert('重啟失敗：' + (data.error || '未知錯誤'));
               }
             })
             .catch(function () { btn.disabled = false; alert('連線失敗，請重試。'); });

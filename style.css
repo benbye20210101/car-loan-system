@@ -2156,3 +2156,37 @@ input.invalid, select.invalid {
   transition: border-color var(--transition);
 }
 .admin-rate-input:focus { outline: none; border-color: var(--border-focus); }
+
+/* ===== Phase 8 完成：重設密碼 / 公告重啟 按鈕 ===== */
+.admin-reset-pwd-btn {
+  display: block;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-focus);
+  background: transparent;
+  color: var(--border-focus);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.admin-reset-pwd-btn:hover:not(:disabled) {
+  background: rgba(100,160,255,0.12);
+}
+.admin-reset-pwd-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.admin-enable-notice-btn {
+  margin-left: auto;
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  border: 1px solid #6fcf7a;
+  background: transparent;
+  color: #6fcf7a;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.admin-enable-notice-btn:hover:not(:disabled) {
+  background: rgba(111,207,122,0.12);
+}
+.admin-enable-notice-btn:disabled { opacity: 0.4; cursor: not-allowed; }
