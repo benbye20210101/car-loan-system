@@ -97,6 +97,11 @@
             <button class="admin-submit-btn" id="admin-reload-users-btn" type="button"
                     style="padding:6px 18px;font-size:0.82rem;margin-top:0;">重新載入</button>
           </div>
+          <div style="margin:12px 0 8px;">
+            <input type="text" class="admin-input" id="admin-user-search"
+                   placeholder="輸入使用者名稱快速搜尋（不分大小寫）"
+                   style="width:100%;box-sizing:border-box;" />
+          </div>
           <div id="admin-user-list-wrap">
             <p class="admin-user-list-hint">點擊「重新載入」讀取帳號列表</p>
           </div>
@@ -104,12 +109,36 @@
 
       </div>
 
-      <!-- ── 公告通知 Tab（Phase 8 預留）── -->
+      <!-- ── 公告通知 Tab（Phase 8e）── -->
       <div class="admin-tab-pane" id="admin-pane-notices" style="display:none;">
-        <div class="admin-card admin-placeholder">
-          <p class="admin-placeholder-title">公告通知管理</p>
-          <p class="admin-placeholder-note">Phase 8 待實作</p>
+
+        <!-- 新增公告 card -->
+        <div class="admin-card">
+          <p class="admin-card-title">新增公告</p>
+          <div class="admin-form">
+            <div class="admin-form-group">
+              <label class="admin-form-label">公告內容</label>
+              <textarea class="admin-input admin-notice-textarea" id="admin-notice-content"
+                        rows="3" placeholder="請輸入公告內容"></textarea>
+              <span class="error-msg" id="admin-notice-content-err"></span>
+            </div>
+            <button class="admin-submit-btn" id="admin-save-notice-btn" type="button">發佈公告</button>
+            <div class="admin-result-msg" id="admin-notice-result"></div>
+          </div>
         </div>
+
+        <!-- 公告列表 card -->
+        <div class="admin-card" style="margin-top:20px;">
+          <div class="admin-users-list-header">
+            <p class="admin-card-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">公告列表</p>
+            <button class="admin-submit-btn" id="admin-reload-notices-btn" type="button"
+                    style="padding:6px 18px;font-size:0.82rem;margin-top:0;">重新載入</button>
+          </div>
+          <div id="admin-notice-list-wrap">
+            <p class="admin-user-list-hint">點擊「重新載入」讀取公告列表</p>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── 核准補件率 Tab（Phase 8 預留）── -->
@@ -1251,8 +1280,15 @@
       var adminPwdEyeIcon     = document.getElementById('admin-pwd-eye-icon');
       var adminConfirmPwdEye  = document.getElementById('admin-confirm-pwd-eye');
       var adminConfirmEyeIcon = document.getElementById('admin-confirm-eye-icon');
-      var adminReloadUsersBtn = document.getElementById('admin-reload-users-btn');
-      var adminUserListWrap   = document.getElementById('admin-user-list-wrap');
+      var adminReloadUsersBtn  = document.getElementById('admin-reload-users-btn');
+      var adminUserListWrap    = document.getElementById('admin-user-list-wrap');
+      var adminUserSearch      = document.getElementById('admin-user-search');
+      var adminNoticeContent   = document.getElementById('admin-notice-content');
+      var adminNoticeContentErr= document.getElementById('admin-notice-content-err');
+      var adminSaveNoticeBtn   = document.getElementById('admin-save-notice-btn');
+      var adminNoticeResult    = document.getElementById('admin-notice-result');
+      var adminReloadNoticesBtn= document.getElementById('admin-reload-notices-btn');
+      var adminNoticeListWrap  = document.getElementById('admin-notice-list-wrap');
 
       /* ── ADMIN 特別登入 modal ── */
       var adminLoginOverlay = document.getElementById('admin-login-overlay');
@@ -1542,11 +1578,10 @@
 
       btnModeCalc.addEventListener('click', function () {
         setCalcMode();
-        /* ADMIN 第一次選「試算功能」時顯示公告，之後直接進入 */
+        /* ADMIN 每次選「試算功能」都顯示最新公告，確認內容是否正確 */
         var ms = getSession();
-        if (ms && ms.account === 'ADMIN' && !adminStartupShown) {
-          adminStartupShown = true;
-          adminStartupMode  = true;
+        if (ms && ms.account === 'ADMIN') {
+          adminStartupMode = true;
           openStartupModal();
         }
       });
@@ -1560,7 +1595,13 @@
           adminTabPanes.forEach(function (p) { p.style.display = 'none'; });
           btn.classList.add('active');
           adminTabPanes[idx].style.display = '';
+          if (idx === 1) loadAdminNotices();  // 切換到公告通知 Tab 時自動載入
         });
+      });
+
+      /* ── 使用者名稱即時搜尋篩選 ── */
+      adminUserSearch.addEventListener('input', function () {
+        renderAdminUserTable(currentAdminUsers);
       });
 
       /* ── 密碼眼睛切換（新增使用者欄位）── */
@@ -1698,10 +1739,18 @@
       }
 
       function renderAdminUserTable(users) {
-        if (!users.length) {
-          adminUserListWrap.innerHTML = '<p class="admin-user-list-hint">目前沒有帳號資料。</p>';
+        currentAdminUsers = users;  // 快取完整資料供搜尋重用
+        var keyword = adminUserSearch ? adminUserSearch.value.trim().toLowerCase() : '';
+        var filtered = keyword
+          ? users.filter(function (u) { return u.account.toLowerCase().indexOf(keyword) !== -1; })
+          : users;
+        if (!filtered.length) {
+          adminUserListWrap.innerHTML = keyword
+            ? '<p class="admin-user-list-hint">找不到包含「' + escHtml(keyword) + '」的帳號。</p>'
+            : '<p class="admin-user-list-hint">目前沒有帳號資料。</p>';
           return;
         }
+        var users = filtered;  // 後續渲染使用篩選結果
         var html = '<div class="admin-user-table-wrap"><table class="admin-user-table">';
         html += '<thead><tr>' +
           '<th>帳號</th><th>申請日</th><th>狀態</th><th>月限</th><th>本月</th>' +
@@ -1821,6 +1870,127 @@
       }
 
       adminReloadUsersBtn.addEventListener('click', loadAdminUsers);
+
+      /* ── 公告通知：載入 / 渲染 / 新增 / 停用 ── */
+
+      function loadAdminNotices() {
+        var session = getSession();
+        if (!session) return;
+        adminNoticeListWrap.innerHTML = '<p class="admin-user-list-hint">載入中…</p>';
+        adminReloadNoticesBtn.disabled = true;
+        fetch(GAS_WEBAPP_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_get_notices', account: session.account })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          adminReloadNoticesBtn.disabled = false;
+          if (data.success) {
+            renderAdminNoticeList(data.notices || []);
+          } else {
+            adminNoticeListWrap.innerHTML = '<p class="admin-user-list-hint" style="color:#e07070;">載入失敗：' + escHtml(data.error || '未知錯誤') + '</p>';
+          }
+        })
+        .catch(function () {
+          adminReloadNoticesBtn.disabled = false;
+          adminNoticeListWrap.innerHTML = '<p class="admin-user-list-hint" style="color:#e07070;">連線失敗，請重試。</p>';
+        });
+      }
+
+      function renderAdminNoticeList(notices) {
+        if (!notices.length) {
+          adminNoticeListWrap.innerHTML = '<p class="admin-user-list-hint">目前無公告資料。</p>';
+          return;
+        }
+        var html = '<div class="admin-notice-list">';
+        notices.forEach(function (n) {
+          var isActive = n.active;
+          html += '<div class="admin-notice-item ' + (isActive ? 'notice-active' : 'notice-inactive') + '">' +
+            '<div class="notice-item-header">' +
+              '<span class="notice-item-date">' + escHtml(n.createdAt) + '</span>' +
+              '<span class="notice-status-badge ' + (isActive ? 'notice-badge-on' : 'notice-badge-off') + '">' +
+                (isActive ? '生效中' : '已停用') +
+              '</span>' +
+              (isActive ? '<button class="admin-del-notice-btn" data-id="' + n.id + '">停用</button>' : '') +
+            '</div>' +
+            '<div class="notice-item-content">' + escHtml(n.content) + '</div>' +
+          '</div>';
+        });
+        html += '</div>';
+        adminNoticeListWrap.innerHTML = html;
+
+        adminNoticeListWrap.querySelectorAll('.admin-del-notice-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = Number(btn.getAttribute('data-id'));
+            if (!confirm('確認停用此公告？停用後將不再對使用者顯示。')) return;
+            var session = getSession();
+            if (!session) return;
+            btn.disabled = true;
+            fetch(GAS_WEBAPP_URL, {
+              method:  'POST',
+              headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_del_notice', account: session.account, id: id })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (data.success) {
+                loadAdminNotices();
+              } else {
+                btn.disabled = false;
+                alert('停用失敗：' + (data.error || '未知錯誤'));
+              }
+            })
+            .catch(function () { btn.disabled = false; alert('連線失敗，請重試。'); });
+          });
+        });
+      }
+
+      adminSaveNoticeBtn.addEventListener('click', function () {
+        var content = adminNoticeContent.value.trim();
+        adminNoticeContentErr.classList.remove('show');
+        adminNoticeResult.textContent = '';
+        adminNoticeResult.className   = 'admin-result-msg';
+
+        if (!content) {
+          adminNoticeContentErr.textContent = '請輸入公告內容';
+          adminNoticeContentErr.classList.add('show');
+          return;
+        }
+        var session = getSession();
+        if (!session) { alert('登入逾時，請重新登入'); return; }
+
+        adminSaveNoticeBtn.disabled    = true;
+        adminSaveNoticeBtn.textContent = '發佈中…';
+        fetch(GAS_WEBAPP_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_save_notice',
+                                   account: session.account, content: content })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          adminSaveNoticeBtn.disabled    = false;
+          adminSaveNoticeBtn.textContent = '發佈公告';
+          if (data.success) {
+            adminNoticeContent.value      = '';
+            adminNoticeResult.textContent = '公告發佈成功！';
+            adminNoticeResult.classList.add('ok');
+            loadAdminNotices();
+          } else {
+            adminNoticeResult.textContent = '發佈失敗：' + (data.error || '未知錯誤');
+            adminNoticeResult.classList.add('err');
+          }
+        })
+        .catch(function () {
+          adminSaveNoticeBtn.disabled    = false;
+          adminSaveNoticeBtn.textContent = '發佈公告';
+          adminNoticeResult.textContent  = '連線失敗，請重試。';
+          adminNoticeResult.classList.add('err');
+        });
+      });
+
+      adminReloadNoticesBtn.addEventListener('click', loadAdminNotices);
 
       /* ════════════════════════════════════════════════════════════
          頻率限制（Rate Limiting）
@@ -2020,7 +2190,7 @@
       var adminLongPressJustFired = false;
       var adminCurrentCaptcha    = '';
       var adminStartupMode       = false;  // 控制 closeStartupModal 是否跳 openStep2
-      var adminStartupShown      = false;  // 本次 session 是否已顯示過公告
+      var currentAdminUsers      = [];     // 快取帳號列表供搜尋篩選用
 
       function isFormEmpty() {
         return !selectA.value && !selectB.value &&

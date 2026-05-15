@@ -1967,6 +1967,77 @@ input.invalid, select.invalid {
 }
 .admin-toggle-btn:hover:not(:disabled) { opacity: 0.75; }
 
+/* ===== 公告通知管理（Phase 8e）===== */
+.admin-notice-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+.admin-notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.admin-notice-item {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  transition: opacity 0.2s;
+}
+.admin-notice-item.notice-active {
+  border-left: 4px solid #60a5fa;
+  background: rgba(96,165,250,0.06);
+}
+.admin-notice-item.notice-inactive {
+  border-left: 4px solid #666;
+  background: rgba(255,255,255,0.03);
+  opacity: 0.55;
+}
+.notice-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.notice-item-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.notice-status-badge {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.notice-badge-on  { background: rgba(96,165,250,0.18); color: #60a5fa; }
+.notice-badge-off { background: rgba(150,150,150,0.15); color: #888; }
+.admin-del-notice-btn {
+  margin-left: auto;
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  border: 1px solid #e07070;
+  background: transparent;
+  color: #e07070;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.admin-del-notice-btn:hover:not(:disabled) {
+  background: rgba(224,112,112,0.12);
+}
+.admin-del-notice-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.notice-item-content {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
 /* ===== Auth Modal 多面板 ===== */
 .auth-modal-box {
   max-height: 88vh;
