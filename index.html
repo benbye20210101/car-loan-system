@@ -4078,6 +4078,8 @@
                   /* 後端也觸發頻率限制時，同步顯示警示框 */
                   modalAccount.value = account;
                   showRateLimitToast();
+                } else if (data.error === 'monthly_limit_reached') {
+                  alert('本月查詢次數已達上限（' + (data.used || 0) + '/' + (data.limit || 0) + ' 次），請下個月再試或聯絡管理員調整上限。');
                 } else if (data.error === 'account_not_found') {
                   setFieldError(modalAccount, '帳號');
                 } else if (data.error === 'wrong_password') {
