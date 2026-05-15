@@ -2108,3 +2108,51 @@ input.invalid, select.invalid {
 }
 .auth-result-msg.ok  { color: #6fcf7a; }
 .auth-result-msg.err { color: #e07070; }
+
+/* ===== Phase 8f：核准補件率 Tab ===== */
+.admin-rate-hint {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 8px 0 12px;
+  line-height: 1.5;
+}
+.admin-rate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.admin-rate-table th {
+  background: rgba(100,130,180,0.12);
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.admin-rate-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.admin-rate-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
+.admin-rate-company {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-rate-updated {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.admin-rate-input {
+  width: 80px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  text-align: right;
+  transition: border-color var(--transition);
+}
+.admin-rate-input:focus { outline: none; border-color: var(--border-focus); }

@@ -141,11 +141,22 @@
 
       </div>
 
-      <!-- ── 核准補件率 Tab（Phase 8 預留）── -->
+      <!-- ── 核准補件率 Tab（Phase 8f）── -->
       <div class="admin-tab-pane" id="admin-pane-rates" style="display:none;">
-        <div class="admin-card admin-placeholder">
-          <p class="admin-placeholder-title">核准補件率管理</p>
-          <p class="admin-placeholder-note">Phase 8 待實作</p>
+        <div class="admin-card">
+          <div class="admin-users-list-header">
+            <p class="admin-card-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">核准補件率管理</p>
+            <button class="admin-submit-btn" id="admin-reload-rates-btn" type="button"
+                    style="padding:6px 18px;font-size:0.82rem;margin-top:0;">重新載入</button>
+          </div>
+          <p class="admin-rate-hint">設定各貸款公司的核准補件率（%），將即時顯示於前台貸款公司選項旁。</p>
+          <div id="admin-rate-list-wrap">
+            <p class="admin-user-list-hint">點擊「重新載入」讀取核准補件率</p>
+          </div>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <button class="admin-submit-btn" id="admin-save-rates-btn" type="button">全部儲存</button>
+            <div class="admin-result-msg" id="admin-rates-result"></div>
+          </div>
         </div>
       </div>
 
@@ -1289,6 +1300,10 @@
       var adminNoticeResult    = document.getElementById('admin-notice-result');
       var adminReloadNoticesBtn= document.getElementById('admin-reload-notices-btn');
       var adminNoticeListWrap  = document.getElementById('admin-notice-list-wrap');
+      var adminReloadRatesBtn  = document.getElementById('admin-reload-rates-btn');
+      var adminRateListWrap    = document.getElementById('admin-rate-list-wrap');
+      var adminSaveRatesBtn    = document.getElementById('admin-save-rates-btn');
+      var adminRatesResult     = document.getElementById('admin-rates-result');
 
       /* ── ADMIN 特別登入 modal ── */
       var adminLoginOverlay = document.getElementById('admin-login-overlay');
@@ -1596,6 +1611,7 @@
           btn.classList.add('active');
           adminTabPanes[idx].style.display = '';
           if (idx === 1) loadAdminNotices();  // 切換到公告通知 Tab 時自動載入
+          if (idx === 2) loadAdminRates();    // 切換到核准補件率 Tab 時自動載入
         });
       });
 
@@ -1858,8 +1874,14 @@
             .then(function (data) {
               btn.disabled = false;
               if (data.success) {
-                btn.textContent = '✓';
-                setTimeout(function () { btn.textContent = '存'; }, 1200);
+                // 即時更新快取中的上限值，重新渲染讓顯示立即反映（如 2/10）
+                for (var ui = 0; ui < currentAdminUsers.length; ui++) {
+                  if (currentAdminUsers[ui].account === acc) {
+                    currentAdminUsers[ui].monthlyLimit = val;
+                    break;
+                  }
+                }
+                renderAdminUserTable(currentAdminUsers);
               } else {
                 alert('儲存失敗：' + (data.error || '未知錯誤'));
               }
@@ -1991,6 +2013,114 @@
       });
 
       adminReloadNoticesBtn.addEventListener('click', loadAdminNotices);
+
+      /* ── 核准補件率：載入 / 渲染 / 儲存 ── */
+
+      function loadAdminRates() {
+        var session = getSession();
+        if (!session) return;
+        adminRateListWrap.innerHTML = '<p class="admin-user-list-hint">載入中…</p>';
+        adminReloadRatesBtn.disabled = true;
+        adminSaveRatesBtn.disabled   = true;
+        fetch(GAS_WEBAPP_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_get_rates', account: session.account })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          adminReloadRatesBtn.disabled = false;
+          adminSaveRatesBtn.disabled   = false;
+          if (data.success) {
+            renderAdminRateTable(data.rates || []);
+          } else {
+            adminRateListWrap.innerHTML = '<p class="admin-user-list-hint" style="color:#e07070;">載入失敗：' + escHtml(data.error || '未知錯誤') + '</p>';
+          }
+        })
+        .catch(function () {
+          adminReloadRatesBtn.disabled = false;
+          adminSaveRatesBtn.disabled   = false;
+          adminRateListWrap.innerHTML = '<p class="admin-user-list-hint" style="color:#e07070;">連線失敗，請重試。</p>';
+        });
+      }
+
+      function renderAdminRateTable(rates) {
+        if (!rates.length) {
+          adminRateListWrap.innerHTML = '<p class="admin-user-list-hint">目前無核准補件率資料。請先在 GAS 執行 setupPhase8Sheets() 建立工作表。</p>';
+          return;
+        }
+        var html = '<div class="table-scroll-wrap"><table class="admin-rate-table">' +
+          '<thead><tr><th>貸款公司</th><th>核准補件率（%）</th><th>最後更新</th></tr></thead><tbody>';
+        rates.forEach(function (r) {
+          var rateVal = (r.rate !== null && r.rate !== undefined) ? r.rate : '';
+          html += '<tr>' +
+            '<td class="admin-rate-company">' + escHtml(r.company) + '</td>' +
+            '<td><input type="number" class="admin-rate-input" data-company="' + escHtml(r.company) + '"' +
+                  ' value="' + escHtml(String(rateVal)) + '" min="0" max="100" step="1" placeholder="0~100"></td>' +
+            '<td class="admin-rate-updated">' + escHtml(r.updatedAt || '—') + '</td>' +
+          '</tr>';
+        });
+        html += '</tbody></table></div>';
+        adminRateListWrap.innerHTML = html;
+      }
+
+      adminSaveRatesBtn.addEventListener('click', function () {
+        var inputs = adminRateListWrap.querySelectorAll('.admin-rate-input');
+        if (!inputs.length) { alert('請先點擊「重新載入」讀取核准補件率。'); return; }
+
+        var rates = [];
+        var hasErr = false;
+        inputs.forEach(function (inp) {
+          var company = inp.getAttribute('data-company');
+          var val = inp.value.trim();
+          var num = parseInt(val, 10);
+          if (val === '' || isNaN(num) || num < 0 || num > 100) {
+            inp.style.borderColor = '#e07070';
+            hasErr = true;
+          } else {
+            inp.style.borderColor = '';
+            rates.push({ company: company, rate: num });
+          }
+        });
+        if (hasErr) { adminRatesResult.textContent = '請確認所有欄位均為 0～100 的整數。'; adminRatesResult.className = 'admin-result-msg err'; return; }
+
+        var session = getSession();
+        if (!session) { alert('登入逾時，請重新登入'); return; }
+
+        adminRatesResult.textContent = '';
+        adminRatesResult.className   = 'admin-result-msg';
+        adminSaveRatesBtn.disabled   = true;
+        adminSaveRatesBtn.textContent = '儲存中…';
+        fetch(GAS_WEBAPP_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_save_rates',
+                                   account: session.account, rates: rates })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          adminSaveRatesBtn.disabled   = false;
+          adminSaveRatesBtn.textContent = '全部儲存';
+          if (data.success) {
+            adminRatesResult.textContent = '儲存成功！前台下拉選項已即時更新。';
+            adminRatesResult.classList.add('ok');
+            // 同步更新前台 cachedRates，讓下拉選項立即反映新數值
+            cachedRates = rates.map(function (r) { return { company: r.company, rate: r.rate }; });
+            loadAdminRates();  // 重載以取得最新 updatedAt 時間
+          } else {
+            adminRatesResult.textContent = '儲存失敗：' + (data.error || '未知錯誤');
+            adminRatesResult.classList.add('err');
+          }
+        })
+        .catch(function () {
+          adminSaveRatesBtn.disabled   = false;
+          adminSaveRatesBtn.textContent = '全部儲存';
+          adminRatesResult.textContent  = '連線失敗，請重試。';
+          adminRatesResult.classList.add('err');
+        });
+      });
+
+      adminReloadRatesBtn.addEventListener('click', loadAdminRates);
 
       /* ════════════════════════════════════════════════════════════
          頻率限制（Rate Limiting）
