@@ -77,6 +77,13 @@
               <span class="error-msg" id="admin-confirm-password-err"></span>
             </div>
 
+            <div class="admin-form-group">
+              <label class="admin-form-label">手機號碼 <span style="color:#e07070;">（必填，忘記帳號查詢用）</span></label>
+              <input type="tel" class="admin-input" id="admin-new-phone"
+                     placeholder="請輸入手機號碼（10碼）" autocomplete="off" />
+              <span class="error-msg" id="admin-new-phone-err"></span>
+            </div>
+
             <button class="admin-submit-btn" id="admin-create-user-btn" type="button">新增使用者</button>
             <div class="admin-result-msg" id="admin-create-result"></div>
 
@@ -1236,6 +1243,8 @@
       var adminNewPasswordErr = document.getElementById('admin-new-password-err');
       var adminConfirmPwd     = document.getElementById('admin-confirm-password');
       var adminConfirmPwdErr  = document.getElementById('admin-confirm-password-err');
+      var adminNewPhone       = document.getElementById('admin-new-phone');
+      var adminNewPhoneErr    = document.getElementById('admin-new-phone-err');
       var adminCreateBtn      = document.getElementById('admin-create-user-btn');
       var adminCreateResult   = document.getElementById('admin-create-result');
       var adminPwdEye         = document.getElementById('admin-pwd-eye');
@@ -1568,14 +1577,16 @@
 
       /* ── 新增使用者 ── */
       adminCreateBtn.addEventListener('click', function () {
-        var acc  = adminNewAccount.value.trim();
-        var pwd  = adminNewPassword.value.trim();
-        var conf = adminConfirmPwd.value.trim();
+        var acc   = adminNewAccount.value.trim();
+        var pwd   = adminNewPassword.value.trim();
+        var conf  = adminConfirmPwd.value.trim();
+        var phone = adminNewPhone.value.trim();
         var hasErr = false;
 
         adminNewAccountErr.classList.remove('show');
         adminNewPasswordErr.classList.remove('show');
         adminConfirmPwdErr.classList.remove('show');
+        adminNewPhoneErr.classList.remove('show');
         adminCreateResult.textContent = '';
         adminCreateResult.className   = 'admin-result-msg';
 
@@ -1599,6 +1610,15 @@
           adminConfirmPwdErr.classList.add('show');
           hasErr = true;
         }
+        if (!phone) {
+          adminNewPhoneErr.textContent = '請輸入手機號碼';
+          adminNewPhoneErr.classList.add('show');
+          hasErr = true;
+        } else if (!/^0\d{9}$/.test(phone.replace(/\s/g, ''))) {
+          adminNewPhoneErr.textContent = '手機號碼格式錯誤（需為09開頭10碼）';
+          adminNewPhoneErr.classList.add('show');
+          hasErr = true;
+        }
         if (hasErr) return;
 
         var session = getSession();
@@ -1615,7 +1635,8 @@
             action:      'create_user',
             account:     session.account,
             newAccount:  acc,
-            newPassword: pwd
+            newPassword: pwd,
+            newPhone:    phone
           })
         })
         .then(function (r) { return r.json(); })
@@ -1626,6 +1647,7 @@
             adminNewAccount.value  = '';
             adminNewPassword.value = '';
             adminConfirmPwd.value  = '';
+            adminNewPhone.value    = '';
             adminCreateResult.textContent = '使用者「' + acc + '」新增成功！';
             adminCreateResult.classList.add('ok');
           } else if (data.error === 'account_exists') {
@@ -1681,14 +1703,24 @@
           return;
         }
         var html = '<div class="admin-user-table-wrap"><table class="admin-user-table">';
-        html += '<thead><tr><th>帳號</th><th>申請日</th><th>狀態</th><th>月限</th><th>本月</th><th>操作</th></tr></thead><tbody>';
+        html += '<thead><tr>' +
+          '<th>帳號</th><th>申請日</th><th>狀態</th><th>月限</th><th>本月</th>' +
+          '<th>總查詢</th><th>月均查</th><th>末查詢</th>' +
+          '<th>總登入</th><th>月均登</th><th>末登入</th>' +
+          '<th>操作</th></tr></thead><tbody>';
 
         users.forEach(function (u) {
           var statusClass = u.status === '停用' ? 'status-disabled' : (u.status === '待驗證' ? 'status-pending' : 'status-active');
           var statusLabel = u.status || '啟用';
           var limitVal    = u.monthlyLimit > 0 ? u.monthlyLimit : 0;
           var usedLabel   = u.monthlyLimit > 0 ? (u.monthlyUsed + '/' + u.monthlyLimit) : u.monthlyUsed + '';
-          var dateStr     = u.createdAt ? u.createdAt.substring(0, 10) : '—';
+          var dateStr     = u.createdAt || '—';
+          var totalQ      = (u.totalQueryCount !== undefined) ? u.totalQueryCount : 0;
+          var avgQ        = (u.monthlyAvgQuery !== undefined) ? u.monthlyAvgQuery : 0;
+          var lastQ       = u.lastQueryTime || '—';
+          var totalL      = (u.totalLoginCount !== undefined) ? u.totalLoginCount : 0;
+          var avgL        = (u.monthlyAvgLogin !== undefined) ? u.monthlyAvgLogin : 0;
+          var lastL       = u.lastLoginTime || '—';
 
           // 停用/啟用按鈕（待驗證帳號不可操作）
           var toggleBtn = '';
@@ -1709,6 +1741,12 @@
               '<button class="admin-limit-save-btn" data-account="' + escHtml(u.account) + '">存</button>' +
             '</td>' +
             '<td style="white-space:nowrap;">' + escHtml(usedLabel) + '</td>' +
+            '<td style="text-align:center;">' + totalQ + '</td>' +
+            '<td style="text-align:center;">' + avgQ + '</td>' +
+            '<td style="white-space:nowrap;font-size:0.78rem;">' + escHtml(lastQ) + '</td>' +
+            '<td style="text-align:center;">' + totalL + '</td>' +
+            '<td style="text-align:center;">' + avgL + '</td>' +
+            '<td style="white-space:nowrap;font-size:0.78rem;">' + escHtml(lastL) + '</td>' +
             '<td>' + toggleBtn + '</td>' +
             '</tr>';
         });
@@ -2092,6 +2130,7 @@
             showLoginStatus(acc);
             setNeutralMode(); /* 無預選：讓 ADMIN 自行選擇試算功能或管理後台 */
             startInactivityTimer(acc);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {
             generateAdminCaptcha();
             alCaptchaInput.value = '';
