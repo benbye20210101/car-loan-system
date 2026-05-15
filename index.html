@@ -4076,11 +4076,13 @@
                 resetField(modalCaptcha, 'text');
                 if (data.error === 'rate_limited') {
                   /* 後端也觸發頻率限制時，同步顯示警示框 */
+                  modalAccount.value = account;
                   showRateLimitToast();
                 } else if (data.error === 'account_not_found') {
                   setFieldError(modalAccount, '帳號');
                 } else if (data.error === 'wrong_password') {
                   setFieldError(modalPassword, '密碼');
+                  modalAccount.value = account; /* 帳號正確，保留欄位值 */
                 } else if (data.error === 'account_pending') {
                   setFieldError(modalAccount, '帳號');
                   alert('此帳號尚未完成 Email 驗證，請先至 Email 收取驗證碼完成驗證。');
