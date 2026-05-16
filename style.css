@@ -2121,13 +2121,11 @@ input.invalid, select.invalid {
 .mz-btn-primary { background: var(--accent, #60a5fa); color: #0f172a; }
 .mz-btn-ghost   { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
 
-/* 案件列表 */
+/* 案件列表（overlay 本身負責捲動，mz-list 自由伸展） */
 .mz-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 65vh;
-  overflow-y: auto;
   padding-right: 4px;
 }
 .mz-empty {
@@ -2213,6 +2211,30 @@ input.invalid, select.invalid {
   cursor: pointer;
 }
 .mz-decision-save-btn:hover { opacity: 0.85; }
+
+/* 試算條件詳細列表 */
+.mz-cond-block {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.mz-cond-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.mz-cond-list {
+  margin: 0;
+  padding-left: 22px;
+  font-size: 0.78rem;
+  line-height: 1.9;
+  color: var(--text-primary, #e2e8f0);
+}
+.mz-cond-key { color: var(--text-secondary); }
+.mz-cond-val { font-weight: 500; }
 
 /* 圖片上傳區 */
 .mz-images-block {

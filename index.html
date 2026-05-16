@@ -3230,7 +3230,7 @@
               '<div class="mz-card-info">' +
                 '<div class="mz-card-time">' + escHtml(c.trialTime || '') + '</div>' +
                 '<div class="mz-card-name">' + escHtml((c.brand || '') + ' ' + (c.model || '')) +
-                  '<span style="font-weight:400;color:var(--text-secondary);font-size:0.8rem;"> · 車齡 ' + escHtml(String(c.age || '')) + ' 年</span></div>' +
+                  '<span style="font-weight:400;color:var(--text-secondary);font-size:0.8rem;"> · 車齡 ' + escHtml(String(c.age || '')) + '</span></div>' +
                 '<div class="mz-card-sub">貸款 ' + escHtml(String(c.loanAmount || '')) + ' 萬 ─ ' + escHtml(c.loanType || '') +
                   (c.guarantor === '有' ? ' ─ 有保證人' : '') + '</div>' +
                 '<div class="mz-card-sub">建議公司：' + escHtml(coList) + '</div>' +
@@ -3288,7 +3288,7 @@
           '<input type="file" class="mz-upload-input" id="mz-upload-input-' + c.rowId + '" accept="image/*" multiple>' +
           '</div>';
 
-        body.innerHTML = suppHtml + decisionHtml + imgHtml;
+        body.innerHTML = buildConditionsHtml(c) + suppHtml + decisionHtml + imgHtml;
 
         /* 綁定送審方案儲存 */
         bindDecisionSave(body, c);
@@ -3306,6 +3306,81 @@
           });
           uploadInput.value = '';
         });
+      }
+
+      /* 建立試算條件詳細列表 HTML */
+      function buildConditionsHtml(c) {
+        var s = function(v) { return String(v || '').trim(); };
+        var items = [];
+
+        // 基本資訊
+        var brandModel = [s(c.brand), s(c.model)].filter(Boolean).join(' ');
+        if (brandModel) items.push(['品牌 / 車款', brandModel]);
+        if (s(c.age))       items.push(['車齡', s(c.age)]);
+        if (s(c.loanType))  items.push(['貸款類型', s(c.loanType)]);
+        items.push(['有保證人', s(c.guarantor) === '有' ? '有' : '無']);
+
+        // 貸款條件
+        if (s(c.loanPeriod))  items.push(['貸款期數', s(c.loanPeriod) + ' 期']);
+        if (s(c.loanAmount))  items.push(['貸款金額', s(c.loanAmount) + ' 萬']);
+        if (s(c.loanPrice))   items.push(['貸款車輛牌價', s(c.loanPrice) + ' 萬']);
+        if (s(c.loanRatio))   items.push(['貸款成數', s(c.loanRatio)]);
+        if (s(c.paymentType)) items.push(['繳款方式', s(c.paymentType)]);
+        if (s(c.loanRate))    items.push(['貸款利率', s(c.loanRate)]);
+
+        // 車主條件
+        if (s(c.ownerAge))       items.push(['車主年齡', s(c.ownerAge)]);
+        if (s(c.ownerJob))       items.push(['車主職業', s(c.ownerJob)]);
+        if (s(c.ownerSeniority)) items.push(['車主年資', s(c.ownerSeniority)]);
+        if (s(c.ownerIncome))    items.push(['車主年收入', s(c.ownerIncome)]);
+        if (s(c.ownerMarital))   items.push(['婚姻狀態', s(c.ownerMarital)]);
+
+        // 資產條件
+        if (s(c.balance))   items.push(['存款餘額', s(c.balance)]);
+        if (s(c.propYears)) items.push(['不動產取得年份', s(c.propYears)]);
+        if (s(c.propLoan))  items.push(['不動產貸款狀況', s(c.propLoan)]);
+
+        // 現有車輛
+        if (s(c.carStatus)) items.push(['現有車輛狀況', s(c.carStatus)]);
+        if (s(c.carPrice))  items.push(['現有車輛牌價', s(c.carPrice) + ' 萬']);
+        if (s(c.carAge))    items.push(['現有車輛車齡', s(c.carAge) + ' 年']);
+        if (s(c.carLoan))   items.push(['車貸狀況', s(c.carLoan)]);
+
+        // 保證人條件（有保證人時才顯示）
+        if (s(c.guarantor) === '有') {
+          if (s(c.guarRel))       items.push(['保證人關係', s(c.guarRel)]);
+          if (s(c.guarAge))       items.push(['保證人年齡', s(c.guarAge)]);
+          if (s(c.guarJob))       items.push(['保證人職業', s(c.guarJob)]);
+          if (s(c.guarSeniority)) items.push(['保證人年資', s(c.guarSeniority)]);
+          if (s(c.guarIncome))    items.push(['保證人年收入', s(c.guarIncome)]);
+          if (s(c.guarMarital))   items.push(['保證人婚姻', s(c.guarMarital)]);
+        }
+
+        // 勾選條件
+        var checks = [];
+        if (s(c.creditAbnormal)   === 'Y') checks.push('信用現況異常');
+        if (s(c.courtEnforce)     === 'Y') checks.push('法院疑有強制執行');
+        if (s(c.courtCrime)       === 'Y') checks.push('曾遭拒絕往來');
+        if (s(c.rejected)         === 'Y') checks.push('已收到法院通知');
+        if (s(c.legalNotice)      === 'Y') checks.push('法律通知');
+        if (s(c.recentGood)       === 'Y') checks.push('近3年往來正常');
+        if (s(c.ccisNone)         === 'Y') checks.push('CCIS 無異常');
+        if (s(c.productLoan)      === 'Y') checks.push('以貸養貸');
+        if (s(c.sameCompanyGood)  === 'Y') checks.push('同公司往來良好');
+        if (checks.length) items.push(['勾選條件', checks.join('、')]);
+
+        // 送件公司 & AI 評估區段
+        if (s(c.submitCompany)) items.push(['送件貸款公司', s(c.submitCompany)]);
+        if (s(c.resultZone))    items.push(['AI 評估區段', s(c.resultZone)]);
+
+        if (!items.length) return '';
+        var html = '<div class="mz-cond-block"><div class="mz-cond-title">📋 試算條件</div><ol class="mz-cond-list">';
+        items.forEach(function(item) {
+          html += '<li><span class="mz-cond-key">' + escHtml(item[0]) + '：</span>' +
+            '<span class="mz-cond-val">' + escHtml(String(item[1])) + '</span></li>';
+        });
+        html += '</ol></div>';
+        return html;
       }
 
       /* 建立送審方案選擇 HTML */
