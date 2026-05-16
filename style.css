@@ -136,36 +136,36 @@ body {
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
-/* card-title 列（含 👤 按鈕） */
-.card-title-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 28px;
-  gap: 10px;
-}
-.card-title-row .card-title {
-  margin-bottom: 0;
-  flex: 1;
-}
+/* ── 👤 會員按鈕（固定於 header 右上角）── */
+/* site-header 本身已是 position:sticky，加 relative 無副作用 */
+.site-header { position: sticky; }
+
 .btn-member-zone {
-  background: none;
-  border: 1px solid var(--border);
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, rgba(96,165,250,0.12) 0%, rgba(167,139,250,0.1) 100%);
+  border: 1px solid rgba(96,165,250,0.35);
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1rem;
+  width: 38px;
+  height: 38px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
-  transition: border-color 0.2s, background 0.2s;
-  flex-shrink: 0;
+  color: #93c5fd;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 10px rgba(96,165,250,0.08);
+  z-index: 10;
 }
 .btn-member-zone:hover {
-  border-color: var(--accent);
-  background: rgba(96,165,250,0.08);
+  background: linear-gradient(135deg, rgba(96,165,250,0.22) 0%, rgba(167,139,250,0.18) 100%);
+  border-color: rgba(96,165,250,0.7);
+  box-shadow: 0 0 16px rgba(96,165,250,0.22);
+  color: #60a5fa;
 }
+.btn-member-zone svg { display: block; }
 
 .card-title {
   font-size: 0.78rem;
@@ -2076,35 +2076,45 @@ input.invalid, select.invalid {
 }
 .mz-close:hover { border-color: #f87171; color: #f87171; }
 
-/* 篩選列 */
+/* 篩選區 */
 .mz-filter {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+}
+.mz-filter-row {
+  display: flex;
   gap: 8px;
   align-items: center;
 }
+.mz-filter-btns { display: flex; gap: 6px; margin-left: auto; }
+
 .mz-input {
   background: var(--input-bg, #252d3d);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text-primary, #e2e8f0);
-  padding: 6px 10px;
+  padding: 7px 10px;
   font-size: 0.82rem;
   outline: none;
+  height: 34px;
 }
 .mz-input:focus { border-color: var(--accent, #60a5fa); }
-#mz-kw      { flex: 1 1 160px; min-width: 120px; }
-#mz-date-from, #mz-date-to { width: 140px; }
-.mz-select  { flex: 1 1 140px; min-width: 120px; }
-.mz-filter-sep { color: var(--text-secondary); font-size: 0.85rem; }
+#mz-company   { flex: 0 0 148px; }
+#mz-kw        { flex: 1; min-width: 100px; }
+#mz-date-from,
+#mz-date-to   { flex: 0 0 140px; }
+.mz-filter-sep { color: var(--text-secondary); font-size: 0.82rem; flex-shrink: 0; }
 
 .mz-btn {
   border-radius: 8px;
-  padding: 6px 16px;
+  padding: 0 18px;
+  height: 34px;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   border: none;
+  white-space: nowrap;
   transition: opacity 0.15s;
 }
 .mz-btn:hover { opacity: 0.85; }
@@ -2240,7 +2250,13 @@ input.invalid, select.invalid {
 
 @media (max-width: 600px) {
   .mz-panel { padding: 20px 16px 24px; }
-  #mz-date-from, #mz-date-to { width: 120px; }
+  .mz-filter-row { flex-wrap: wrap; }
+  #mz-company   { flex: 1 1 130px; }
+  #mz-kw        { flex: 1 1 120px; }
+  #mz-date-from,
+  #mz-date-to   { flex: 1 1 110px; }
+  .mz-filter-btns { margin-left: 0; }
+  .btn-member-zone { right: 14px; width: 34px; height: 34px; }
 }
 .admin-notice-item.notice-inactive {
   border-left: 4px solid #666;

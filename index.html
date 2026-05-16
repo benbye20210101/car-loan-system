@@ -19,6 +19,11 @@
       <span class="login-status-text" id="login-status-text"></span>
       <button class="btn-logout" id="btn-logout" type="button">登出</button>
     </div>
+    <button id="btn-member-zone" class="btn-member-zone" title="我的案件">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+    </button>
   </header>
 
   <!-- ===== ADMIN 模式切換列（ADMIN 登入後顯示）===== -->
@@ -164,10 +169,7 @@
 
     <!-- 試算表單卡片 -->
     <div class="card">
-      <div class="card-title-row">
-        <p class="card-title">車貸條件輸入</p>
-        <button id="btn-member-zone" class="btn-member-zone" title="我的案件">👤</button>
-      </div>
+      <p class="card-title">車貸條件輸入</p>
 
       <div class="form-grid">
 
@@ -1055,15 +1057,31 @@
 
       <!-- 搜尋篩選區 -->
       <div class="mz-filter">
-        <input  type="text"   id="mz-kw"         class="mz-input" placeholder="品牌 / 車款關鍵字">
-        <input  type="date"   id="mz-date-from"  class="mz-input" title="起始日期">
-        <span   class="mz-filter-sep">～</span>
-        <input  type="date"   id="mz-date-to"    class="mz-input" title="結束日期">
-        <select id="mz-company"                   class="mz-input mz-select">
-          <option value="">── 所有建議公司 ──</option>
-        </select>
-        <button id="mz-search-btn"  class="mz-btn mz-btn-primary">搜尋</button>
-        <button id="mz-clear-btn"   class="mz-btn mz-btn-ghost">清除</button>
+        <div class="mz-filter-row">
+          <select id="mz-company" class="mz-input mz-select">
+            <option value="">── 送件貸款公司 ──</option>
+            <option>台灣賓士</option>
+            <option>福斯財務</option>
+            <option>合迪</option>
+            <option>和潤</option>
+            <option>日盛</option>
+            <option>台新大安租</option>
+            <option>中信資融</option>
+            <option>裕融</option>
+            <option>其他租賃公司</option>
+            <option>銀行</option>
+          </select>
+          <input type="text" id="mz-kw" class="mz-input" placeholder="品牌 / 車款關鍵字">
+        </div>
+        <div class="mz-filter-row">
+          <input  type="date" id="mz-date-from" class="mz-input" title="起始日期">
+          <span   class="mz-filter-sep">～</span>
+          <input  type="date" id="mz-date-to"   class="mz-input" title="結束日期">
+          <div class="mz-filter-btns">
+            <button id="mz-search-btn" class="mz-btn mz-btn-primary">搜尋</button>
+            <button id="mz-clear-btn"  class="mz-btn mz-btn-ghost">清除</button>
+          </div>
+        </div>
       </div>
 
       <!-- 案件列表 -->
@@ -3151,10 +3169,14 @@
       /* 載入案件（一次全部，之後客戶端篩選） */
       function loadMyCases() {
         var sess = getSession();
-        if (!sess || !sess.account) { mzEmpty.textContent = '請先登入'; return; }
+        if (!sess || !sess.account) { mzEmpty.textContent = '請先登入'; mzEmpty.style.display = ''; return; }
         gasPost({ action: 'get_my_cases', spreadsheetId: sess.spreadsheetId }, function (data) {
+          if (!data.success && !data.cases) {
+            mzEmpty.textContent = '載入失敗，請稍後再試';
+            mzEmpty.style.display = '';
+            return;
+          }
           mzAllCases = (data.cases || []);
-          buildCompanyFilter();
           renderFilteredCases();
         }, function () {
           mzEmpty.textContent = '載入失敗，請稍後再試';
@@ -3162,42 +3184,12 @@
         });
       }
 
-      /* 從案件清單提取公司名稱填入下拉 */
-      function buildCompanyFilter() {
-        var seen = {};
-        mzAllCases.forEach(function (c) {
-          extractCompanies(c.aiSuggestion).forEach(function (co) { seen[co] = true; });
-        });
-        var prev = mzCompany.value;
-        while (mzCompany.options.length > 1) mzCompany.remove(1);
-        Object.keys(seen).sort().forEach(function (co) {
-          var opt = document.createElement('option');
-          opt.value = co; opt.textContent = co;
-          mzCompany.appendChild(opt);
-        });
-        if (prev) mzCompany.value = prev;
-      }
-
-      /* 從 aiSuggestion 文字解析公司名稱 */
-      function extractCompanies(aiText) {
-        if (!aiText) return [];
-        var parts = String(aiText).split(/[>→\n,，]+/);
-        var out   = [];
-        parts.forEach(function (p) {
-          var co = p.trim().replace(/^\d+\.\s*/, '');
-          if (co && co.length <= 10 && !co.includes('建議') && !co.includes('婉拒') && !co.includes('增補')) {
-            out.push(co);
-          }
-        });
-        return out;
-      }
-
-      /* 篩選並渲染 */
+      /* 篩選並渲染（預設顯示全部案件） */
       function renderFilteredCases() {
-        var kw       = mzKw.value.trim().toLowerCase();
-        var df       = mzDateFrom.value;
-        var dt       = mzDateTo.value;
-        var co       = mzCompany.value;
+        var kw = mzKw.value.trim().toLowerCase();
+        var df = mzDateFrom.value;
+        var dt = mzDateTo.value;
+        var co = mzCompany.value;
         var filtered = mzAllCases.filter(function (c) {
           if (kw && !(
             String(c.brand || '').toLowerCase().includes(kw) ||
@@ -3205,7 +3197,7 @@
           )) return false;
           if (df && c.trialTime && c.trialTime.slice(0, 10) < df) return false;
           if (dt && c.trialTime && c.trialTime.slice(0, 10) > dt) return false;
-          if (co && !extractCompanies(c.aiSuggestion).includes(co)) return false;
+          if (co && String(c.submitCompany || '').trim() !== co) return false;
           return true;
         });
         renderCaseCards(filtered);
@@ -3232,7 +3224,7 @@
           else if (ai.includes('婉拒')) { aiClass = 'reject'; aiLabel = '⚠️ 高風險婉拒案件'; }
           else { aiLabel = ai.slice(0, 30); }
 
-          var coList = extractCompanies(ai).slice(0, 3).join(' > ') || '—';
+          var coList = String(c.submitCompany || '—');
 
           card.innerHTML =
             '<div class="mz-card-head" data-idx="' + idx + '">' +
