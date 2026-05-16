@@ -2048,6 +2048,8 @@ input.invalid, select.invalid {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex-shrink: 0;
+  margin: 0 auto;
 }
 
 .mz-header {
