@@ -1501,7 +1501,7 @@
       var s2SubmitCompany    = document.getElementById('s2-submit-company');
       var s2SubmitCompanyErr = document.getElementById('s2-submit-company-error');
 
-      var currentCaptcha     = '';
+      var currentCaptchaId   = '';   // server-side captcha ID（非客戶端亂數）
       var currentScCategory  = '低SC'; /* 第一步驟完成後由 computeScCategory() 設定 */
       var currentLoanType    = '';     /* 第一步驟貸款類型文字，供第二步驟零利率驗證使用 */
       var cachedRates        = [];     /* 登入時由 get_startup_data 取得，供下拉選項顯示核准率 */
@@ -2447,7 +2447,7 @@
       ════════════════════════════════════════════════════════════ */
       var adminLongPressTimer    = null;
       var adminLongPressJustFired = false;
-      var adminCurrentCaptcha    = '';
+      var adminCaptchaId         = '';   // server-side captcha ID for admin login
       var adminStartupMode       = false;  // 控制 closeStartupModal 是否跳 openStep2
       var currentAdminUsers      = [];     // 快取帳號列表供搜尋篩選用
 
@@ -2456,15 +2456,25 @@
                !inputC.value.trim() && !selectD.value;
       }
 
-      function generateAdminCaptcha() {
-        var code = '';
-        for (var i = 0; i < 6; i++) code += Math.floor(Math.random() * 10);
-        adminCurrentCaptcha = code;
-        alCaptchaDisplay.textContent = code;
+      function fetchAdminCaptcha() {
+        alCaptchaDisplay.textContent = '……';
+        alCaptchaInput.value = '';
+        gasPost({ action: 'get_captcha' }, function (data) {
+          if (data && data.success) {
+            adminCaptchaId = data.captchaId;
+            alCaptchaDisplay.textContent = data.captchaNum;
+          } else {
+            adminCaptchaId = '';
+            alCaptchaDisplay.textContent = '──────';
+          }
+        }, function () {
+          adminCaptchaId = '';
+          alCaptchaDisplay.textContent = '連線失敗';
+        });
       }
 
       function openAdminLoginModal() {
-        generateAdminCaptcha();
+        fetchAdminCaptcha();
         alAccount.value  = '';
         alPassword.value = '';
         alCaptchaInput.value = '';
@@ -2510,7 +2520,7 @@
       alPwdEye.addEventListener('click', function () {
         alPassword.type = alPassword.type === 'password' ? 'text' : 'password';
       });
-      alCaptchaRefresh.addEventListener('click', generateAdminCaptcha);
+      alCaptchaRefresh.addEventListener('click', fetchAdminCaptcha);
 
       /* ADMIN 登入提交 */
       alSubmit.addEventListener('click', function () {
@@ -2526,13 +2536,6 @@
           alResult.className += ' err';
           return;
         }
-        if (cap !== adminCurrentCaptcha) {
-          alResult.textContent = '驗證碼錯誤，請重新輸入';
-          alResult.className += ' err';
-          generateAdminCaptcha();
-          alCaptchaInput.value = '';
-          return;
-        }
 
         alSubmit.disabled    = true;
         alSubmit.textContent = '驗證中…';
@@ -2541,7 +2544,8 @@
           method:  'POST',
           headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
           body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_login',
-                                   account: acc, password: pwd }),
+                                   account: acc, password: pwd,
+                                   captchaId: adminCaptchaId, captchaInput: cap }),
           redirect: 'follow'
         })
         .then(function (r) { return r.json(); })
@@ -2561,9 +2565,10 @@
             startInactivityTimer(acc);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {
-            generateAdminCaptcha();
-            alCaptchaInput.value = '';
-            if (data.error === 'admin_only') {
+            fetchAdminCaptcha();
+            if (data.error === 'invalid_captcha') {
+              alResult.textContent = '驗證碼錯誤，請重新輸入';
+            } else if (data.error === 'admin_only') {
               alResult.textContent = '此入口僅限 ADMIN 帳號使用';
             } else if (data.error === 'wrong_password') {
               alResult.textContent = '密碼錯誤，請重新輸入';
@@ -2947,11 +2952,21 @@
       /* ════════════════════════════════════════════════════════════
          浮動登入框：開啟 / 關閉 / 驗證碼產生
       ════════════════════════════════════════════════════════════ */
-      function generateCaptcha() {
-        var code = '';
-        for (var i = 0; i < 6; i++) code += Math.floor(Math.random() * 10);
-        currentCaptcha = code;
-        captchaDisplay.textContent = code;
+      function fetchCaptcha() {
+        captchaDisplay.textContent = '……';
+        modalCaptcha.value = '';
+        gasPost({ action: 'get_captcha' }, function (data) {
+          if (data && data.success) {
+            currentCaptchaId = data.captchaId;
+            captchaDisplay.textContent = data.captchaNum;
+          } else {
+            currentCaptchaId = '';
+            captchaDisplay.textContent = '──────';
+          }
+        }, function () {
+          currentCaptchaId = '';
+          captchaDisplay.textContent = '連線失敗';
+        });
       }
 
       /* ── 面板切換輔助 ── */
@@ -2962,7 +2977,7 @@
       }
 
       function openModal() {
-        generateCaptcha();
+        fetchCaptcha();
         resetField(modalAccount,  'text');
         resetField(modalPassword, 'password');
         resetField(modalCaptcha,  'text');
@@ -4391,7 +4406,7 @@
 
       /* ── 驗證碼重新產生 ── */
       btnCaptchaRefresh.addEventListener('click', function () {
-        generateCaptcha();
+        fetchCaptcha();
         /* 清空輸入框並移除錯誤狀態 */
         if (modalCaptcha.classList.contains('input-error-state')) {
           resetField(modalCaptcha, 'text');
@@ -4453,9 +4468,8 @@
           setFieldError(modalPassword, '密碼');
           hasError = true;
         }
-        if (!captcha || captcha !== currentCaptcha) {
+        if (!captcha) {
           setFieldError(modalCaptcha, '驗證碼');
-          generateCaptcha(); /* 驗證碼不符時立即更新顯示屏 */
           hasError = true;
         }
 
@@ -4487,14 +4501,16 @@
               method:   'POST',
               headers:  { 'Content-Type': 'text/plain;charset=UTF-8' },
               body:     JSON.stringify({
-                account:   account,
-                password:  password,
-                token:     GAS_API_TOKEN,
-                brand:     pendingFormData ? pendingFormData.brand    : '',
-                model:     pendingFormData ? pendingFormData.model    : '',
-                age:       pendingFormData ? pendingFormData.age      : '0',
-                loanType:  pendingFormData ? pendingFormData.loanType : '',
-                guarantor: pendingFormData ? pendingFormData.guarantor: '否'
+                account:      account,
+                password:     password,
+                token:        GAS_API_TOKEN,
+                captchaId:    currentCaptchaId,
+                captchaInput: captcha,
+                brand:        pendingFormData ? pendingFormData.brand    : '',
+                model:        pendingFormData ? pendingFormData.model    : '',
+                age:          pendingFormData ? pendingFormData.age      : '0',
+                loanType:     pendingFormData ? pendingFormData.loanType : '',
+                guarantor:    pendingFormData ? pendingFormData.guarantor: '否'
               }),
               redirect: 'follow'
             })
@@ -4523,10 +4539,12 @@
                   openStartupModal();
                 }
               } else {
-                /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
-                generateCaptcha();
+                /* 比對失敗：向伺服器取新驗證碼，依錯誤類型標記欄位 */
+                fetchCaptcha();
                 resetField(modalCaptcha, 'text');
-                if (data.error === 'rate_limited') {
+                if (data.error === 'invalid_captcha') {
+                  setFieldError(modalCaptcha, '驗證碼');
+                } else if (data.error === 'rate_limited') {
                   /* 後端也觸發頻率限制時，同步顯示警示框 */
                   modalAccount.value = account;
                   showRateLimitToast();
