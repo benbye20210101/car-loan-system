@@ -1077,10 +1077,7 @@
           <input  type="date" id="mz-date-from" class="mz-input" title="起始日期">
           <span   class="mz-filter-sep">～</span>
           <input  type="date" id="mz-date-to"   class="mz-input" title="結束日期">
-          <div class="mz-filter-btns">
-            <button id="mz-search-btn" class="mz-btn mz-btn-primary">搜尋</button>
-            <button id="mz-clear-btn"  class="mz-btn mz-btn-ghost">清除</button>
-          </div>
+          <button id="mz-clear-btn" class="mz-btn mz-btn-ghost" style="margin-left:auto;">✕ 清除</button>
         </div>
       </div>
 
@@ -3124,16 +3121,15 @@
       /* ════════════════════════════════════════════════════════════
          Phase 10：會員專區
       ════════════════════════════════════════════════════════════ */
-      var mzOverlay   = document.getElementById('mz-overlay');
-      var mzCloseBtn  = document.getElementById('mz-close');
-      var mzList      = document.getElementById('mz-list');
-      var mzEmpty     = document.getElementById('mz-empty');
-      var mzKw        = document.getElementById('mz-kw');
-      var mzDateFrom  = document.getElementById('mz-date-from');
-      var mzDateTo    = document.getElementById('mz-date-to');
-      var mzCompany   = document.getElementById('mz-company');
-      var mzSearchBtn = document.getElementById('mz-search-btn');
-      var mzClearBtn  = document.getElementById('mz-clear-btn');
+      var mzOverlay  = document.getElementById('mz-overlay');
+      var mzCloseBtn = document.getElementById('mz-close');
+      var mzList     = document.getElementById('mz-list');
+      var mzEmpty    = document.getElementById('mz-empty');
+      var mzKw       = document.getElementById('mz-kw');
+      var mzDateFrom = document.getElementById('mz-date-from');
+      var mzDateTo   = document.getElementById('mz-date-to');
+      var mzCompany  = document.getElementById('mz-company');
+      var mzClearBtn = document.getElementById('mz-clear-btn');
 
       /* 👤 按鈕：已登入→直開，未登入→觸發登入 */
       document.getElementById('btn-member-zone').addEventListener('click', function () {
@@ -3151,7 +3147,10 @@
         if (e.target === mzOverlay) mzOverlay.classList.remove('show');
       });
 
-      mzSearchBtn.addEventListener('click', renderFilteredCases);
+      mzKw.addEventListener('input', renderFilteredCases);
+      mzCompany.addEventListener('change', renderFilteredCases);
+      mzDateFrom.addEventListener('change', renderFilteredCases);
+      mzDateTo.addEventListener('change', renderFilteredCases);
       mzClearBtn.addEventListener('click', function () {
         mzKw.value = ''; mzDateFrom.value = ''; mzDateTo.value = ''; mzCompany.value = '';
         renderFilteredCases();
@@ -3170,7 +3169,7 @@
       function loadMyCases() {
         var sess = getSession();
         if (!sess || !sess.account) { mzEmpty.textContent = '請先登入'; mzEmpty.style.display = ''; return; }
-        gasPost({ action: 'get_my_cases', spreadsheetId: sess.spreadsheetId }, function (data) {
+        gasPost({ action: 'get_my_cases', account: sess.account, spreadsheetId: sess.spreadsheetId }, function (data) {
           if (!data.success && !data.cases) {
             mzEmpty.textContent = '載入失敗，請稍後再試';
             mzEmpty.style.display = '';
@@ -3359,7 +3358,7 @@
           var sess = getSession();
           saveBtn.disabled = true;
           saveBtn.textContent = '儲存中…';
-          gasPost({ action: 'save_case_decision', spreadsheetId: sess.spreadsheetId,
+          gasPost({ action: 'save_case_decision', account: sess.account, spreadsheetId: sess.spreadsheetId,
             rowId: String(c.rowId), decision: decision }, function (data) {
             if (data.success) {
               c.decision = decision;
@@ -3390,7 +3389,7 @@
         var listEl = document.getElementById('mz-img-list-' + rowId);
         if (!listEl) return;
         var sess = getSession();
-        gasPost({ action: 'get_case_images', spreadsheetId: sess.spreadsheetId, rowId: String(rowId) },
+        gasPost({ action: 'get_case_images', account: sess.account, spreadsheetId: sess.spreadsheetId, rowId: String(rowId) },
           function (data) {
             var imgs = data.images || [];
             if (imgs.length === 0) { listEl.textContent = '尚無圖片'; return; }
@@ -3430,7 +3429,7 @@
             var fname = file.name.replace(/\.[^.]+$/, '') + '_' +
               new Date().toISOString().slice(0, 10).replace(/-/g, '') + '.jpg';
             if (listEl) listEl.textContent = '上傳中…';
-            gasPost({ action: 'upload_case_image', spreadsheetId: sess.spreadsheetId,
+            gasPost({ action: 'upload_case_image', account: sess.account, spreadsheetId: sess.spreadsheetId,
               rowId: String(rowId), imageName: fname, imageBase64: b64 },
               function (data) {
                 if (data.success) { loadCaseImages(rowId); }
