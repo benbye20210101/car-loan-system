@@ -164,7 +164,10 @@
 
     <!-- 試算表單卡片 -->
     <div class="card">
-      <p class="card-title">車貸條件輸入</p>
+      <div class="card-title-row">
+        <p class="card-title">車貸條件輸入</p>
+        <button id="btn-member-zone" class="btn-member-zone" title="我的案件">👤</button>
+      </div>
 
       <div class="form-grid">
 
@@ -1042,6 +1045,34 @@
     </div>
   </div>
 
+  <!-- ===== Phase 10：會員專區 overlay ===== -->
+  <div class="mz-overlay" id="mz-overlay">
+    <div class="mz-panel">
+      <div class="mz-header">
+        <span class="mz-title">👤 我的案件</span>
+        <button class="mz-close" id="mz-close" type="button" aria-label="關閉">✕</button>
+      </div>
+
+      <!-- 搜尋篩選區 -->
+      <div class="mz-filter">
+        <input  type="text"   id="mz-kw"         class="mz-input" placeholder="品牌 / 車款關鍵字">
+        <input  type="date"   id="mz-date-from"  class="mz-input" title="起始日期">
+        <span   class="mz-filter-sep">～</span>
+        <input  type="date"   id="mz-date-to"    class="mz-input" title="結束日期">
+        <select id="mz-company"                   class="mz-input mz-select">
+          <option value="">── 所有建議公司 ──</option>
+        </select>
+        <button id="mz-search-btn"  class="mz-btn mz-btn-primary">搜尋</button>
+        <button id="mz-clear-btn"   class="mz-btn mz-btn-ghost">清除</button>
+      </div>
+
+      <!-- 案件列表 -->
+      <div class="mz-list" id="mz-list">
+        <p class="mz-empty" id="mz-empty">載入中…</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== ADMIN 管理者特別登入浮動框（長按 START 5 秒後出現）===== -->
   <div class="modal-overlay" id="admin-login-overlay">
     <div class="modal-box admin-login-box">
@@ -1460,6 +1491,8 @@
       var currentLoanType    = '';     /* 第一步驟貸款類型文字，供第二步驟零利率驗證使用 */
       var cachedRates        = [];     /* 登入時由 get_startup_data 取得，供下拉選項顯示核准率 */
       var pendingItems     = null; /* 暫存試算結果，登入成功後顯示 */
+      var loginDestination = 'startup'; /* 'startup'=原流程, 'member_zone'=登入後直開會員專區 */
+      var mzAllCases       = [];        /* 會員專區：一次載入所有案件後供客戶端篩選 */
       var pendingFormData  = null; /* 暫存表單原始值，登入成功後送至 SC 試算表 */
       var pendingStep1Items = null; /* 暫存第一步驟摘要，第二步驟提交後合併顯示 */
 
@@ -3070,6 +3103,353 @@
 
       btnStartupEnter.addEventListener('click', closeStartupModal);
 
+      /* ════════════════════════════════════════════════════════════
+         Phase 10：會員專區
+      ════════════════════════════════════════════════════════════ */
+      var mzOverlay   = document.getElementById('mz-overlay');
+      var mzCloseBtn  = document.getElementById('mz-close');
+      var mzList      = document.getElementById('mz-list');
+      var mzEmpty     = document.getElementById('mz-empty');
+      var mzKw        = document.getElementById('mz-kw');
+      var mzDateFrom  = document.getElementById('mz-date-from');
+      var mzDateTo    = document.getElementById('mz-date-to');
+      var mzCompany   = document.getElementById('mz-company');
+      var mzSearchBtn = document.getElementById('mz-search-btn');
+      var mzClearBtn  = document.getElementById('mz-clear-btn');
+
+      /* 👤 按鈕：已登入→直開，未登入→觸發登入 */
+      document.getElementById('btn-member-zone').addEventListener('click', function () {
+        var sess = getSession();
+        if (sess && sess.account) {
+          openMemberZone();
+        } else {
+          loginDestination = 'member_zone';
+          openModal();
+        }
+      });
+
+      mzCloseBtn.addEventListener('click', function () { mzOverlay.classList.remove('show'); });
+      mzOverlay.addEventListener('click', function (e) {
+        if (e.target === mzOverlay) mzOverlay.classList.remove('show');
+      });
+
+      mzSearchBtn.addEventListener('click', renderFilteredCases);
+      mzClearBtn.addEventListener('click', function () {
+        mzKw.value = ''; mzDateFrom.value = ''; mzDateTo.value = ''; mzCompany.value = '';
+        renderFilteredCases();
+      });
+
+      /* 開啟會員專區 */
+      function openMemberZone() {
+        mzOverlay.classList.add('show');
+        mzList.innerHTML = '';
+        mzEmpty.style.display = '';
+        mzEmpty.textContent = '載入中…';
+        loadMyCases();
+      }
+
+      /* 載入案件（一次全部，之後客戶端篩選） */
+      function loadMyCases() {
+        var sess = getSession();
+        if (!sess || !sess.account) { mzEmpty.textContent = '請先登入'; return; }
+        gasPost({ action: 'get_my_cases', spreadsheetId: sess.spreadsheetId }, function (data) {
+          mzAllCases = (data.cases || []);
+          buildCompanyFilter();
+          renderFilteredCases();
+        }, function () {
+          mzEmpty.textContent = '載入失敗，請稍後再試';
+          mzEmpty.style.display = '';
+        });
+      }
+
+      /* 從案件清單提取公司名稱填入下拉 */
+      function buildCompanyFilter() {
+        var seen = {};
+        mzAllCases.forEach(function (c) {
+          extractCompanies(c.aiSuggestion).forEach(function (co) { seen[co] = true; });
+        });
+        var prev = mzCompany.value;
+        while (mzCompany.options.length > 1) mzCompany.remove(1);
+        Object.keys(seen).sort().forEach(function (co) {
+          var opt = document.createElement('option');
+          opt.value = co; opt.textContent = co;
+          mzCompany.appendChild(opt);
+        });
+        if (prev) mzCompany.value = prev;
+      }
+
+      /* 從 aiSuggestion 文字解析公司名稱 */
+      function extractCompanies(aiText) {
+        if (!aiText) return [];
+        var parts = String(aiText).split(/[>→\n,，]+/);
+        var out   = [];
+        parts.forEach(function (p) {
+          var co = p.trim().replace(/^\d+\.\s*/, '');
+          if (co && co.length <= 10 && !co.includes('建議') && !co.includes('婉拒') && !co.includes('增補')) {
+            out.push(co);
+          }
+        });
+        return out;
+      }
+
+      /* 篩選並渲染 */
+      function renderFilteredCases() {
+        var kw       = mzKw.value.trim().toLowerCase();
+        var df       = mzDateFrom.value;
+        var dt       = mzDateTo.value;
+        var co       = mzCompany.value;
+        var filtered = mzAllCases.filter(function (c) {
+          if (kw && !(
+            String(c.brand || '').toLowerCase().includes(kw) ||
+            String(c.model || '').toLowerCase().includes(kw)
+          )) return false;
+          if (df && c.trialTime && c.trialTime.slice(0, 10) < df) return false;
+          if (dt && c.trialTime && c.trialTime.slice(0, 10) > dt) return false;
+          if (co && !extractCompanies(c.aiSuggestion).includes(co)) return false;
+          return true;
+        });
+        renderCaseCards(filtered);
+      }
+
+      /* 渲染案件卡片 */
+      function renderCaseCards(cases) {
+        mzList.innerHTML = '';
+        if (cases.length === 0) {
+          mzEmpty.style.display = '';
+          mzEmpty.textContent = '無符合條件的案件';
+          return;
+        }
+        mzEmpty.style.display = 'none';
+        cases.forEach(function (c, idx) {
+          var card = document.createElement('div');
+          card.className = 'mz-card';
+
+          /* 判斷 AI 建議類型 */
+          var aiClass = 'suggest', aiLabel = '';
+          var ai = String(c.aiSuggestion || '');
+          if (ai.includes('直接核准')) { aiClass = 'suggest'; aiLabel = '✅ 建議直接核准'; }
+          else if (ai.includes('增補條件')) { aiClass = 'supp'; aiLabel = '📋 建議增補條件（' + (c.zoneText || '') + '）'; }
+          else if (ai.includes('婉拒')) { aiClass = 'reject'; aiLabel = '⚠️ 高風險婉拒案件'; }
+          else { aiLabel = ai.slice(0, 30); }
+
+          var coList = extractCompanies(ai).slice(0, 3).join(' > ') || '—';
+
+          card.innerHTML =
+            '<div class="mz-card-head" data-idx="' + idx + '">' +
+              '<div class="mz-card-info">' +
+                '<div class="mz-card-time">' + escHtml(c.trialTime || '') + '</div>' +
+                '<div class="mz-card-name">' + escHtml((c.brand || '') + ' ' + (c.model || '')) +
+                  '<span style="font-weight:400;color:var(--text-secondary);font-size:0.8rem;"> · 車齡 ' + escHtml(String(c.age || '')) + ' 年</span></div>' +
+                '<div class="mz-card-sub">貸款 ' + escHtml(String(c.loanAmount || '')) + ' 萬 ─ ' + escHtml(c.loanType || '') +
+                  (c.guarantor === '有' ? ' ─ 有保證人' : '') + '</div>' +
+                '<div class="mz-card-sub">建議公司：' + escHtml(coList) + '</div>' +
+                '<div class="mz-card-ai ' + aiClass + '">' + escHtml(aiLabel) + '</div>' +
+              '</div>' +
+              '<div class="mz-card-toggle">展開詳細 ▼</div>' +
+            '</div>' +
+            '<div class="mz-card-body" id="mz-body-' + idx + '"></div>';
+
+          mzList.appendChild(card);
+
+          card.querySelector('.mz-card-head').addEventListener('click', function () {
+            var body   = document.getElementById('mz-body-' + idx);
+            var toggle = card.querySelector('.mz-card-toggle');
+            var opened = body.classList.toggle('open');
+            toggle.textContent = opened ? '收起 ▲' : '展開詳細 ▼';
+            if (opened && !body.dataset.loaded) {
+              body.dataset.loaded = '1';
+              renderCaseBody(body, c);
+            }
+          });
+        });
+      }
+
+      /* 渲染展開詳細 + 送審方案選擇 + 圖片上傳 */
+      function renderCaseBody(body, c) {
+        var ai   = String(c.aiSuggestion || '');
+        var supp = (c.isSupp === 'Y');
+
+        /* 決策選項 */
+        var decisionHtml = buildDecisionHtml(c, supp);
+
+        /* 增補條件摘要（僅有時顯示） */
+        var suppHtml = '';
+        if (supp) {
+          var scItems = (c.scConditions || []).filter(function (s) { return s.trim(); });
+          if (scItems.length) {
+            suppHtml = '<div style="margin-top:12px;">' +
+              '<div style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px;">增補條件建議</div>';
+            scItems.forEach(function (s, i) {
+              suppHtml += '<div style="font-size:0.78rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--text-primary);">' +
+                '<span style="color:#60a5fa;font-weight:700;">' + (i + 1) + '.&nbsp;</span>' +
+                escHtml(s).replace(/\n/g, '<br>') + '</div>';
+            });
+            suppHtml += '</div>';
+          }
+        }
+
+        /* 圖片上傳 */
+        var imgBlockId = 'mz-img-' + c.rowId;
+        var imgHtml = '<div class="mz-images-block" id="' + imgBlockId + '">' +
+          '<div class="mz-images-title">📎 徵審結果圖片</div>' +
+          '<div class="mz-images-list" id="mz-img-list-' + c.rowId + '">載入中…</div>' +
+          '<button class="mz-upload-btn" id="mz-upload-btn-' + c.rowId + '">＋ 上傳圖片</button>' +
+          '<input type="file" class="mz-upload-input" id="mz-upload-input-' + c.rowId + '" accept="image/*" multiple>' +
+          '</div>';
+
+        body.innerHTML = suppHtml + decisionHtml + imgHtml;
+
+        /* 綁定送審方案儲存 */
+        bindDecisionSave(body, c);
+
+        /* 載入圖片 */
+        loadCaseImages(c.rowId);
+
+        /* 綁定圖片上傳 */
+        var uploadBtn   = document.getElementById('mz-upload-btn-' + c.rowId);
+        var uploadInput = document.getElementById('mz-upload-input-' + c.rowId);
+        uploadBtn.addEventListener('click', function () { uploadInput.click(); });
+        uploadInput.addEventListener('change', function () {
+          Array.prototype.forEach.call(uploadInput.files, function (file) {
+            compressAndUpload(file, c.rowId);
+          });
+          uploadInput.value = '';
+        });
+      }
+
+      /* 建立送審方案選擇 HTML */
+      function buildDecisionHtml(c, supp) {
+        var ai    = String(c.aiSuggestion || '');
+        var saved = String(c.decision || '').trim();
+        var isDirect = ai.includes('直接核准');
+        var scItems  = (c.scConditions || []).filter(function (s) { return s.trim(); });
+
+        var optsHtml = '';
+        /* 選項 A：原條件送審（所有情境均有） */
+        optsHtml += '<label class="mz-decision-opt">' +
+          '<input type="radio" name="mz-dec-' + c.rowId + '" value="原條件送審"' +
+          (saved === '原條件送審' ? ' checked' : '') + '>' +
+          '<span class="mz-decision-opt-label">A.</span>' +
+          '<span class="mz-decision-opt-text">原條件送審</span>' +
+          '</label>';
+
+        /* 選項 B~K：增補條件（非直接核准且有增補條件時） */
+        if (!isDirect && supp && scItems.length) {
+          scItems.forEach(function (s, i) {
+            var label   = String.fromCharCode(66 + i); // B, C, D...
+            var valText = '增補條件' + (i + 1) + '：' + s.slice(0, 30) + (s.length > 30 ? '…' : '');
+            optsHtml += '<label class="mz-decision-opt">' +
+              '<input type="radio" name="mz-dec-' + c.rowId + '" value="' + escHtml('增補條件' + (i + 1)) + '"' +
+              (saved === '增補條件' + (i + 1) ? ' checked' : '') + '>' +
+              '<span class="mz-decision-opt-label">' + label + '.</span>' +
+              '<span class="mz-decision-opt-text" style="white-space:pre-wrap;">' + escHtml(s) + '</span>' +
+              '</label>';
+          });
+        }
+
+        var savedBadge = saved ? '<div class="mz-decision-saved">✅ 已記錄：' + escHtml(saved) + '</div>' : '';
+        return '<div class="mz-decision-block">' +
+          '<div class="mz-decision-title">📌 送審方案選擇</div>' +
+          '<div class="mz-decision-opts" id="mz-dec-opts-' + c.rowId + '">' + optsHtml + '</div>' +
+          savedBadge +
+          '<button class="mz-decision-save-btn" id="mz-dec-save-' + c.rowId + '" data-rowid="' + c.rowId + '">儲存選擇</button>' +
+          '</div>';
+      }
+
+      /* 綁定送審方案儲存 */
+      function bindDecisionSave(body, c) {
+        var saveBtn = document.getElementById('mz-dec-save-' + c.rowId);
+        if (!saveBtn) return;
+        saveBtn.addEventListener('click', function () {
+          var chosen = body.querySelector('input[name="mz-dec-' + c.rowId + '"]:checked');
+          if (!chosen) { alert('請先選擇送審方案'); return; }
+          var decision = chosen.value;
+          var sess = getSession();
+          saveBtn.disabled = true;
+          saveBtn.textContent = '儲存中…';
+          gasPost({ action: 'save_case_decision', spreadsheetId: sess.spreadsheetId,
+            rowId: String(c.rowId), decision: decision }, function (data) {
+            if (data.success) {
+              c.decision = decision;
+              var badge = body.querySelector('.mz-decision-saved');
+              if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'mz-decision-saved';
+                saveBtn.parentNode.insertBefore(badge, saveBtn);
+              }
+              badge.textContent = '✅ 已記錄：' + decision;
+              saveBtn.disabled = false;
+              saveBtn.textContent = '儲存選擇';
+            } else {
+              alert('儲存失敗，請稍後再試');
+              saveBtn.disabled = false;
+              saveBtn.textContent = '儲存選擇';
+            }
+          }, function () {
+            alert('網路錯誤，請稍後再試');
+            saveBtn.disabled = false;
+            saveBtn.textContent = '儲存選擇';
+          });
+        });
+      }
+
+      /* 載入已上傳圖片 */
+      function loadCaseImages(rowId) {
+        var listEl = document.getElementById('mz-img-list-' + rowId);
+        if (!listEl) return;
+        var sess = getSession();
+        gasPost({ action: 'get_case_images', spreadsheetId: sess.spreadsheetId, rowId: String(rowId) },
+          function (data) {
+            var imgs = data.images || [];
+            if (imgs.length === 0) { listEl.textContent = '尚無圖片'; return; }
+            listEl.innerHTML = '';
+            imgs.forEach(function (img) {
+              var a   = document.createElement('a');
+              a.href  = img.viewUrl;
+              a.target = '_blank';
+              var im  = document.createElement('img');
+              im.src  = 'https://drive.google.com/uc?id=' + img.fileId;
+              im.className = 'mz-thumb';
+              im.alt  = img.name;
+              a.appendChild(im);
+              listEl.appendChild(a);
+            });
+          }, function () { listEl.textContent = '載入失敗'; });
+      }
+
+      /* Canvas 壓縮後上傳 */
+      function compressAndUpload(file, rowId) {
+        var listEl = document.getElementById('mz-img-list-' + rowId);
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var MAX = 1200;
+            var w = img.width, h = img.height;
+            if (w > MAX || h > MAX) {
+              if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+              else        { w = Math.round(w * MAX / h); h = MAX; }
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            var b64 = canvas.toDataURL('image/jpeg', 0.8);
+            var sess = getSession();
+            var fname = file.name.replace(/\.[^.]+$/, '') + '_' +
+              new Date().toISOString().slice(0, 10).replace(/-/g, '') + '.jpg';
+            if (listEl) listEl.textContent = '上傳中…';
+            gasPost({ action: 'upload_case_image', spreadsheetId: sess.spreadsheetId,
+              rowId: String(rowId), imageName: fname, imageBase64: b64 },
+              function (data) {
+                if (data.success) { loadCaseImages(rowId); }
+                else { alert('上傳失敗：' + (data.error || '')); if (listEl) listEl.textContent = '上傳失敗'; }
+              }, function () { alert('網路錯誤，上傳失敗'); });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
       /* ── GAS fetch 共用函式 ── */
       function gasPost(payload, onSuccess, onError) {
         fetch(GAS_WEBAPP_URL, {
@@ -4068,8 +4448,14 @@
                 pendingStep1Items = pendingItems ? pendingItems.slice() : [];
                 pendingItems    = null;
                 pendingFormData = null;
-                /* 顯示登入後資訊彈窗（公告+核准補件率）；關閉後才進入試算 */
-                openStartupModal();
+                /* 依 loginDestination 決定登入後路由 */
+                if (loginDestination === 'member_zone') {
+                  loginDestination = 'startup';
+                  openMemberZone();
+                } else {
+                  /* 顯示登入後資訊彈窗（公告+核准補件率）；關閉後才進入試算 */
+                  openStartupModal();
+                }
               } else {
                 /* 比對失敗：依後台回應標記對應欄位錯誤，並重新產生驗證碼 */
                 generateCaptcha();

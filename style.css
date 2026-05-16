@@ -136,6 +136,37 @@ body {
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
+/* card-title 列（含 👤 按鈕） */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 10px;
+}
+.card-title-row .card-title {
+  margin-bottom: 0;
+  flex: 1;
+}
+.btn-member-zone {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+.btn-member-zone:hover {
+  border-color: var(--accent);
+  background: rgba(96,165,250,0.08);
+}
+
 .card-title {
   font-size: 0.78rem;
   font-weight: 600;
@@ -1991,6 +2022,225 @@ input.invalid, select.invalid {
 .admin-notice-item.notice-active {
   border-left: 4px solid #60a5fa;
   background: rgba(96,165,250,0.06);
+}
+
+/* ===== Phase 10：會員專區 ===== */
+.mz-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 9000;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 12px;
+  overflow-y: auto;
+}
+.mz-overlay.show { display: flex; }
+
+.mz-panel {
+  background: var(--surface, #1e2533);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 780px;
+  padding: 28px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mz-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-primary, #e2e8f0);
+}
+.mz-close {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mz-close:hover { border-color: #f87171; color: #f87171; }
+
+/* 篩選列 */
+.mz-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.mz-input {
+  background: var(--input-bg, #252d3d);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary, #e2e8f0);
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  outline: none;
+}
+.mz-input:focus { border-color: var(--accent, #60a5fa); }
+#mz-kw      { flex: 1 1 160px; min-width: 120px; }
+#mz-date-from, #mz-date-to { width: 140px; }
+.mz-select  { flex: 1 1 140px; min-width: 120px; }
+.mz-filter-sep { color: var(--text-secondary); font-size: 0.85rem; }
+
+.mz-btn {
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+.mz-btn:hover { opacity: 0.85; }
+.mz-btn-primary { background: var(--accent, #60a5fa); color: #0f172a; }
+.mz-btn-ghost   { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+
+/* 案件列表 */
+.mz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.mz-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  padding: 32px 0;
+}
+
+/* 案件卡片 */
+.mz-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.mz-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mz-card-head:hover { background: rgba(96,165,250,0.05); }
+.mz-card-info { flex: 1; min-width: 0; }
+.mz-card-time { font-size: 0.73rem; color: var(--text-secondary); margin-bottom: 3px; }
+.mz-card-name { font-size: 0.92rem; font-weight: 600; color: var(--text-primary, #e2e8f0); }
+.mz-card-sub  { font-size: 0.78rem; color: var(--text-secondary); margin-top: 3px; }
+.mz-card-ai   { font-size: 0.75rem; margin-top: 5px; }
+.mz-card-ai.suggest   { color: #34d399; }
+.mz-card-ai.supp      { color: #60a5fa; }
+.mz-card-ai.reject    { color: #f87171; }
+.mz-card-toggle { font-size: 0.75rem; color: var(--text-secondary); white-space: nowrap; padding-top: 2px; }
+
+/* 展開詳細區 */
+.mz-card-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
+.mz-card-body.open { display: block; }
+
+/* 送審方案選擇 */
+.mz-decision-block {
+  margin-top: 14px;
+  padding: 14px;
+  background: rgba(96,165,250,0.06);
+  border: 1px solid rgba(96,165,250,0.2);
+  border-radius: 10px;
+}
+.mz-decision-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.mz-decision-opts { display: flex; flex-direction: column; gap: 8px; }
+.mz-decision-opt {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color 0.15s, background 0.15s;
+}
+.mz-decision-opt:hover { background: rgba(96,165,250,0.05); border-color: rgba(96,165,250,0.2); }
+.mz-decision-opt input[type="radio"] { margin-top: 2px; flex-shrink: 0; accent-color: #60a5fa; }
+.mz-decision-opt-text { font-size: 0.8rem; color: var(--text-primary, #e2e8f0); line-height: 1.5; white-space: pre-wrap; }
+.mz-decision-opt-label { font-size: 0.77rem; font-weight: 600; color: var(--text-secondary); margin-right: 4px; flex-shrink: 0; }
+.mz-decision-saved {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #34d399;
+}
+.mz-decision-save-btn {
+  margin-top: 10px;
+  background: var(--accent, #60a5fa);
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mz-decision-save-btn:hover { opacity: 0.85; }
+
+/* 圖片上傳區 */
+.mz-images-block {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.mz-images-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+.mz-images-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.mz-thumb {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.mz-upload-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.mz-upload-btn:hover { border-color: var(--accent, #60a5fa); color: var(--accent, #60a5fa); }
+.mz-upload-input { display: none; }
+
+@media (max-width: 600px) {
+  .mz-panel { padding: 20px 16px 24px; }
+  #mz-date-from, #mz-date-to { width: 120px; }
 }
 .admin-notice-item.notice-inactive {
   border-left: 4px solid #666;
