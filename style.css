@@ -24,7 +24,7 @@
   --transition:    0.22s ease;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: var(--bg-deep); }
 
 body {
   font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
@@ -956,8 +956,7 @@ input.invalid, select.invalid {
 
 /* ===== 響應式：手機版 ===== */
 @media (max-width: 540px) {
-  html { height: 100%; overflow: hidden; }
-  body { height: 100%; overflow: hidden; overscroll-behavior: none; padding-bottom: 26px; }
+  body { min-height: 0; padding-bottom: 26px; }
   .site-header { padding: 15px 16px; }
   .main-wrap { padding: 18px 12px 0; }
   .card { padding: 22px 14px 26px; }
