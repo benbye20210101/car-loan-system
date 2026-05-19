@@ -956,15 +956,23 @@ input.invalid, select.invalid {
 
 /* ===== 響應式：手機版 ===== */
 @media (max-width: 540px) {
-  .site-header { padding: 18px 16px; }
-  .card { padding: 24px 18px 28px; }
+  body { padding-bottom: 20px; }
+  .site-header { padding: 10px 16px; }
+  .main-wrap { padding: 10px 12px 0; }
+  .card { padding: 14px 14px 18px; }
+  .card-title { margin-bottom: 12px; }
+  .form-grid { gap: 10px; }
+  .form-group { gap: 5px; }
+  select, input[type="number"] { padding: 9px 12px; font-size: 0.86rem; }
   .result-card { padding: 22px 18px 26px; }
   .btn-calculate { font-size: 0.95rem; padding: 14px 20px; }
+  .btn-wrap { margin-top: 10px; }
+  .site-footer { margin-top: 16px; }
   /* 圓形 START 按鈕手機縮小 */
-  #btn-calc { width: 155px; height: 155px; border-width: 12px; }
-  #btn-calc::after { inset: -12px; }
-  .start-chrome { font-size: 1.12rem; }
-  .btn-top-label { font-size: 0.53rem; }
+  #btn-calc { width: 120px; height: 120px; border-width: 10px; }
+  #btn-calc::after { inset: -10px; }
+  .start-chrome { font-size: 1.0rem; }
+  .btn-top-label { font-size: 0.50rem; }
 }
 
 @media (max-width: 360px) {
