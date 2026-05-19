@@ -956,7 +956,8 @@ input.invalid, select.invalid {
 
 /* ===== 響應式：手機版 ===== */
 @media (max-width: 540px) {
-  body { padding-bottom: 26px; }
+  html { height: 100%; overflow: hidden; }
+  body { height: 100%; overflow: hidden; overscroll-behavior: none; padding-bottom: 26px; }
   .site-header { padding: 15px 16px; }
   .main-wrap { padding: 18px 12px 0; }
   .card { padding: 22px 14px 26px; }
@@ -2488,3 +2489,72 @@ input.invalid, select.invalid {
   background: rgba(111,207,122,0.12);
 }
 .admin-enable-notice-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── 公告操作按鈕群組（修改＋停用/重啟） ── */
+.notice-action-btns {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.notice-action-btns .admin-del-notice-btn,
+.notice-action-btns .admin-enable-notice-btn {
+  margin-left: 0;
+}
+.admin-edit-notice-btn {
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  border: 1px solid rgba(96, 165, 250, 0.5);
+  background: transparent;
+  color: #7ab4f0;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.admin-edit-notice-btn:hover:not(:disabled) {
+  background: rgba(96, 165, 250, 0.12);
+}
+.admin-edit-notice-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── 公告行內編輯區域 ── */
+.notice-edit-area {
+  display: none;
+  margin-top: 8px;
+}
+.notice-edit-action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+.notice-save-btn {
+  padding: 6px 20px;
+  background: var(--accent);
+  border: none;
+  border-radius: 24px;
+  color: #0e0f13;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+.notice-save-btn:hover:not(:disabled) { opacity: 0.85; }
+.notice-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.notice-cancel-btn {
+  padding: 5px 16px;
+  font-size: 0.82rem;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.notice-cancel-btn:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}

@@ -2035,15 +2035,88 @@
               '<span class="notice-status-badge ' + (isActive ? 'notice-badge-on' : 'notice-badge-off') + '">' +
                 (isActive ? '生效中' : '已停用') +
               '</span>' +
-              (isActive
-                ? '<button class="admin-del-notice-btn" data-id="' + n.id + '">停用</button>'
-                : '<button class="admin-enable-notice-btn" data-id="' + n.id + '">重啟</button>') +
+              '<div class="notice-action-btns">' +
+                '<button class="admin-edit-notice-btn" data-id="' + n.id + '">修改</button>' +
+                (isActive
+                  ? '<button class="admin-del-notice-btn" data-id="' + n.id + '">停用</button>'
+                  : '<button class="admin-enable-notice-btn" data-id="' + n.id + '">重啟</button>') +
+              '</div>' +
             '</div>' +
-            '<div class="notice-item-content">' + escHtml(n.content) + '</div>' +
+            '<div class="notice-item-content" id="notice-content-' + n.id + '">' + escHtml(n.content) + '</div>' +
+            '<div class="notice-edit-area" id="notice-edit-' + n.id + '">' +
+              '<textarea class="admin-input admin-notice-textarea" id="notice-textarea-' + n.id + '" rows="3"></textarea>' +
+              '<div class="notice-edit-action-row">' +
+                '<button class="notice-save-btn" data-id="' + n.id + '">儲存修改</button>' +
+                '<button class="notice-cancel-btn" data-id="' + n.id + '">取消</button>' +
+              '</div>' +
+            '</div>' +
           '</div>';
         });
         html += '</div>';
         adminNoticeListWrap.innerHTML = html;
+
+        // 預填 textarea 原始內容（避免 HTML 屬性跳脫問題）
+        notices.forEach(function (n) {
+          var ta = document.getElementById('notice-textarea-' + n.id);
+          if (ta) ta.value = n.content;
+        });
+
+        // 修改按鈕：展開行內編輯區
+        adminNoticeListWrap.querySelectorAll('.admin-edit-notice-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id         = btn.getAttribute('data-id');
+            var contentDiv = document.getElementById('notice-content-' + id);
+            var editArea   = document.getElementById('notice-edit-' + id);
+            var textarea   = document.getElementById('notice-textarea-' + id);
+            textarea.value           = contentDiv.innerText;
+            contentDiv.style.display = 'none';
+            editArea.style.display   = 'block';
+            textarea.focus();
+          });
+        });
+
+        // 取消按鈕
+        adminNoticeListWrap.querySelectorAll('.notice-cancel-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = btn.getAttribute('data-id');
+            document.getElementById('notice-content-' + id).style.display = '';
+            document.getElementById('notice-edit-'    + id).style.display = 'none';
+          });
+        });
+
+        // 儲存修改按鈕
+        adminNoticeListWrap.querySelectorAll('.notice-save-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id         = Number(btn.getAttribute('data-id'));
+            var newContent = document.getElementById('notice-textarea-' + id).value.trim();
+            if (!newContent) { alert('公告內容不能為空'); return; }
+            var session = getSession();
+            if (!session) { alert('登入逾時，請重新登入'); return; }
+            btn.disabled    = true;
+            btn.textContent = '儲存中…';
+            fetch(GAS_WEBAPP_URL, {
+              method:  'POST',
+              headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+              body:    JSON.stringify({ token: GAS_API_TOKEN, action: 'admin_update_notice',
+                                       account: session.account, id: id, content: newContent })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              btn.disabled    = false;
+              btn.textContent = '儲存修改';
+              if (data.success) {
+                loadAdminNotices();
+              } else {
+                alert('修改失敗：' + (data.error || '未知錯誤'));
+              }
+            })
+            .catch(function () {
+              btn.disabled    = false;
+              btn.textContent = '儲存修改';
+              alert('連線失敗，請重試。');
+            });
+          });
+        });
 
         // 停用按鈕
         adminNoticeListWrap.querySelectorAll('.admin-del-notice-btn').forEach(function (btn) {
