@@ -948,6 +948,11 @@ input.invalid, select.invalid {
   letter-spacing: 0.08em;
 }
 
+/* 手機版：卡片內行內版權（桌機版隱藏） */
+.card-inline-footer {
+  display: none;
+}
+
 /* ===== 動畫 ===== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -956,10 +961,10 @@ input.invalid, select.invalid {
 
 /* ===== 響應式：手機版 ===== */
 @media (max-width: 540px) {
-  body { min-height: 0; padding-bottom: 26px; }
+  body { min-height: 0; padding-bottom: 16px; }
   .site-header { padding: 15px 16px; }
   .main-wrap { padding: 18px 12px 0; }
-  .card { padding: 22px 14px 26px; }
+  .card { padding: 22px 14px 22px; }
   .card-title { margin-bottom: 18px; }
   .form-grid { gap: 16px; }
   .form-group { gap: 5px; }
@@ -967,9 +972,18 @@ input.invalid, select.invalid {
   .result-card { padding: 22px 18px 26px; }
   .btn-calculate { font-size: 0.95rem; padding: 14px 20px; }
   .btn-wrap { margin-top: 20px; }
-  .site-footer { margin-top: 16px; }
-  /* 圓形 START 按鈕手機縮小 */
-  #btn-calc { width: 144px; height: 144px; border-width: 12px; }
+  .site-footer { display: none; }
+  /* 手機版行內版權 */
+  .card-inline-footer {
+    display: block;
+    text-align: center;
+    font-size: 0.65rem;
+    color: #3e4255;
+    letter-spacing: 0.08em;
+    margin-top: 14px;
+  }
+  /* 圓形 START 按鈕手機版 */
+  #btn-calc { width: 155px; height: 155px; border-width: 12px; }
   #btn-calc::after { inset: -12px; }
   .start-chrome { font-size: 1.12rem; }
   .btn-top-label { font-size: 0.53rem; }
